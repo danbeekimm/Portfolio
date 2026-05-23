@@ -1,0 +1,1800 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ants-camp — RAG · LLMOps Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #0d8754;
+            --accent-soft: #e8f5ee;
+            --accent-faded: #f4faf7;
+            --ink: #0e1410;
+            --ink-soft: #2a3530;
+            --muted: #5a6b63;
+            --rule: #d6dfd9;
+            --rule-soft: #ebf0ec;
+            --bg: #fbfbf8;
+            --card: #ffffff;
+            --warn: #b85c00;
+            --warn-soft: #fff4e8;
+            --neutral: #6c7a72;
+            --neutral-soft: #f0f2ee;
+            --code-bg: #f3f4ef;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter Tight', -apple-system, sans-serif;
+            color: var(--ink);
+            background: var(--bg);
+            line-height: 1.65;
+            font-size: 15px;
+            letter-spacing: -0.005em;
+            -webkit-font-smoothing: antialiased;
+        }
+        .wrap { max-width: 920px; margin: 0 auto; padding: 80px 56px 120px; }
+
+        /* Section header */
+        .section-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            color: var(--accent);
+            margin-bottom: 14px;
+            text-transform: uppercase;
+        }
+        h1 {
+            font-family: 'Fraunces', serif;
+            font-weight: 600;
+            font-size: 42px;
+            line-height: 1.15;
+            letter-spacing: -0.02em;
+            color: var(--ink);
+            margin-bottom: 18px;
+        }
+        h1 .marker {
+            background: linear-gradient(transparent 60%, var(--accent-soft) 60%);
+            padding: 0 2px;
+        }
+        h2 {
+            font-family: 'Fraunces', serif;
+            font-weight: 600;
+            font-size: 30px;
+            line-height: 1.2;
+            letter-spacing: -0.015em;
+            color: var(--ink);
+            margin-bottom: 16px;
+        }
+        h3 {
+            font-family: 'Inter Tight', sans-serif;
+            font-weight: 600;
+            font-size: 16px;
+            color: var(--ink);
+            margin-bottom: 10px;
+            letter-spacing: -0.01em;
+        }
+        h3 .accent { color: var(--accent); }
+        .section-rule {
+            height: 2px;
+            background: var(--accent);
+            width: 100%;
+            margin: 0 0 28px;
+        }
+        .section { margin-bottom: 72px; }
+        .lede {
+            font-size: 16px;
+            color: var(--ink-soft);
+            line-height: 1.75;
+            margin-bottom: 24px;
+        }
+        .lede strong { color: var(--ink); font-weight: 600; }
+
+        /* Hero */
+        .hero {
+            background: var(--ink);
+            color: #fff;
+            border-radius: 12px;
+            padding: 36px 38px;
+            margin-bottom: 32px;
+        }
+        .hero-title {
+            font-family: 'Fraunces', serif;
+            font-weight: 600;
+            font-size: 26px;
+            line-height: 1.3;
+            letter-spacing: -0.015em;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+        .hero-title em {
+            color: var(--accent-soft);
+            font-style: normal;
+            background: rgba(13, 135, 84, 0.25);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        .hero-sub {
+            color: #c5d0ca;
+            font-size: 14px;
+            line-height: 1.7;
+            margin-bottom: 22px;
+        }
+        .hero-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 22px;
+            font-size: 13px;
+            color: #a5b3ab;
+            font-family: 'JetBrains Mono', monospace;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 18px;
+        }
+        .hero-meta span::before {
+            content: "●";
+            color: var(--accent);
+            margin-right: 6px;
+            font-size: 8px;
+            vertical-align: middle;
+        }
+
+        /* KPI strip */
+        .kpi-strip {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin: 32px 0 0;
+        }
+        .kpi {
+            background: var(--card);
+            border: 1px solid var(--rule);
+            border-radius: 8px;
+            padding: 22px 24px;
+            text-align: center;
+        }
+        .kpi-num {
+            font-family: 'Fraunces', serif;
+            font-weight: 600;
+            font-size: 36px;
+            line-height: 1;
+            color: var(--accent);
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+        }
+        .kpi-num .small { font-size: 22px; color: var(--ink-soft); }
+        .kpi-label {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.5;
+        }
+        .kpi-label strong { display: block; color: var(--ink); font-size: 13px; margin-bottom: 2px; }
+
+        /* Challenge / Contribution */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 22px;
+        }
+        .box {
+            background: var(--accent-faded);
+            border-radius: 8px;
+            padding: 22px 24px;
+            border-top: 3px solid var(--accent);
+        }
+        .box.muted { background: #f5f5f1; border-top-color: var(--ink-soft); }
+        .box-title {
+            font-family: 'Inter Tight', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--accent);
+            margin-bottom: 12px;
+            letter-spacing: 0.02em;
+        }
+        .box.muted .box-title { color: var(--ink-soft); }
+        .box ul { list-style: none; padding: 0; }
+        .box li {
+            font-size: 13.5px;
+            color: var(--ink-soft);
+            margin-bottom: 8px;
+            padding-left: 14px;
+            position: relative;
+            line-height: 1.6;
+        }
+        .box li::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 9px;
+            width: 4px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 50%;
+        }
+        .box.muted li::before { background: var(--ink-soft); }
+        .box li strong { color: var(--ink); font-weight: 600; }
+        .box li code { background: #fff; padding: 1px 6px; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; }
+
+        /* Architecture diagram */
+        .arch {
+            background: var(--card);
+            border: 1px solid var(--rule);
+            border-radius: 8px;
+            padding: 36px 28px;
+            margin: 22px 0;
+        }
+        .arch svg { width: 100%; height: auto; display: block; }
+
+        /* Contribution headline cards — 큰 제목 + 임팩트 한 줄 */
+        .contrib-card {
+            background: var(--card);
+            border: 1px solid var(--rule);
+            border-radius: 12px;
+            padding: 0;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .contrib-headline {
+            background: var(--accent-faded);
+            padding: 22px 28px;
+            border-bottom: 1px solid var(--rule);
+        }
+        .contrib-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--accent);
+            letter-spacing: 0.1em;
+            margin-bottom: 8px;
+        }
+        .contrib-title {
+            font-family: 'Fraunces', serif;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--ink);
+            line-height: 1.35;
+            letter-spacing: -0.01em;
+            margin-bottom: 8px;
+        }
+        .contrib-impact {
+            font-size: 13.5px;
+            color: var(--accent);
+            font-weight: 500;
+            line-height: 1.5;
+        }
+        .contrib-body {
+            padding: 24px 28px;
+        }
+        .contrib-body p,
+        .contrib-body li {
+            font-size: 13.5px;
+            color: var(--ink-soft);
+            line-height: 1.7;
+        }
+        .contrib-body p { margin-bottom: 10px; }
+        .contrib-body strong { color: var(--ink); font-weight: 600; }
+        .contrib-body code {
+            background: var(--code-bg);
+            padding: 1px 6px;
+            border-radius: 3px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+        }
+
+        /* Eval table */
+        .eval-section {
+            background: var(--card);
+            border: 1px solid var(--rule);
+            border-radius: 10px;
+            padding: 30px 32px;
+            margin: 22px 0;
+        }
+        .eval-section h3 {
+            font-family: 'Fraunces', serif;
+            font-size: 19px;
+            margin-bottom: 14px;
+        }
+        .eval-section p { font-size: 14px; color: var(--ink-soft); margin-bottom: 16px; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 13.5px;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--rule-soft);
+        }
+        th {
+            background: var(--accent-faded);
+            color: var(--ink);
+            font-weight: 600;
+            font-size: 12px;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--accent);
+        }
+        td:first-child { font-weight: 500; color: var(--ink); }
+        td.num { font-family: 'JetBrains Mono', monospace; }
+        td.win { color: var(--accent); font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+        td.lose { color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+
+        /* Code block */
+        pre {
+            background: var(--code-bg);
+            border-left: 3px solid var(--accent);
+            border-radius: 4px;
+            padding: 16px 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12.5px;
+            line-height: 1.65;
+            overflow-x: auto;
+            color: var(--ink);
+            margin: 14px 0;
+        }
+        pre .kw { color: var(--warn); font-weight: 600; }
+        pre .str { color: var(--accent); }
+        pre .com { color: var(--muted); font-style: italic; }
+
+        /* Defense layers — 3-column */
+        .three-col {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin: 22px 0;
+        }
+        .layer {
+            background: var(--accent-faded);
+            border-radius: 8px;
+            padding: 22px 22px;
+        }
+        .layer-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+        .layer-title {
+            font-family: 'Inter Tight', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--ink);
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        .layer p {
+            font-size: 12.5px;
+            color: var(--ink-soft);
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        .layer .conclusion {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--rule-soft);
+            font-size: 12px;
+            color: var(--accent);
+            font-weight: 500;
+        }
+        .layer code {
+            background: #fff;
+            padding: 1px 5px;
+            border-radius: 3px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+        }
+
+        /* Trouble cards */
+        .trouble {
+            background: var(--card);
+            border: 1px solid var(--rule);
+            border-radius: 8px;
+            padding: 0;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .trouble-header {
+            background: #f5f7f5;
+            padding: 14px 22px;
+            border-bottom: 1px solid var(--rule);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .trouble-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--ink);
+        }
+        .trouble-tag {
+            background: var(--accent);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 500;
+            padding: 4px 12px;
+            border-radius: 12px;
+            letter-spacing: 0.02em;
+        }
+        .trouble-body {
+            display: grid;
+            grid-template-columns: 1fr 1.3fr 1.2fr;
+            gap: 0;
+        }
+        .trouble-cell {
+            padding: 20px 22px;
+            border-right: 1px solid var(--rule-soft);
+        }
+        .trouble-cell:last-child { border-right: none; }
+        .trouble-cell h4 {
+            font-size: 11px;
+            color: var(--accent);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 10px;
+        }
+        .trouble-cell p, .trouble-cell li {
+            font-size: 12.5px;
+            color: var(--ink-soft);
+            line-height: 1.6;
+        }
+        .trouble-cell ul { list-style: none; padding: 0; }
+        .trouble-cell li {
+            padding-left: 12px;
+            position: relative;
+            margin-bottom: 6px;
+        }
+        .trouble-cell li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+        }
+        .trouble-cell code {
+            background: var(--code-bg);
+            padding: 1px 5px;
+            border-radius: 3px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+        }
+        .trouble-cell strong { color: var(--ink); }
+
+        /* Retro — 3-tier structure */
+        .retro-block {
+            margin-bottom: 22px;
+        }
+        .retro-header {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--rule);
+        }
+        .retro-icon {
+            font-size: 18px;
+            width: 28px;
+            text-align: center;
+        }
+        .retro-title {
+            font-family: 'Fraunces', serif;
+            font-weight: 600;
+            font-size: 18px;
+            color: var(--ink);
+        }
+        .retro-meta {
+            font-size: 12px;
+            color: var(--muted);
+            margin-left: auto;
+            font-style: italic;
+            font-family: 'Inter Tight';
+        }
+
+        .retro-good {
+            background: var(--accent-faded);
+            border-left: 4px solid var(--accent);
+            border-radius: 6px;
+            padding: 18px 22px;
+            font-size: 14px;
+            color: var(--ink-soft);
+            line-height: 1.65;
+        }
+        .retro-good strong { color: var(--ink); }
+
+        .retro-intent {
+            background: var(--neutral-soft);
+            border-left: 4px solid var(--neutral);
+            border-radius: 6px;
+            padding: 4px 0;
+        }
+        .retro-intent .item {
+            padding: 14px 22px;
+            border-bottom: 1px solid #e5e8e2;
+        }
+        .retro-intent .item:last-child { border-bottom: none; }
+        .retro-intent .item-title {
+            font-weight: 600;
+            color: var(--ink);
+            font-size: 13.5px;
+            margin-bottom: 6px;
+        }
+        .retro-intent .item-body {
+            font-size: 13px;
+            color: var(--ink-soft);
+            line-height: 1.65;
+        }
+        .retro-intent .item-body strong { color: var(--ink); }
+        .retro-intent .item-future {
+            margin-top: 6px;
+            font-size: 12px;
+            color: var(--neutral);
+            font-weight: 500;
+            padding-left: 14px;
+            position: relative;
+        }
+        .retro-intent .item-future::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--neutral);
+        }
+
+        .retro-real {
+            background: var(--warn-soft);
+            border-left: 4px solid var(--warn);
+            border-radius: 6px;
+            padding: 4px 0;
+        }
+        .retro-real .item {
+            padding: 14px 22px;
+            border-bottom: 1px solid #f4e6d4;
+        }
+        .retro-real .item:last-child { border-bottom: none; }
+        .retro-real .item-title {
+            font-weight: 600;
+            color: var(--ink);
+            font-size: 13.5px;
+            margin-bottom: 6px;
+        }
+        .retro-real .item-body {
+            font-size: 13px;
+            color: var(--ink-soft);
+            line-height: 1.65;
+        }
+        .retro-real .item-body strong { color: var(--warn); }
+        .retro-real .item-future {
+            margin-top: 6px;
+            font-size: 12px;
+            color: var(--warn);
+            font-weight: 500;
+            padding-left: 14px;
+            position: relative;
+        }
+        .retro-real .item-future::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+        }
+
+        /* Screenshot evidence card */
+        .screenshot-card {
+            background: var(--card);
+            border: 1px solid var(--rule);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 22px 0;
+        }
+        .screenshot-header {
+            background: #f5f7f5;
+            padding: 14px 22px;
+            border-bottom: 1px solid var(--rule);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+        .screenshot-title {
+            font-family: 'Inter Tight', sans-serif;
+            font-weight: 600;
+            font-size: 13.5px;
+            color: var(--ink);
+        }
+        .screenshot-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 600;
+            color: #fff;
+            background: var(--accent);
+            padding: 3px 10px;
+            border-radius: 12px;
+            letter-spacing: 0.05em;
+        }
+        .screenshot-img-wrap {
+            background: #fafaf6;
+            padding: 18px;
+            text-align: center;
+        }
+        .screenshot-img-wrap img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+            box-shadow: 0 2px 12px rgba(14, 20, 16, 0.08);
+            display: block;
+            margin: 0 auto;
+        }
+        .screenshot-caption {
+            padding: 16px 22px;
+            background: var(--card);
+            border-top: 1px solid var(--rule-soft);
+            font-size: 12.5px;
+            color: var(--ink-soft);
+            line-height: 1.7;
+        }
+        .screenshot-caption strong { color: var(--ink); font-weight: 600; }
+        .screenshot-caption code {
+            background: var(--code-bg);
+            padding: 1px 6px;
+            border-radius: 3px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11.5px;
+        }
+        .screenshot-points {
+            list-style: none;
+            margin-top: 8px;
+            padding: 0;
+        }
+        .screenshot-points li {
+            font-size: 12.5px;
+            color: var(--ink-soft);
+            padding-left: 16px;
+            position: relative;
+            margin-bottom: 4px;
+            line-height: 1.6;
+        }
+        .screenshot-points li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: 600;
+        }
+        .screenshot-points li strong { color: var(--ink); }
+
+        /* Service overview — 프로젝트 소개 */
+        .service-banner {
+            background: linear-gradient(135deg, var(--accent-faded) 0%, #fff 100%);
+            border: 1px solid var(--rule);
+            border-radius: 12px;
+            padding: 32px 36px;
+            margin-bottom: 24px;
+        }
+        .service-tagline {
+            font-family: 'Fraunces', serif;
+            font-style: italic;
+            font-size: 20px;
+            color: var(--ink);
+            line-height: 1.5;
+            margin-bottom: 18px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid var(--rule);
+        }
+        .service-tagline strong { font-style: normal; color: var(--accent); }
+        .service-desc {
+            font-size: 14.5px;
+            color: var(--ink-soft);
+            line-height: 1.75;
+        }
+        .service-desc strong { color: var(--ink); font-weight: 600; }
+
+        /* Feature 6-grid */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 22px;
+        }
+        .feature-card {
+            background: var(--card);
+            border: 1px solid var(--rule);
+            border-radius: 8px;
+            padding: 18px 20px;
+            transition: border-color 0.2s;
+        }
+        .feature-card:hover { border-color: var(--accent); }
+        .feature-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--accent);
+            letter-spacing: 0.1em;
+            margin-bottom: 6px;
+        }
+        .feature-title {
+            font-family: 'Inter Tight', sans-serif;
+            font-weight: 600;
+            font-size: 13.5px;
+            color: var(--ink);
+            margin-bottom: 8px;
+            line-height: 1.35;
+        }
+        .feature-body {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.55;
+        }
+        .feature-card.highlight {
+            border-color: var(--accent);
+            background: var(--accent-faded);
+        }
+        .feature-card.highlight .feature-body { color: var(--ink-soft); }
+
+        /* Tech selection comparison */
+        .tech-compare {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin: 22px 0;
+        }
+        .tech-row {
+            background: var(--card);
+            border: 1px solid var(--rule);
+            border-radius: 8px;
+            padding: 18px 22px;
+            display: grid;
+            grid-template-columns: 160px 1fr 110px;
+            gap: 18px;
+            align-items: start;
+        }
+        .tech-row.rejected { background: #fafaf6; opacity: 0.85; }
+        .tech-row.chosen {
+            border: 2px solid var(--accent);
+            background: var(--accent-faded);
+        }
+        .tech-name {
+            font-family: 'Fraunces', serif;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--ink);
+            line-height: 1.3;
+        }
+        .tech-name .tech-sub {
+            display: block;
+            font-family: 'Inter Tight', sans-serif;
+            font-size: 11px;
+            color: var(--muted);
+            font-weight: 400;
+            margin-top: 4px;
+            font-style: italic;
+        }
+        .tech-reasoning {
+            font-size: 12.5px;
+            color: var(--ink-soft);
+            line-height: 1.65;
+        }
+        .tech-reasoning strong { color: var(--ink); }
+        .tech-reasoning .pros { color: var(--accent); font-weight: 500; }
+        .tech-reasoning .cons { color: var(--warn); font-weight: 500; }
+        .tech-verdict {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-align: center;
+            padding: 8px 10px;
+            border-radius: 6px;
+            line-height: 1.4;
+        }
+        .tech-row.rejected .tech-verdict {
+            background: #e5e8e2;
+            color: var(--muted);
+        }
+        .tech-row.chosen .tech-verdict {
+            background: var(--accent);
+            color: #fff;
+        }
+
+        /* Stack chosen — 5-tool breakdown */
+        .stack-detail {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin: 22px 0;
+        }
+        .stack-tool {
+            background: var(--ink);
+            color: #fff;
+            border-radius: 8px;
+            padding: 18px 16px;
+            text-align: center;
+        }
+        .stack-tool-icon {
+            font-size: 22px;
+            margin-bottom: 8px;
+        }
+        .stack-tool-name {
+            font-family: 'Inter Tight', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+        .stack-tool-role {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--accent-soft);
+            letter-spacing: 0.05em;
+        }
+
+        /* Inline emphasis */
+        .pill {
+            display: inline-block;
+            background: var(--accent-soft);
+            color: var(--accent);
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: 0.02em;
+            vertical-align: middle;
+            margin-left: 6px;
+        }
+        .pill.warn { background: #fff0e0; color: var(--warn); }
+
+        /* Footer */
+        footer {
+            margin-top: 80px;
+            padding-top: 28px;
+            border-top: 1px solid var(--rule);
+            font-size: 12px;
+            color: var(--muted);
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Responsive */
+        @media (max-width: 720px) {
+            .wrap { padding: 48px 24px 80px; }
+            h1 { font-size: 32px; }
+            h2 { font-size: 24px; }
+            .two-col, .three-col, .kpi-strip { grid-template-columns: 1fr; }
+            .trouble-body { grid-template-columns: 1fr; }
+            .trouble-cell { border-right: none; border-bottom: 1px solid var(--rule-soft); }
+            .trouble-cell:last-child { border-bottom: none; }
+        }
+    </style>
+</head>
+<body>
+<div class="wrap">
+
+    <!-- SECTION 01 — OVERVIEW (Positioning) -->
+    <section class="section">
+        <div class="section-tag">01 · OVERVIEW</div>
+        <h1><span class="marker">LLM을 정량 평가하고, 안전하게 운영하는 백엔드</span></h1>
+        <div class="section-rule"></div>
+        <p class="lede">
+            모놀리식 → MSA → LLMOps로 이어진 설계 성장의 마지막 매듭. <strong>RAG 답변 품질을 LLM-as-a-Judge로 정량 평가</strong>하고,
+            <strong>Prometheus·Loki·Claude를 묶어 알림에 원인 분석과 복구 액션까지 자동 부착</strong>하는 시스템을 설계·구현했습니다.
+            AI를 외부 API처럼 덧붙인 것이 아니라, <strong>운영 모니터링 시스템 그 자체로 녹여낸</strong> 것이 핵심입니다.
+        </p>
+
+        <div class="hero">
+            <div class="hero-title">
+                <em>"LLM을 검증 가능하게(Eval/Pairwise), 운영을 안전하게(HITL·다층 방어) 만든다."</em>
+            </div>
+            <div class="hero-sub">
+                모의투자 플랫폼에서 도메인 사실성이 핵심인 RAG 챗봇 + LLM 기반 AIOps + 측정 가능한 관측 스택을 단독 설계.
+            </div>
+            <div class="hero-meta">
+                <span>2026 · 부트캠프 5인</span>
+                <span>담당: assistant · notification · monitoring 단독</span>
+                <span>Java 17 · Spring AI 1.0 · pgvector · Kafka · GCP</span>
+            </div>
+        </div>
+
+        <div class="kpi-strip">
+            <div class="kpi">
+                <div class="kpi-num">2.38 → <span style="color:var(--accent)">4.04</span></div>
+                <div class="kpi-label"><strong>faithfulness 향상</strong>RAG 모델 교체 (LLM-as-a-Judge 점수 기반)</div>
+            </div>
+            <div class="kpi">
+                <div class="kpi-num"><span class="small">환각률</span> 64.3<span class="small">%</span> → 8.3<span class="small">%</span></div>
+                <div class="kpi-label"><strong>환각률 −56pp</strong>faithfulness &lt; 3 비율</div>
+            </div>
+            <div class="kpi">
+                <div class="kpi-num">&lt; 1<span class="small">분</span></div>
+                <div class="kpi-label"><strong>MTTD</strong>ServiceDown: scrape 15s × for 1m</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 02 — SERVICE OVERVIEW (프로젝트 소개) -->
+    <section class="section">
+        <div class="section-tag">02 · SERVICE OVERVIEW</div>
+        <h2>ants-camp <span style="color:var(--muted); font-weight:400; font-size:22px;">— 개미배움캠프 · 가상 주식 투자 대회 플랫폼</span></h2>
+        <div class="section-rule"></div>
+
+        <div class="service-banner">
+            <div class="service-tagline">
+                실제 주식 데이터를 기반으로, <strong>가상 자산으로 투자 대회에 참여</strong>하고 <strong>수익률 경쟁으로 순위를 겨루는</strong> 모의 투자 플랫폼.
+            </div>
+            <div class="service-desc">
+                사용자는 한국투자증권 API로 가져온 <strong>실시간 시세</strong>를 보며 모의 매매를 진행하고, 매니저가 만든 대회 규칙(거래 시간·종목 제한·시드머니 등)에 따라 전략 경쟁을 합니다.
+                대회 종료 시점의 평가 자산 기반 <strong>수익률로 순위·티어를 산정</strong>하며, 단순 모의 투자를 넘어 <strong>실시간 랭킹 · AI 챗봇 · LLM 기반 운영 알림 · MSA 확장 구조</strong>까지
+                실제 서비스 수준의 경험을 목표로 설계했습니다.
+            </div>
+        </div>
+
+        <h3 style="margin-top:28px; margin-bottom:14px;">서비스 6대 핵심 기능</h3>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-num">01 · AUTH</div>
+                <div class="feature-title">회원 · 권한 관리</div>
+                <div class="feature-body">JWT 인증 + 사용자/매니저/관리자 RBAC. 매니저는 관리자가 등록한 계정으로만 활동.</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-num">02 · TRADING</div>
+                <div class="feature-title">가상 주식 매매</div>
+                <div class="feature-body">TradingView 실시간 조회 + 한국투자 API 기준가로 시장가 즉시 체결. 대회별 거래 시간·종목 제한 검증.</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-num">03 · COMPETITION</div>
+                <div class="feature-title">투자 대회 시스템</div>
+                <div class="feature-body">매니저 주도 대회 생성. 거래 규칙·참가 인원·시드머니 설정. 한 사용자가 여러 대회 동시 참가 가능.</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-num">04 · RANKING</div>
+                <div class="feature-title">실시간 랭킹 · 티어</div>
+                <div class="feature-body">주기적 수익률 계산 + Redis 캐싱. 종료 시 1·2·3등 발표 + TOP 10% 단위 티어 자동 산정.</div>
+            </div>
+            <div class="feature-card highlight">
+                <div class="feature-num">05 · AI ASSISTANT <span style="color:var(--accent); font-weight:700;">★ 담당</span></div>
+                <div class="feature-title">RAG 기반 챗봇 + 품질 평가</div>
+                <div class="feature-body">FAQ·약관·매매규칙을 벡터화해 의미 검색. LLM-as-a-Judge로 답변 품질 정량 측정.</div>
+            </div>
+            <div class="feature-card highlight">
+                <div class="feature-num">06 · NOTIFICATION <span style="color:var(--accent); font-weight:700;">★ 담당</span></div>
+                <div class="feature-title">통합 알림 + 모니터링</div>
+                <div class="feature-body">메트릭·로그 자동 수집 + LLM RCA → Slack HITL 액션. 중복 알림 SUPPRESSED 처리.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 03 — TECH SELECTION (모니터링 스택 선택 근거) -->
+    <section class="section">
+        <div class="section-tag">03 · TECH SELECTION</div>
+        <h2>왜 PGAL Stack인가 — 모니터링 도구 선택 근거</h2>
+        <div class="section-rule"></div>
+        <p class="lede">
+            MSA 환경의 핵심 비기능 요구는 <strong>장애 추적·실시간 메트릭·중앙 집중 로그·자동 알림</strong>입니다.
+            ELK · CloudWatch · Datadog 등 후보를 <strong>운영 비용 · 의존성 · 우리 규모 적합성</strong> 세 축으로 비교한 결과,
+            <strong>Prometheus + Grafana + Alertmanager + Loki + Promtail</strong>(이하 PGAL)이 적절하다고 판단했습니다.
+        </p>
+
+        <div class="tech-compare">
+            <div class="tech-row rejected">
+                <div class="tech-name">
+                    ELK Stack
+                    <span class="tech-sub">Elasticsearch + Logstash + Kibana</span>
+                </div>
+                <div class="tech-reasoning">
+                    <span class="pros">✓ 강력한 Full-text 검색 · 대규모 로그 분석 · Kibana 시각화 우수</span><br>
+                    <span class="cons">✗ Elasticsearch 메모리 사용량이 매우 큼 · Logstash 리소스 무거움 · 운영 복잡도 높음</span><br>
+                    <strong>판단</strong>: 우리는 Kubernetes 규모의 초대형 시스템이 아니고, 로그 분석보다 <strong>장애 추적이 더 큰 목적</strong>. Docker 기반 경량 MSA엔 과한 구성.
+                </div>
+                <div class="tech-verdict">REJECTED<br>(over-spec)</div>
+            </div>
+
+            <div class="tech-row rejected">
+                <div class="tech-name">
+                    CloudWatch
+                    <span class="tech-sub">AWS managed</span>
+                </div>
+                <div class="tech-reasoning">
+                    <span class="pros">✓ AWS 서비스와 높은 통합성 · 별도 서버 운영 불필요 · 자동 스케일링</span><br>
+                    <span class="cons">✗ AWS 의존성 증가 · 로그 저장 비용 누적 · 멀티 클라우드 대응 어려움</span><br>
+                    <strong>판단</strong>: 본 프로젝트는 <strong>GCP + 로컬 Docker 기반</strong>으로 운영 — 특정 클라우드 종속 회피.
+                </div>
+                <div class="tech-verdict">REJECTED<br>(vendor lock-in)</div>
+            </div>
+
+            <div class="tech-row rejected">
+                <div class="tech-name">
+                    Datadog
+                    <span class="tech-sub">SaaS APM</span>
+                </div>
+                <div class="tech-reasoning">
+                    <span class="pros">✓ SaaS 구축 쉬움 · UI/UX 우수 · 로그+메트릭+트레이싱 통합 APM</span><br>
+                    <span class="cons">✗ 비용이 높음 · 데이터량 증가 시 과금 부담 · SaaS 의존성</span><br>
+                    <strong>판단</strong>: 학습/포트폴리오 환경에서는 <strong>운영 비용 최소화가 중요</strong>해 부적합.
+                </div>
+                <div class="tech-verdict">REJECTED<br>(cost-prohibitive)</div>
+            </div>
+
+            <div class="tech-row chosen">
+                <div class="tech-name">
+                    PGAL Stack
+                    <span class="tech-sub">Prometheus + Grafana + Alertmanager + Loki + Promtail</span>
+                </div>
+                <div class="tech-reasoning">
+                    <span class="pros">✓ MSA 사실상 표준(Prometheus) · Spring Boot Actuator 연동 용이 · ELK 대비 경량(Loki) · Grafana 단일 대시보드로 메트릭+로그 통합 · Docker SD로 컨테이너 자동 발견 · 전부 오픈소스로 비용 0</span><br>
+                    <strong>판단</strong>: 우리 규모(Docker 기반 MSA · 5인 팀 · 학습/데모 환경)에 정확히 맞는 균형. <strong>운영 가시성을 확보하면서도 운영 부담을 최소화</strong>.
+                </div>
+                <div class="tech-verdict">CHOSEN<br>★</div>
+            </div>
+        </div>
+
+        <h3 style="margin-top:28px; margin-bottom:14px;">5개 도구 각각의 역할</h3>
+        <div class="stack-detail">
+            <div class="stack-tool">
+                <div class="stack-tool-icon">📊</div>
+                <div class="stack-tool-name">Prometheus</div>
+                <div class="stack-tool-role">시계열 메트릭<br>scrape 15s</div>
+            </div>
+            <div class="stack-tool">
+                <div class="stack-tool-icon">📈</div>
+                <div class="stack-tool-name">Grafana</div>
+                <div class="stack-tool-role">통합 대시보드<br>IaC provisioning</div>
+            </div>
+            <div class="stack-tool">
+                <div class="stack-tool-icon">🚨</div>
+                <div class="stack-tool-name">Alertmanager</div>
+                <div class="stack-tool-role">조건 기반 알림<br>Slack 라우팅</div>
+            </div>
+            <div class="stack-tool">
+                <div class="stack-tool-icon">📜</div>
+                <div class="stack-tool-name">Loki</div>
+                <div class="stack-tool-role">경량 로그 저장<br>라벨 인덱싱</div>
+            </div>
+            <div class="stack-tool">
+                <div class="stack-tool-icon">🚚</div>
+                <div class="stack-tool-name">Promtail</div>
+                <div class="stack-tool-role">컨테이너 로그<br>Docker SD</div>
+            </div>
+        </div>
+
+        <table style="margin-top:24px;">
+            <thead>
+            <tr><th>도구</th><th>선택 이유 (한 줄)</th><th>활용 목적</th></tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Prometheus</td>
+                <td>MSA 사실상 표준 · Spring Boot Actuator 연동 용이 · 시계열 저장 최적화 · PromQL</td>
+                <td>CPU/Memory/API 응답시간/에러율/요청수 추적</td>
+            </tr>
+            <tr>
+                <td>Grafana</td>
+                <td>다양한 데이터 소스 + Loki/Prometheus와 높은 호환 + 대시보드 자유도</td>
+                <td>서비스별 메트릭 시각화 · 운영 대시보드 · 장애 실시간 확인</td>
+            </tr>
+            <tr>
+                <td>Alertmanager</td>
+                <td>Prometheus 자연스러운 통합 · 조건 기반 · Slack 연동 용이</td>
+                <td>임계치 초과 → Slack 알림 · API Error Rate 증가 감지</td>
+            </tr>
+            <tr>
+                <td>Loki</td>
+                <td>Elasticsearch 없이 로그 저장 · 라벨 인덱싱으로 비용 절감 · Docker 궁합</td>
+                <td>서비스별 중앙 로그 · 장애 로그 분석 · Trace ID 요청 추적</td>
+            </tr>
+            <tr>
+                <td>Promtail</td>
+                <td>Docker 로그 수집 단순 · Loki 공식 연동 · 설정 단순</td>
+                <td>컨테이너 로그 수집 · 서비스 라벨링 · Loki로 전달</td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- SECTION 04 — DESIGN GOALS (이전 02 — 핵심 도전 + 핵심 기여) -->
+    <section class="section">
+        <div class="section-tag">04 · DESIGN GOALS</div>
+        <h2>설계 도전 과제와 핵심 기여</h2>
+        <div class="section-rule"></div>
+
+        <div class="two-col">
+            <div class="box">
+                <div class="box-title">핵심 도전 과제</div>
+                <ul>
+                    <li>RAG 답변의 <strong>사실성(faithfulness)</strong> 정량 측정 — "느낌"이 아닌 <strong>점수·승률</strong>로 모델 결정</li>
+                    <li>LLM 평가의 함정 <strong>self-preference bias</strong> 차단 — Judge가 자기 출력에 후한 경향 회피</li>
+                    <li>단순 알림을 <strong>"원인 + 권장 조치"</strong>로 격상 — 운영자 컨텍스트 수집 단계 제거</li>
+                    <li>LLM 자동 실행의 위험 — 인프라/PII/위변조의 <strong>다층 안전장치</strong> 필요</li>
+                    <li>토이 프로젝트의 한계 — <strong>측정 가능한 관측 시스템</strong> 자체를 차별점으로</li>
+                </ul>
+            </div>
+            <div class="box muted">
+                <div class="box-title">핵심 기여 (개인)</div>
+                <ul>
+                    <li>RAG 파이프라인 + <strong>LLM-as-a-Judge 3축 채점 + Pairwise</strong> 시스템</li>
+                    <li>Self-preference bias <strong>코드 레벨 차단</strong> + Judge 2종 교차</li>
+                    <li>Alertmanager → Redis dedup → Claude RCA → Slack <strong>HITL</strong> 파이프라인</li>
+                    <li>Defense-in-Depth: <strong>인프라 보호 2중 차단 + HMAC-SHA256 + PII 마스킹</strong></li>
+                    <li>관측 스택 단독 구축 — Prometheus/Loki/Promtail/Grafana/Alertmanager + alert 룰 <strong>7종 `for:` 차등</strong></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 05 — ARCHITECTURE -->
+    <section class="section">
+        <div class="section-tag">05 · ARCHITECTURE</div>
+        <h2>TO-BE 아키텍처 — GCP 5-VM 분리 토폴로지</h2>
+        <div class="section-rule"></div>
+        <p class="lede">
+            Google Cloud Platform 위에 <strong>역할별 VM 5개 그룹</strong>으로 분리 배포합니다.
+            <strong>APP VM</strong>(서비스 컨테이너) · <strong>Redis VM</strong>(랭킹 캐시·dedup) · <strong>Monitoring VM</strong>(관측 스택 단독) ·
+            <strong>Infra VM</strong>(Config·Eureka) · <strong>Kafka VM</strong>(이벤트). 외부 의존성(<strong>Vercel</strong> 프론트 ·
+            <strong>한국투자증권 API/WebSocket</strong> · <strong>네이버 뉴스</strong> · <strong>Cloud SQL</strong> · <strong>GCP Container Registry</strong>)은
+            GCP 경계 바깥에서 통신. AI Assistant(녹색)와 Notification(주황) 두 흐름이 동일 인프라를 공유합니다.
+        </p>
+
+        <div class="arch">
+            <svg viewBox="0 0 920 700" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#0d8754"/>
+                    </marker>
+                    <marker id="arrow-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#5a6b63"/>
+                    </marker>
+                    <marker id="arrow-warn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#b85c00"/>
+                    </marker>
+                </defs>
+
+                <!-- ===== Background tone: deep ink for GCP container ===== -->
+                <rect x="220" y="40" width="600" height="600" rx="14" fill="#0e1410"/>
+                <text x="232" y="62" fill="#9aaaa0" font-family="JetBrains Mono" font-size="11" font-weight="600">G</text>
+                <text x="248" y="62" fill="#fff" font-family="Inter Tight" font-size="12" font-weight="600">Google Cloud Platform</text>
+
+                <!-- ===== Left side: External actors ===== -->
+                <!-- User -->
+                <circle cx="40" cy="115" r="14" fill="none" stroke="#5a6b63" stroke-width="2"/>
+                <circle cx="40" cy="108" r="5" fill="none" stroke="#5a6b63" stroke-width="2"/>
+                <text x="40" y="148" text-anchor="middle" fill="#5a6b63" font-family="Inter Tight" font-size="11" font-weight="600">사용자</text>
+
+                <!-- Vercel -->
+                <polygon points="120,100 145,140 95,140" fill="none" stroke="#5a6b63" stroke-width="2"/>
+                <text x="120" y="160" text-anchor="middle" fill="#0e1410" font-family="Inter Tight" font-size="11" font-weight="600">Vercel</text>
+                <text x="120" y="173" text-anchor="middle" fill="#5a6b63" font-family="JetBrains Mono" font-size="9">React · TS</text>
+
+                <line x1="58" y1="120" x2="98" y2="120" stroke="#5a6b63" stroke-width="1.5" marker-end="url(#arrow-dark)"/>
+                <line x1="148" y1="120" x2="218" y2="160" stroke="#5a6b63" stroke-width="1.5" marker-end="url(#arrow-dark)"/>
+
+                <!-- External APIs -->
+                <circle cx="120" cy="260" r="22" fill="none" stroke="#5a6b63" stroke-width="2"/>
+                <text x="120" y="265" text-anchor="middle" fill="#5a6b63" font-family="Inter Tight" font-size="14">💹</text>
+                <text x="120" y="298" text-anchor="middle" fill="#0e1410" font-family="Inter Tight" font-size="10.5" font-weight="600">한국투자증권 WebSocket</text>
+                <text x="120" y="311" text-anchor="middle" fill="#5a6b63" font-family="JetBrains Mono" font-size="9">실시간 시세</text>
+
+                <circle cx="120" cy="360" r="22" fill="none" stroke="#5a6b63" stroke-width="2"/>
+                <text x="120" y="365" text-anchor="middle" fill="#5a6b63" font-family="Inter Tight" font-size="14">📊</text>
+                <text x="120" y="398" text-anchor="middle" fill="#0e1410" font-family="Inter Tight" font-size="10.5" font-weight="600">한국투자증권 API</text>
+                <text x="120" y="411" text-anchor="middle" fill="#5a6b63" font-family="JetBrains Mono" font-size="9">매매 기준가</text>
+
+                <circle cx="120" cy="460" r="22" fill="none" stroke="#5a6b63" stroke-width="2"/>
+                <text x="120" y="465" text-anchor="middle" fill="#5a6b63" font-family="Inter Tight" font-size="14">📰</text>
+                <text x="120" y="498" text-anchor="middle" fill="#0e1410" font-family="Inter Tight" font-size="10.5" font-weight="600">네이버 뉴스</text>
+
+                <!-- External → GCP -->
+                <line x1="146" y1="260" x2="240" y2="220" stroke="#5a6b63" stroke-width="1" stroke-dasharray="3,2" marker-end="url(#arrow-dark)"/>
+                <line x1="146" y1="360" x2="240" y2="230" stroke="#5a6b63" stroke-width="1" stroke-dasharray="3,2" marker-end="url(#arrow-dark)"/>
+                <line x1="146" y1="460" x2="240" y2="240" stroke="#5a6b63" stroke-width="1" stroke-dasharray="3,2" marker-end="url(#arrow-dark)"/>
+
+                <!-- ===== APP VM ===== -->
+                <rect x="240" y="85" width="560" height="115" rx="8" fill="none" stroke="#5a6b63" stroke-width="1" stroke-dasharray="2,2"/>
+                <rect x="250" y="78" width="14" height="14" rx="2" fill="#3a8fcc"/>
+                <text x="272" y="90" fill="#fff" font-family="Inter Tight" font-size="11" font-weight="600">APP VM</text>
+
+                <!-- NginX -->
+                <rect x="250" y="105" width="60" height="20" rx="3" fill="#3a8fcc"/>
+                <text x="280" y="119" text-anchor="middle" fill="#fff" font-family="Inter Tight" font-size="10" font-weight="600">NginX</text>
+
+                <!-- Gateway -->
+                <rect x="250" y="135" width="62" height="50" rx="4" fill="#d97706"/>
+                <text x="281" y="160" text-anchor="middle" fill="#fff" font-family="Inter Tight" font-size="9" font-weight="600">Gateway</text>
+
+                <!-- Assistant (★) -->
+                <rect x="318" y="135" width="62" height="50" rx="4" fill="#d97706" stroke="#0d8754" stroke-width="2.5"/>
+                <text x="349" y="160" text-anchor="middle" fill="#fff" font-family="Inter Tight" font-size="9" font-weight="600">Assistant</text>
+                <text x="349" y="172" text-anchor="middle" fill="#c9ead9" font-family="JetBrains Mono" font-size="8">★ 담당</text>
+
+                <!-- Notification (★) -->
+                <rect x="386" y="135" width="62" height="50" rx="4" fill="#d97706" stroke="#b85c00" stroke-width="2.5"/>
+                <text x="417" y="160" text-anchor="middle" fill="#fff" font-family="Inter Tight" font-size="9" font-weight="600">Notification</text>
+                <text x="417" y="172" text-anchor="middle" fill="#ffd9b3" font-family="JetBrains Mono" font-size="8">★ 담당</text>
+
+                <!-- Promtail (left) -->
+                <rect x="454" y="135" width="62" height="50" rx="4" fill="#d97706"/>
+                <text x="485" y="163" text-anchor="middle" fill="#fff" font-family="Inter Tight" font-size="9" font-weight="600">Promtail</text>
+
+                <!-- Other services group -->
+                <rect x="528" y="135" width="62" height="50" rx="4" fill="#d97706"/>
+                <text x="559" y="160" text-anchor="middle" fill="#fff" font-family="Inter Tight" font-size="9" font-weight="600">Ranking</text>
+
+                <rect x="596" y="135" width="62" height="50" rx="4" fill="#d97706"/>
+                <text x="627" y="160" text-anchor="middle" fill="#fff" font-family="Inter Tight" font-size="9" font-weight="600">Competition</text>
+
+                <rect x="664" y="135" width="62" height="50" rx="4" fill="#d97706"/>
+                <text x="695" y="160" text-anchor="middle" fill="#fff" font-family="Inter Tight" font-size="9" font-weight="600">User · Trade</text>
+                <text x="695" y="172" text-anchor="middle" fill="#fff" font-family="Inter Tight" font-size="9" font-weight="600">Asset</text>
+
+                <!-- ===== Redis VM ===== -->
+                <rect x="240" y="215" width="560" height="80" rx="8" fill="none" stroke="#5a6b63" stroke-width="1" stroke-dasharray="2,2"/>
+                <rect x="250" y="208" width="14" height="14" rx="2" fill="#3a8fcc"/>
+                <text x="272" y="220" fill="#fff" font-family="Inter Tight" font-size="11" font-weight="600">Redis VM</text>
+
+                <rect x="490" y="240" width="50" height="42" rx="4" fill="#dc2626"/>
+                <text x="515" y="258" text-anchor="middle" fill="#fff" font-family="Inter Tight" font-size="10" font-weight="600">Redis</text>
+                <text x="515" y="272" text-anchor="middle" fill="#fee2e2" font-family="JetBrains Mono" font-size="8">cache·dedup</text>
+
+                <!-- ===== Monitoring VM ===== -->
+                <rect x="240" y="310" width="560" height="105" rx="8" fill="none" stroke="#5a6b63" stroke-width="1" stroke-dasharray="2,2"/>
+                <rect x="250" y="303" width="14" height="14" rx="2" fill="#3a8fcc"/>
+                <text x="272" y="315" fill="#fff" font-family="Inter Tight" font-size="11" font-weight="600">Monitoring VM</text>
+
+                <rect x="270" y="333" width="76" height="56" rx="4" fill="#d97706"/>
+                <text x="308" y="358" text-anchor="middle" fill="#fff" font-family="Inter Tight" font-size="10" font-weight="600">Grafana</text>
+                <text x="308" y="372" text-anchor="middle" fill="#ffd9b3" font-family="JetBrains Mono" font-size="8">시각화</text>
+
+                <rect x="360" y="333" width="76" height="56" rx="4" fill="#d97706"/>
+                <text x="398" y="358" text-anchor="middle" fill="#fff" font-family="Inter Tight" font-size="10" font-weight="600">Prometheus</text>
+                <text x="398" y="372" text-anchor="middle" fill="#ffd9b3" font-family="JetBrains Mono" font-size="8">메트릭</text>
+
+                <rect x="450" y="333" width="76" height="56" rx="4" fill="#d97706"/>
+                <text x="488" y="358" text-anchor="middle" fill="#fff" font-family="Inter Tight" font-size="10" font-weight="600">Loki</text>
+                <text x="488" y="372" text-anchor="middle" fill="#ffd9b3" font-family="JetBrains Mono" font-size="8">로그 저장</text>
+
+                <rect x="540" y="333" width="100" height="56" rx="4" fill="#d97706"/>
+                <text x="590" y="358" text-anchor="middle" fill="#fff" font-family="Inter Tight" font-size="10" font-weight="600">Alertmanager</text>
+                <text x="590" y="372" text-anchor="middle" fill="#ffd9b3" font-family="JetBrains Mono" font-size="8">알림 라우팅</text>
+
+                <!-- ===== Infra VM ===== -->
+                <rect x="240" y="430" width="560" height="85" rx="8" fill="none" stroke="#5a6b63" stroke-width="1" stroke-dasharray="2,2"/>
+                <rect x="250" y="423" width="14" height="14" rx="2" fill="#3a8fcc"/>
+                <text x="272" y="435" fill="#fff" font-family="Inter Tight" font-size="11" font-weight="600">Infra VM</text>
+
+                <rect x="270" y="453" width="76" height="50" rx="4" fill="#d97706"/>
+                <text x="308" y="475" text-anchor="middle" fill="#fff" font-family="Inter Tight" font-size="10" font-weight="600">Config</text>
+                <text x="308" y="488" text-anchor="middle" fill="#ffd9b3" font-family="JetBrains Mono" font-size="8">Spring Cloud</text>
+
+                <rect x="360" y="453" width="76" height="50" rx="4" fill="#d97706"/>
+                <text x="398" y="475" text-anchor="middle" fill="#fff" font-family="Inter Tight" font-size="10" font-weight="600">Eureka</text>
+                <text x="398" y="488" text-anchor="middle" fill="#ffd9b3" font-family="JetBrains Mono" font-size="8">Discovery</text>
+
+                <!-- ===== Kafka VM ===== -->
+                <rect x="240" y="530" width="560" height="95" rx="8" fill="none" stroke="#5a6b63" stroke-width="1" stroke-dasharray="2,2"/>
+                <rect x="250" y="523" width="14" height="14" rx="2" fill="#3a8fcc"/>
+                <text x="272" y="535" fill="#fff" font-family="Inter Tight" font-size="11" font-weight="600">Kafka VM</text>
+
+                <rect x="270" y="553" width="76" height="56" rx="4" fill="none" stroke="#b85c00" stroke-width="2"/>
+                <text x="308" y="578" text-anchor="middle" fill="#b85c00" font-family="Inter Tight" font-size="14">⎇</text>
+                <text x="308" y="595" text-anchor="middle" fill="#fff" font-family="Inter Tight" font-size="10" font-weight="600">Kafka</text>
+
+                <!-- ===== Right side: managed services ===== -->
+                <rect x="830" y="135" width="70" height="50" rx="4" fill="none" stroke="#5a6b63" stroke-width="1.5"/>
+                <text x="865" y="158" text-anchor="middle" fill="#0e1410" font-family="Inter Tight" font-size="10" font-weight="600">Cloud SQL</text>
+                <text x="865" y="172" text-anchor="middle" fill="#5a6b63" font-family="JetBrains Mono" font-size="8">PostgreSQL</text>
+                <text x="865" y="183" text-anchor="middle" fill="#5a6b63" font-family="JetBrains Mono" font-size="8">+ pgvector</text>
+
+                <line x1="800" y1="158" x2="828" y2="158" stroke="#5a6b63" stroke-width="1.5" marker-end="url(#arrow-dark)"/>
+                <line x1="828" y1="162" x2="800" y2="162" stroke="#5a6b63" stroke-width="1.5"/>
+
+                <rect x="830" y="240" width="70" height="60" rx="4" fill="none" stroke="#5a6b63" stroke-width="1.5"/>
+                <text x="865" y="262" text-anchor="middle" fill="#0e1410" font-family="Inter Tight" font-size="14">🐳</text>
+                <text x="865" y="280" text-anchor="middle" fill="#0e1410" font-family="Inter Tight" font-size="10" font-weight="600">GCP</text>
+                <text x="865" y="292" text-anchor="middle" fill="#0e1410" font-family="Inter Tight" font-size="10" font-weight="600">Registry</text>
+
+                <!-- ===== Two groups dashed boundary ===== -->
+                <!-- Assistant flow (green) -->
+                <path d="M 340 100 Q 230 100 220 250 Q 220 400 340 410 Q 460 420 470 580 Q 470 620 320 620 Q 220 620 220 400 Z"
+                      fill="none" stroke="#0d8754" stroke-width="2" stroke-dasharray="6,4" opacity="0.85"/>
+                <rect x="478" y="103" width="116" height="14" rx="3" fill="#0d8754"/>
+                <text x="536" y="113" text-anchor="middle" fill="#fff" font-family="JetBrains Mono" font-size="9" font-weight="600">AI Assistant 흐름</text>
+
+                <!-- Notification flow (orange) -->
+                <path d="M 416 100 Q 750 100 760 250 Q 770 400 660 410 Q 540 420 520 580 Q 520 630 660 630 Q 790 630 790 400 Z"
+                      fill="none" stroke="#b85c00" stroke-width="2" stroke-dasharray="6,4" opacity="0.85"/>
+                <rect x="640" y="103" width="116" height="14" rx="3" fill="#b85c00"/>
+                <text x="698" y="113" text-anchor="middle" fill="#fff" font-family="JetBrains Mono" font-size="9" font-weight="600">Notification 흐름</text>
+
+                <!-- ===== Legend ===== -->
+                <g font-family="JetBrains Mono" font-size="9.5">
+                    <line x1="240" y1="660" x2="265" y2="660" stroke="#0d8754" stroke-width="2" stroke-dasharray="4,3"/>
+                    <text x="275" y="664" fill="#0e1410" font-weight="600">AI Assistant 흐름 (RAG · Eval · LLM)</text>
+                    <line x1="500" y1="660" x2="525" y2="660" stroke="#b85c00" stroke-width="2" stroke-dasharray="4,3"/>
+                    <text x="535" y="664" fill="#0e1410" font-weight="600">Notification 흐름 (메트릭 · 로그 · RCA)</text>
+                    <line x1="240" y1="678" x2="265" y2="678" stroke="#5a6b63" stroke-width="1" stroke-dasharray="3,2"/>
+                    <text x="275" y="682" fill="#5a6b63">외부 의존성 (Vercel · 증권 API · 네이버 뉴스 · Cloud SQL)</text>
+                </g>
+            </svg>
+        </div>
+
+        <p style="font-size:13px; color:var(--muted); font-style:italic; margin-top:14px; text-align:center;">
+            두 흐름이 같은 인프라(APP·Redis·Monitoring·Infra·Kafka VM)를 공유하지만, 각자의 책임 영역을 점선으로 분리해 표현.
+            AI Assistant는 사용자 요청 처리, Notification은 운영 모니터링에 집중.
+        </p>
+
+        <h3 style="margin-top:32px; margin-bottom:14px;">설계 의사결정과 근거</h3>
+        <table>
+            <thead>
+            <tr><th>결정</th><th>대안</th><th>선택 이유 — 정량 가정 · 확장 계획 포함</th></tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>역할별 VM 5개 분리</td>
+                <td>단일 VM 통합 · K8s 클러스터</td>
+                <td>학습/포트폴리오 환경엔 K8s가 과함. 단일 VM은 SPOF·자원 경합 위험. <strong>역할별 분리로 장애 격리와 자원 독립성 확보</strong>. 운영 시 GKE로 단계적 이행 가능.</td>
+            </tr>
+            <tr>
+                <td>pgvector</td>
+                <td>Pinecone · Milvus</td>
+                <td>문서 수 수천 건 · QPS 한 자릿수 가정엔 cosine + IVFFlat로 p95 충분. <strong>수십만 건 또는 멀티테넌시</strong> 시점에 외부화 검토.</td>
+            </tr>
+            <tr>
+                <td>Spring AI + 모델명 라우팅</td>
+                <td>provider별 SDK 직접 호출</td>
+                <td>LLM(OpenAI/Claude/Gemini)을 Port 뒤로 추상화 → <strong>모델 교체 시 application 무수정</strong>. Pairwise 비교 실험 자유로움.</td>
+            </tr>
+            <tr>
+                <td>Claude Haiku (장애 분석)</td>
+                <td>Opus · Sonnet</td>
+                <td>알림은 빈도 높고 빠른 요약이 핵심 → <strong>Opus 대비 약 1/10 비용</strong>, max_tokens 2000.</td>
+            </tr>
+            <tr>
+                <td>Human-in-the-Loop</td>
+                <td>LLM 전자동 실행</td>
+                <td>운영 컨테이너를 건드림 → <strong>AI는 추천까지, 실행은 사람 클릭</strong>. 자동화 효율과 인간 판단의 안정성의 균형.</td>
+            </tr>
+            <tr>
+                <td>Reconciler(@Scheduled)</td>
+                <td>메시지 큐 (DLQ)</td>
+                <td>인제스트 동시성 분당 수십 건 가정엔 60초 주기 보정으로 SLA 만족. <strong>분당 수백 건 이상</strong> 시 Kafka DLQ 전환.</td>
+            </tr>
+            <tr>
+                <td>단일 인스턴스 → 분산 락 생략</td>
+                <td>ShedLock · 리더 선출</td>
+                <td>각 서비스 단일 인스턴스 배포 토폴로지 → 스케줄러 중복 실행 자체 발생 X. <strong>수평 확장 시</strong> ShedLock + 컨슈머 멱등 처리.</td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- SECTION 06 — KEY CONTRIBUTION ① — LLM-as-a-Judge -->
+    <section class="section">
+        <div class="section-tag">06 · KEY CONTRIBUTION ①</div>
+        <div class="contrib-card">
+            <div class="contrib-headline">
+                <div class="contrib-num">🎯 CONTRIBUTION #1</div>
+                <div class="contrib-title">LLM 답변 품질을 "감"이 아닌 "점수"로 검증 — 정량 평가 파이프라인</div>
+                <div class="contrib-impact">모델 교체 결정의 정량적 근거 확보. faithfulness 2.38 → 4.04, 환각률 64.3% → 8.3%, Pairwise 6승 0패</div>
+            </div>
+            <div class="contrib-body">
+                <p><strong>P</strong> · 대다수 RAG 프로젝트는 답변 품질을 "느낌"으로 판단하고 모델 교체를 "감"으로 결정 → 품질 회귀(regression) 위험을 막을 정량 체계 필요. 특히 LLM 평가의 가장 알려진 함정 <strong>self-preference bias</strong>(LLM이 자기 출력에 더 후한 경향, 연구로 보고됨)가 차단되지 않으면 평가 결과 자체가 신뢰 불가.</p>
+                <p><strong>A</strong> · pgvector 의미검색(topK×3 → 유사도 0.3·score-gap 0.8 컷오프 → 최종 topK=5) + <strong>3축 채점</strong>(Relevance/Faithfulness/ContextPrecision) + <strong>Pairwise A/B 위치 교차</strong> + <strong>Self-preference bias 코드 레벨 차단</strong>(Judge==생성모델이면 skip, temperature 0) + <strong>Judge 2종 교차 검증</strong>(claude-sonnet-4-6 + gpt-4o).</p>
+                <p><strong>R</strong> · 점수·승률 기반으로 <strong>gpt-4o-mini → claude-haiku 교체</strong>. <strong>OpenAI 자사 gpt-4o조차 gpt-4o-mini를 낮게 평가</strong> → 계열 편향 데이터로 반박.</p>
+            </div>
+        </div>
+
+        <div class="eval-section">
+            <h3>★ 차별점 — 어떻게 차단했나 (3겹 방어)</h3>
+            <div class="three-col" style="margin-top:14px;">
+                <div class="layer">
+                    <div class="layer-num">① BIAS BLOCK</div>
+                    <div class="layer-title">Self-preference 코드 레벨 차단</div>
+                    <p>Judge 모델 == 응답 생성 모델이면 채점 자체를 <strong>skip</strong>. 자기 출력에 후한 경향을 원천 회피.</p>
+                </div>
+                <div class="layer">
+                    <div class="layer-num">② CROSS</div>
+                    <div class="layer-title">Judge 2종 교차 검증</div>
+                    <p><code>claude-sonnet-4-6</code> + <code>gpt-4o</code> 양쪽 모두 돌려 한 모델에 결정 의존 X. <strong>OpenAI 자사 gpt-4o조차 gpt-4o-mini를 낮게 평가</strong>.</p>
+                </div>
+                <div class="layer">
+                    <div class="layer-num">③ PAIRWISE</div>
+                    <div class="layer-title">A/B 위치 교차 비교</div>
+                    <p>A/B 위치를 <strong>교차해 양방향 비교</strong> → 위치 편향(앞쪽 유리)까지 회피. 결과: 6승 0패.</p>
+                </div>
+            </div>
+
+            <pre><span class="com">// EvalProcessor.judgeAndSave()</span>
+<span class="kw">if</span> (judgeModel.equalsIgnoreCase(ragQuery.getLlmModel())) {
+    log.warn(<span class="str">"Self-preference bias 방지: skip. model={}"</span>, judgeModel);
+    <span class="kw">return</span>;
+}</pre>
+
+            <h3 style="margin-top:24px;">결과 — 데이터 기반 의사결정</h3>
+            <table>
+                <thead>
+                <tr>
+                    <th>지표</th>
+                    <th class="num">gpt-4o-mini (n=28)</th>
+                    <th class="num">claude-haiku (n=12)</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr><td>faithfulness</td><td class="num">2.38</td><td class="win">4.04</td></tr>
+                <tr><td>relevance</td><td class="num">2.38</td><td class="win">4.00</td></tr>
+                <tr><td>contextPrecision</td><td class="num">2.32</td><td class="win">3.92</td></tr>
+                <tr><td>환각률 (faith &lt; 3)</td><td class="num" style="color:var(--warn);font-weight:600;">64.3 %</td><td class="win">8.3 %</td></tr>
+                <tr><td>Pairwise (A/B 교차)</td><td class="lose">0승</td><td class="win">6승 0패 (TIE 0)</td></tr>
+                </tbody>
+            </table>
+            <p style="font-size:12.5px;color:var(--muted);margin-top:8px;font-style:italic;">
+                표본 40건은 통계적 검정력 충분치 않으나 ① 두 Judge 동일 방향 ② Pairwise 동일 방향 → 방향성 견고.
+                정밀화 시 골든셋 200건+ 확대 및 사람 평가자 inter-rater agreement 측정으로 Judge 신뢰도 자체 검증 계획.
+            </p>
+        </div>
+
+        <!-- 평가 대상이 된 실제 챗봇 UI -->
+        <div class="screenshot-card">
+            <div class="screenshot-header">
+                <div class="screenshot-title">📸 평가 대상이 된 실제 RAG 챗봇 UI</div>
+                <div class="screenshot-tag">RAG · 출처 표시</div>
+            </div>
+            <div class="screenshot-img-wrap">
+                <img src="images/chatbot-ui.png" alt="AntCamp AI 챗봇 — 질문, 응답, 출처 가이드 표시, 상세 페이지">
+            </div>
+            <div class="screenshot-caption">
+                <strong>위 정량 평가 시스템(LLM-as-a-Judge · Pairwise)의 평가 대상</strong>이 된 사용자 챗봇 화면.
+                단순 응답에 그치지 않고 <strong>참조 문서의 출처를 함께 표시</strong>해 사용자가 근거를 직접 확인할 수 있도록 설계했습니다.
+                <ul class="screenshot-points">
+                    <li><strong>질문 → 응답 → 출처 가이드</strong> 3단계 표시 — "전용 계좌는 언제 발급받을 수 있죠?" 질문에 RAG로 검색한 가이드 문서 기반 답변 생성</li>
+                    <li><strong>출처 칩 클릭</strong> → 우측 패널에서 참조한 가이드 문서의 핵심 내용 미리보기</li>
+                    <li><strong>"가이드 상세 페이지로 더 보기"</strong> 버튼 → 전체 문서 페이지로 이동, 답변의 근거를 끝까지 추적 가능</li>
+                    <li>세션 기반 대화 이력 관리 — 좌측 "문의 목록"에서 이전 대화 재조회 (세션 제목은 마지막 메시지로 자동 설정)</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 07 — KEY CONTRIBUTION ② — AIOps -->
+    <section class="section">
+        <div class="section-tag">07 · KEY CONTRIBUTION ②</div>
+        <div class="contrib-card">
+            <div class="contrib-headline">
+                <div class="contrib-num">🤖 CONTRIBUTION #2</div>
+                <div class="contrib-title">알림이 아니라 "원인 분석"을 보낸다 — LLM 기반 AIOps (Human-in-the-Loop)</div>
+                <div class="contrib-impact">MTTR 단축 + AI 자동화의 안전성을 사람 클릭으로 통제. 운영자의 컨텍스트 수집 단계 제거</div>
+            </div>
+            <div class="contrib-body">
+                <p><strong>P</strong> · Prometheus → Slack 단순 알림은 "임계값 초과" 사실만 전달 → 운영자가 Grafana·터미널을 왕복하며 원인 추적에 시간 소요(MTTR의 대부분). 동시에 LLM 자동 실행은 운영 컨테이너를 건드리므로 위험.</p>
+                <p><strong>A</strong> · Alertmanager webhook → Redis fingerprint <strong>dedup</strong>(SET NX, TTL 1h) → Prometheus(CPU/Heap/에러수/응답시간) + Loki(최근 10분 에러 로그) <strong>자동 수집</strong> → Claude(haiku) RCA → Slack Block Kit <strong>분석 + 복구 버튼 4종</strong>(restart/rollback/cache-clear/false-alarm). <strong>AI는 추천까지, 실행은 사람 클릭.</strong></p>
+                <p><strong>R</strong> · 알림 수신 후 수 초 내 "근거 메트릭/로그 + 권장 조치" 자동 게시. <strong>AI를 외부 API가 아닌 운영 모니터링 시스템 그 자체로 녹임.</strong></p>
+                <pre style="margin-top:14px;"><span class="com">// Slack 3초 응답 제약 → @Async ACK 후 메시지 갱신</span>
+<span class="kw">@Async</span>(<span class="str">"slackActionExecutor"</span>)
+<span class="kw">public void</span> executeAndNotifyAsync(SlackActionCommand command) {
+    trySlack(<span class="str">"처리 중"</span>, () -> alertPort.markAsProcessing(...));
+    ActionResult result = executeAction(...);
+    trySlack(<span class="str">"완료/실패 갱신"</span>, () -> alertPort.markAsHandled(...));
+}</pre>
+            </div>
+        </div>
+
+        <!-- Slack HITL 실제 동작 -->
+        <div class="screenshot-card">
+            <div class="screenshot-header">
+                <div class="screenshot-title">📸 실제 Slack 알림 + Human-in-the-Loop 액션 화면</div>
+                <div class="screenshot-tag">HITL · 실제 운영</div>
+            </div>
+            <div class="screenshot-img-wrap">
+                <img src="images/slack-hitl.png" alt="Slack #grafana 채널의 알림 — AI 장애 분석, 원인 분석, 복구 버튼 4종, 스레드 갱신">
+            </div>
+            <div class="screenshot-caption">
+                <strong>실제 Slack 채널에 자동 게시된 LLM 기반 장애 분석 메시지</strong>와 복구 버튼 클릭 후 스레드 알림까지의 실제 동작 흐름.
+                단순 "임계값 초과" 알림이 아닌, <strong>AI가 메트릭·로그를 자동 수집해 원인을 분석하고 권장 조치까지 제시</strong>합니다.
+                <ul class="screenshot-points">
+                    <li><strong>AI 장애 분석 리포트</strong> — antcamp-user HTTP 400 에러 발생 시점, 심각도(warning), 에러율(7건/5분)을 자동 포착</li>
+                    <li><strong>원인 분석</strong> — 1순위 클라이언트 입력값 검증, 2순위 일시적 클라이언트 트래픽, 3순위 서버 상태 등 <strong>우선순위가 매겨진 분석</strong> 제공</li>
+                    <li><strong>복구 버튼 4종</strong>(빨강 박스 영역): 코드 롤백 · 캐시 비우기 · 서비스 재시작 · 정상 처리(false alarm) — 운영자가 상황에 맞게 선택</li>
+                    <li><strong>스레드 자동 갱신</strong>(우측) — 버튼 클릭 시 <code>@Async</code> ACK 후 "처리중 → 완료/실패"로 메시지 갱신. Slack 3초 응답 제약 해소</li>
+                    <li><strong>Grafana 대시보드 / 로그 보기</strong> 바로가기 버튼으로 운영자의 컨텍스트 전환 비용 최소화</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 08 — KEY CONTRIBUTION ③ — Defense-in-depth -->
+    <section class="section">
+        <div class="section-tag">08 · KEY CONTRIBUTION ③</div>
+        <div class="contrib-card">
+            <div class="contrib-headline">
+                <div class="contrib-num">🛡️ CONTRIBUTION #3</div>
+                <div class="contrib-title">LLM이 운영 시스템을 만지는 위험을 다층으로 막다 — Defense-in-depth</div>
+                <div class="contrib-impact">장애 시나리오 3종에서 fallback 동작 검증 완료</div>
+            </div>
+            <div class="contrib-body">
+                <p><strong>P</strong> · LLM 제안 시스템은 ① 인프라 서비스 오작동(LLM이 gateway/kafka에 destructive action 권유), ② 외부 위변조 요청(공개 endpoint 노출), ③ LLM 입력으로의 PII/시크릿 유출 등 다층 위험을 동시에 갖는다.</p>
+                <p><strong>A</strong> · 세 위험에 각각 독립적 방어선을 둠 (아래 3겹).</p>
+                <p><strong>R</strong> · 세 시나리오 모두 fallback 동작 검증 완료 — ① notification-service 자기 장애 시 Alertmanager <code>match_re</code> fallback으로 Slack 직통, ② LLM API 장애 시 단순 텍스트 fallback, ③ 비동기 ingest 실패 시 Reconciler 자가복구.</p>
+            </div>
+        </div>
+
+        <div class="three-col">
+            <div class="layer">
+                <div class="layer-num">① INFRA PROTECTION</div>
+                <div class="layer-title">인프라 서비스 2중 차단</div>
+                <p>gateway·kafka 등 <code>infrastructureJobs</code>는 SlackBlockBuilder에서 <strong>버튼 자체 미노출</strong> + executeAction 진입 시 <strong>화이트리스트 차단</strong>. API/payload 조작 우회까지 방어.</p>
+                <div class="conclusion">→ 두 겹 중 한 겹이 뚫려도 다음 겹이 막음</div>
+            </div>
+            <div class="layer">
+                <div class="layer-num">② SLACK FORGERY</div>
+                <div class="layer-title">위변조 · Replay · Timing 공격 방어</div>
+                <p>공개 endpoint에 전용 필터: <strong>HMAC-SHA256 서명 검증</strong> + timestamp 5분 초과 거부(replay) + <code>MessageDigest.isEqual</code> constant-time 비교(timing attack). body는 <code>CachedBodyRequest</code> 래핑.</p>
+                <div class="conclusion">→ 외부 위변조 요청 원천 차단</div>
+            </div>
+            <div class="layer">
+                <div class="layer-num">③ PII MASKING</div>
+                <div class="layer-title">LLM 입력 민감정보 마스킹</div>
+                <p>token · password · secret · bearer → <code>[REDACTED]</code>, 이메일 → <code>[EMAIL]</code>, 로그 4000자 제한. 외부 LLM 호출 직전 최종 검증.</p>
+                <div class="conclusion">→ 시크릿/PII 외부 API 유출 방지</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 09 — KEY CONTRIBUTION ④ — Observability stack -->
+    <section class="section">
+        <div class="section-tag">09 · KEY CONTRIBUTION ④</div>
+        <div class="contrib-card">
+            <div class="contrib-headline">
+                <div class="contrib-num">📊 CONTRIBUTION #4</div>
+                <div class="contrib-title">측정 불가능한 운영을 측정 가능한 운영으로 — 관측 스택 단독 구축</div>
+                <div class="contrib-impact">MTTD &lt; 1분 · alert 룰 7종 차등 설계 · 반복 알림 LLM 비용 0</div>
+            </div>
+            <div class="contrib-body">
+                <p>토이/부트캠프 프로젝트는 <strong>측정 시스템 부재로 정량 수치를 못 남기는</strong> 경우가 많다. "측정 가능한 시스템을 처음부터 만들었다"는 것 자체가 차별점.</p>
+                <p>Prometheus(15s scrape · 10 job) + Loki + Promtail(<code>docker_sd_configs</code> 컨테이너 자동발견) + Grafana(provisioning IaC) + Alertmanager 단독 구축. <strong>alert 룰 7종 `for:` 차등 설계</strong> — "터지면 큰가(심각도) × 자주 출렁이나(노이즈)"를 함께 반영.</p>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+            <tr><th>룰</th><th>임계 / for</th><th>심각도</th><th>근거</th></tr>
+            </thead>
+            <tbody>
+            <tr><td>ServiceDown</td><td class="num">up == 0 / 1m</td><td><span class="pill warn">critical</span></td><td>scrape 15s × 4회 연속 실패라야 발동 → 순간 끊김과 구분</td></tr>
+            <tr><td>ConnPoolPending</td><td class="num">&gt; 3 / 1m</td><td><span class="pill warn">critical</span></td><td>대기 자체가 고갈 신호 → 가장 짧게</td></tr>
+            <tr><td>HighCPU</td><td class="num">0.8 / 2m</td><td><span class="pill warn">critical</span></td><td>throttling 시작 구간, 100% 직전 여유</td></tr>
+            <tr><td>HighMemory · ConnPoolNear · HttpError</td><td class="num">/ 2m</td><td><span class="pill">warning</span></td><td>스파이크와 추세 구분 가능한 지점</td></tr>
+            <tr><td>HighGcOverhead</td><td class="num">0.1 / 5m</td><td><span class="pill">warning</span></td><td>단기 변동 잦아 가장 길게</td></tr>
+            </tbody>
+        </table>
+        <p style="font-size:13px;color:var(--accent);margin-top:14px;">
+            <strong>★ SPOF 해소</strong> — notification-service 자기 장애 시 Alertmanager <code style="background:var(--code-bg);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11.5px;">match_re</code> fallback으로 Slack 직통(LLM 분석 없는 단순 텍스트로 알림 보존).
+        </p>
+
+        <!-- 실제 Grafana 대시보드 + 로그 뷰 -->
+        <div class="screenshot-card">
+            <div class="screenshot-header">
+                <div class="screenshot-title">📸 실제 운영 중인 Grafana 통합 대시보드</div>
+                <div class="screenshot-tag">관측 스택 · 실측</div>
+            </div>
+            <div class="screenshot-img-wrap">
+                <img src="images/monitoring-dashboard.png" alt="Service Dashboard + Logs Dashboard — Prometheus 메트릭과 Loki 로그를 Grafana에서 통합 시각화">
+            </div>
+            <div class="screenshot-caption">
+                <strong>"측정 가능한 시스템을 만들었다"의 직접적 증거</strong>. 좌측은 <strong>서비스 대시보드</strong>(Prometheus 메트릭), 우측은 <strong>로그 대시보드</strong>(Loki 집계)로
+                <strong>메트릭과 로그를 Grafana 단일 UI에서 통합</strong>해 운영자의 컨텍스트 전환 비용을 제거했습니다.
+                <ul class="screenshot-points">
+                    <li><strong>핵심 게이지</strong>(좌상단): CPU 사용률 0.0838% · JVM Heap 9.54% — 실시간 상태를 게이지로 즉시 가독</li>
+                    <li><strong>시계열 패널 다수</strong>: CPU/메모리/HTTP 응답 시간/요청 수/스레드/GC/JVM CPU 사용률 등 <strong>서비스 헬스의 다축 추적</strong></li>
+                    <li><strong>로그 통합 뷰</strong>(우측): notification-service의 INFO/WARN 로그 실시간 스트림. <strong>로그 라벨링</strong>으로 컨테이너별·서비스별 필터링 가능</li>
+                    <li><strong>Promtail Docker SD</strong>로 컨테이너 자동 발견 → 새 서비스 띄우면 자동으로 로그 수집 대상에 편입</li>
+                    <li><strong>provisioning IaC</strong>로 대시보드 정의 자체를 코드 관리 → 재현 가능</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 10 — TROUBLESHOOTING -->
+    <section class="section">
+        <div class="section-tag">10 · TROUBLESHOOTING</div>
+        <h2>트러블슈팅 — 원인을 윗단까지 파고든 사례</h2>
+        <div class="section-rule"></div>
+        <p class="lede">
+            "외부 호출 때문에 트랜잭션이 길어졌다"는 표면적 설명이 아닌, <strong>커넥션 풀 → 톰캣 워커 스레드 → 세션 한계</strong>까지 원인을 윗단으로 추적한 사례들.
+        </p>
+
+        <div class="trouble">
+            <div class="trouble-header">
+                <div class="trouble-num">#01 · LLM 호출 중 DB 커넥션 점유 → 풀 고갈 위험</div>
+                <div class="trouble-tag">트랜잭션 경계 분리</div>
+            </div>
+            <div class="trouble-body">
+                <div class="trouble-cell">
+                    <h4>현상 · 가설</h4>
+                    <p>RAG 응답 생성은 평균 수 초 소요. 유저메시지 저장과 봇메시지 저장을 단일 <code>@Transactional</code>로 묶으면 <strong>LLM 응답 대기 내내 HikariCP 커넥션 점유</strong>.</p>
+                    <p style="margin-top:8px;">동시 요청 시 풀 고갈 → 그 위 <strong>톰캣 워커 스레드까지 블로킹</strong> → 전체 타임아웃.</p>
+                </div>
+                <div class="trouble-cell">
+                    <h4>원인 분석 (Why → Why)</h4>
+                    <ul>
+                        <li>LLM 호출이 트랜잭션 안 → 커넥션 점유</li>
+                        <li>커넥션 풀 고갈 → 톰캣 스레드도 트랜잭션 잡은 채 블로킹</li>
+                        <li>스레드 풀 한계 도달 → 새 요청 거절</li>
+                        <li>풀 확장은 근본 해결 X — 요청량 늘면 다시 고갈</li>
+                    </ul>
+                </div>
+                <div class="trouble-cell">
+                    <h4>해결 & 검증</h4>
+                    <p style="margin-bottom:8px;"><strong>3구간 분리</strong>: 유저메시지 저장(T1) → LLM 호출(<strong>트랜잭션 없음</strong>) → 봇메시지 + COMPLETED(T2).</p>
+                    <p style="font-size:11.5px;color:var(--accent);font-weight:500;">→ omin 프로젝트 트랜잭션 경계 분리 교훈을 LLM 호출에 그대로 재사용</p>
+                    <p style="margin-top:10px;font-size:11.5px;color:var(--muted);font-style:italic;">측정 후속 계획: Micrometer <code>hikari_connections_active</code> + <code>llm_call_duration</code> 게이지로 점유 시간 정량화 예정.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="trouble">
+            <div class="trouble-header">
+                <div class="trouble-num">#02 · 비동기 ingest 부분 실패 → DB · 벡터 불일치(orphan)</div>
+                <div class="trouble-tag">멱등성 · 자가복구</div>
+            </div>
+            <div class="trouble-body">
+                <div class="trouble-cell">
+                    <h4>현상 · 가설</h4>
+                    <p>문서 인제스트는 <strong>청킹 → 임베딩 → 저장</strong> 3단계. 임베딩 단계 실패 시 청크는 DB에 남고 벡터는 비어 orphan 발생.</p>
+                    <p style="margin-top:8px;">재인제스트 시 단순 INSERT는 중복 벡터 생성.</p>
+                </div>
+                <div class="trouble-cell">
+                    <h4>원인 분석</h4>
+                    <ul>
+                        <li>다단계 비동기 처리 + 부분 실패 시점이 불특정</li>
+                        <li>재시도 시 멱등성 미보장 → 중복 가능</li>
+                        <li>실패 작업이 PROCESSING 상태로 영구 잔존 위험</li>
+                    </ul>
+                </div>
+                <div class="trouble-cell">
+                    <h4>해결 & 검증</h4>
+                    <p style="margin-bottom:8px;">재인제스트 전 <strong>기존 벡터 선삭제</strong>(멱등성). <code>DocumentReconciler</code> 60s 주기로 <strong>10분 PROCESSING 감지 · 최대 3회 재시도 · PERMANENT 격리</strong>.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="trouble">
+            <div class="trouble-header">
+                <div class="trouble-num">#03 · 동일 세션 동시 메시지 → seq 채번 race condition</div>
+                <div class="trouble-tag">비관적 락</div>
+            </div>
+            <div class="trouble-body">
+                <div class="trouble-cell">
+                    <h4>현상 · 가설</h4>
+                    <p>한 채팅 세션에서 사용자가 빠르게 두 번 전송하면 "최대 seq 조회 → +1 저장" 사이 <strong>Read-Modify-Write race</strong> → 동일 seq 중복.</p>
+                </div>
+                <div class="trouble-cell">
+                    <h4>원인 분석 — 대안 검토</h4>
+                    <ul>
+                        <li>낙관적 락: 어차피 매번 충돌하는 채번엔 <strong>재시도 비용만 누적</strong></li>
+                        <li>분산 락(Redis): 단일 인스턴스 배포 토폴로지엔 과함</li>
+                        <li>채번은 <strong>충돌 잦고 임계구역 짧음</strong> → 비관적 락이 최적</li>
+                    </ul>
+                </div>
+                <div class="trouble-cell">
+                    <h4>해결 & 검증</h4>
+                    <p><code>findMaxSeqForUpdate</code>에 <code>@Lock(PESSIMISTIC_WRITE)</code>로 채번 구간 보호. 재시도 로직 없이 <strong>DB 레벨 원천 차단</strong>.</p>
+                    <p style="margin-top:10px;font-size:11.5px;color:var(--accent);font-weight:500;">→ 경력 "비동기 다운로드 race condition" → 스터디 "분산 락 발표" → 본 프로젝트 적용. 3단계 학습 곡선의 매듭.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 11 — STACK -->
+    <section class="section">
+        <div class="section-tag">11 · STACK</div>
+        <h2>기술 스택</h2>
+        <div class="section-rule"></div>
+        <table>
+            <thead>
+            <tr><th>영역</th><th>스택</th></tr>
+            </thead>
+            <tbody>
+            <tr><td>Backend</td><td>Java 17 · Spring Boot 3.5 · Spring Cloud (Eureka · Config · Gateway) · <strong>Spring AI 1.0</strong></td></tr>
+            <tr><td>AI / LLM</td><td><strong>LLM-as-a-Judge · Pairwise · pgvector</strong> · Claude (Anthropic) · OpenAI · Gemini (fallback)</td></tr>
+            <tr><td>Data</td><td>PostgreSQL + pgvector · Redis · Kafka</td></tr>
+            <tr><td>Observability</td><td>Prometheus · Grafana · Loki · Promtail · Alertmanager · Zipkin</td></tr>
+            <tr><td>Infra</td><td>Docker · Terraform · GCP · GitHub Actions</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- SECTION 12 — RETRO — 3분할 구조 -->
+    <section class="section">
+        <div class="section-tag">12 · RETROSPECTIVE</div>
+        <h2>회고 — 의도적 선택과 진짜 아쉬운 점을 구분하다</h2>
+        <div class="section-rule"></div>
+        <p class="lede">
+            "아쉬운 점"을 한 덩어리로 두면 의도적 트레이드오프와 진짜 실수가 섞여 약점처럼 보입니다.
+            <strong>여러 옵션을 따져본 결과 현 규모에 적절했던 선택</strong>과 <strong>더 챙겼어야 하는 부분</strong>을 명확히 구분합니다.
+        </p>
+
+        <!-- ✅ 잘한 것 -->
+        <div class="retro-block">
+            <div class="retro-header">
+                <div class="retro-icon">✅</div>
+                <div class="retro-title">잘한 것</div>
+            </div>
+            <div class="retro-good">
+                LLM을 "붙이기"가 아니라 <strong>검증 가능한 시스템</strong>(Eval/Pairwise · bias 차단)으로,
+                운영을 <strong>안전하게</strong>(Human-in-the-Loop · 다층 방어 · 자가복구) 만든 것.
+                그리고 토이 프로젝트의 한계인 "측정 수치 부재"를 <strong>관측 스택 단독 구축</strong>으로 정면 돌파.
+            </div>
+        </div>
+
+        <!-- 🎯 의도적 선택 -->
+        <div class="retro-block">
+            <div class="retro-header">
+                <div class="retro-icon">🎯</div>
+                <div class="retro-title">의도적 선택</div>
+                <div class="retro-meta">트레이드오프를 따져보고 현 규모에 적절하다 판단한 부분</div>
+            </div>
+            <div class="retro-intent">
+                <div class="item">
+                    <div class="item-title">복구 액션이 단일 호스트 Docker socket 1:1</div>
+                    <div class="item-body">
+                        SSM · K8s rolling restart로 외부화하는 옵션도 검토했으나, <strong>단일 호스트 데모 환경</strong>에선 직접 호출이 더 단순·명료. 운영 복잡도 증가의 비용이 이득을 넘어선다고 판단.
+                    </div>
+                    <div class="item-future">다중 인스턴스 시점엔 SSM/K8s API로 외부화 예정</div>
+                </div>
+                <div class="item">
+                    <div class="item-title">Loki <code>replication_factor=1</code> · retention 미설정</div>
+                    <div class="item-body">
+                        단일 VM 토폴로지에선 HA가 의미 없음 → 단순 구성 선택. 데이터 영속성도 데모 범위 안에서 충분.
+                    </div>
+                    <div class="item-future">운영 환경 전제로는 다중 노드 + 보관 정책 도입</div>
+                </div>
+                <div class="item">
+                    <div class="item-title">인증을 게이트웨이 헤더에 위임</div>
+                    <div class="item-body">
+                        모든 서비스에 JWT 검증을 중복 구현 vs 게이트웨이 단일 검증의 단순함을 비교한 결과 <strong>부트캠프 규모엔 후자가 적절</strong>.
+                    </div>
+                    <div class="item-future">운영 환경엔 서비스 레벨 JWT 한 겹 추가가 정석 — 알고 있고 다음에는 그렇게 설계</div>
+                </div>
+                <div class="item">
+                    <div class="item-title">분산 락 생략</div>
+                    <div class="item-body">
+                        각 서비스가 단일 인스턴스 배포 토폴로지에선 스케줄러 중복 실행 자체가 발생 X → ShedLock 도입은 오버엔지니어링.
+                    </div>
+                    <div class="item-future">수평 확장 시점에 ShedLock + 컨슈머 멱등 처리 추가</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🛠 진짜 아쉬운 것 -->
+        <div class="retro-block">
+            <div class="retro-header">
+                <div class="retro-icon">🛠</div>
+                <div class="retro-title">진짜 아쉬운 것</div>
+                <div class="retro-meta">더 챙겼어야 하는 부분</div>
+            </div>
+            <div class="retro-real">
+                <div class="item">
+                    <div class="item-title">ChatReconciler max-retry 상한 부재</div>
+                    <div class="item-body">
+                        DocumentReconciler엔 적용했지만 ChatReconciler엔 누락 → <strong>무한 재시도 위험</strong>. 두 Reconciler 간 정책 일관성을 처음부터 챙겼어야 함.
+                    </div>
+                    <div class="item-future">동일 패턴엔 동일 안전장치 — 정책 일관성 체크리스트 도입</div>
+                </div>
+                <div class="item">
+                    <div class="item-title">응답 캐시 hit율 · latency 측정 미구현</div>
+                    <div class="item-body">
+                        "측정 가능한 시스템"을 자처했으면서 정작 <strong>RAG 캐시 메트릭은 빠뜨림</strong>. Micrometer 커스텀 메트릭(<code>cache_hit_total</code>, <code>llm_call_duration</code>)을 처음부터 노출했어야 함.
+                    </div>
+                    <div class="item-future">후속 측정으로 핵심 RAG 경로의 정량 근거 확보 예정</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        [이름] · 백엔드 개발자 — Portfolio v2026.05 · ants-camp
+    </footer>
+</div>
+</body>
+</html>

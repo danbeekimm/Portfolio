@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>다2조부르릉 — B2B 물류 MSA Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --accent: #0d8754;
+      --accent-soft: #e8f5ee;
+      --accent-faded: #f4faf7;
+      --ink: #0e1410;
+      --ink-soft: #2a3530;
+      --muted: #5a6b63;
+      --rule: #d6dfd9;
+      --rule-soft: #ebf0ec;
+      --bg: #fbfbf8;
+      --card: #ffffff;
+      --warn: #b85c00;
+      --warn-soft: #fff4e8;
+      --neutral: #6c7a72;
+      --neutral-soft: #f0f2ee;
+      --code-bg: #f3f4ef;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter Tight', -apple-system, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.65;
+      font-size: 15px;
+      letter-spacing: -0.005em;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 80px 56px 120px; }
+
+    .back-link {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      display: inline-block;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--accent); }
+
+    .section-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      margin-bottom: 14px;
+      text-transform: uppercase;
+    }
+    h1 {
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-size: 42px;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: 18px;
+    }
+    h1 .marker {
+      background: linear-gradient(transparent 60%, var(--accent-soft) 60%);
+      padding: 0 2px;
+    }
+    h2 {
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-size: 30px;
+      line-height: 1.2;
+      letter-spacing: -0.015em;
+      color: var(--ink);
+      margin-bottom: 16px;
+    }
+    h3 {
+      font-family: 'Inter Tight', sans-serif;
+      font-weight: 600;
+      font-size: 16px;
+      color: var(--ink);
+      margin-bottom: 10px;
+      letter-spacing: -0.01em;
+    }
+    .section-rule {
+      height: 2px;
+      background: var(--accent);
+      width: 100%;
+      margin: 0 0 28px;
+    }
+    .section { margin-bottom: 72px; }
+    .lede {
+      font-size: 16px;
+      color: var(--ink-soft);
+      line-height: 1.75;
+      margin-bottom: 24px;
+    }
+    .lede strong { color: var(--ink); font-weight: 600; }
+
+    /* Hero */
+    .hero {
+      background: var(--ink);
+      color: #fff;
+      border-radius: 12px;
+      padding: 36px 38px;
+      margin-bottom: 32px;
+    }
+    .hero-title {
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-size: 26px;
+      line-height: 1.3;
+      letter-spacing: -0.015em;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+    .hero-title em {
+      color: var(--accent-soft);
+      font-style: normal;
+      background: rgba(13, 135, 84, 0.25);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .hero-sub {
+      color: #c5d0ca;
+      font-size: 14px;
+      line-height: 1.7;
+      margin-bottom: 22px;
+    }
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 22px;
+      font-size: 13px;
+      color: #a5b3ab;
+      font-family: 'JetBrains Mono', monospace;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 18px;
+    }
+    .hero-meta span::before {
+      content: "●";
+      color: var(--accent);
+      margin-right: 6px;
+      font-size: 8px;
+      vertical-align: middle;
+    }
+
+    .kpi-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin: 32px 0 0;
+    }
+    .kpi {
+      background: var(--card);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 22px 24px;
+      text-align: center;
+    }
+    .kpi-num {
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-size: 34px;
+      line-height: 1;
+      color: var(--accent);
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+    }
+    .kpi-num .small { font-size: 22px; color: var(--ink-soft); }
+    .kpi-label {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .kpi-label strong { display: block; color: var(--ink); font-size: 13px; margin-bottom: 2px; }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 22px;
+    }
+    .box {
+      background: var(--accent-faded);
+      border-radius: 8px;
+      padding: 22px 24px;
+      border-top: 3px solid var(--accent);
+    }
+    .box.muted { background: #f5f5f1; border-top-color: var(--ink-soft); }
+    .box-title {
+      font-family: 'Inter Tight', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--accent);
+      margin-bottom: 12px;
+      letter-spacing: 0.02em;
+    }
+    .box.muted .box-title { color: var(--ink-soft); }
+    .box ul { list-style: none; padding: 0; }
+    .box li {
+      font-size: 13.5px;
+      color: var(--ink-soft);
+      margin-bottom: 8px;
+      padding-left: 14px;
+      position: relative;
+      line-height: 1.6;
+    }
+    .box li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 9px;
+      width: 4px;
+      height: 4px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+    .box.muted li::before { background: var(--ink-soft); }
+    .box li strong { color: var(--ink); font-weight: 600; }
+    .box li code { background: #fff; padding: 1px 6px; border-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; }
+
+    /* Screenshot evidence card */
+    .screenshot-card {
+      background: var(--card);
+      border: 1px solid var(--rule);
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 22px 0;
+    }
+    .screenshot-header {
+      background: #f5f7f5;
+      padding: 14px 22px;
+      border-bottom: 1px solid var(--rule);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+    .screenshot-title {
+      font-family: 'Inter Tight', sans-serif;
+      font-weight: 600;
+      font-size: 13.5px;
+      color: var(--ink);
+    }
+    .screenshot-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      color: #fff;
+      background: var(--accent);
+      padding: 3px 10px;
+      border-radius: 12px;
+      letter-spacing: 0.05em;
+    }
+    .screenshot-img-wrap {
+      background: #fafaf6;
+      padding: 18px;
+      text-align: center;
+    }
+    .screenshot-img-wrap img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 6px;
+      box-shadow: 0 2px 12px rgba(14, 20, 16, 0.08);
+      display: block;
+      margin: 0 auto;
+    }
+    .screenshot-caption {
+      padding: 16px 22px;
+      background: var(--card);
+      border-top: 1px solid var(--rule-soft);
+      font-size: 12.5px;
+      color: var(--ink-soft);
+      line-height: 1.7;
+    }
+    .screenshot-caption strong { color: var(--ink); font-weight: 600; }
+    .screenshot-caption code {
+      background: var(--code-bg);
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11.5px;
+    }
+    .screenshot-points {
+      list-style: none;
+      margin-top: 8px;
+      padding: 0;
+    }
+    .screenshot-points li {
+      font-size: 12.5px;
+      color: var(--ink-soft);
+      padding-left: 16px;
+      position: relative;
+      margin-bottom: 4px;
+      line-height: 1.6;
+    }
+    .screenshot-points li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .screenshot-points li strong { color: var(--ink); }
+
+    /* Context tag — 바운디드 컨텍스트 라벨 */
+    .ctx-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9px;
+      fill: #b85c00;
+      font-weight: 600;
+    }
+
+    /* Service overview — 프로젝트 소개 */
+    .service-banner {
+      background: linear-gradient(135deg, var(--accent-faded) 0%, #fff 100%);
+      border: 1px solid var(--rule);
+      border-radius: 12px;
+      padding: 32px 36px;
+      margin-bottom: 24px;
+    }
+    .service-tagline {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-size: 20px;
+      color: var(--ink);
+      line-height: 1.5;
+      margin-bottom: 18px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--rule);
+    }
+    .service-tagline strong { font-style: normal; color: var(--accent); }
+    .service-desc {
+      font-size: 14.5px;
+      color: var(--ink-soft);
+      line-height: 1.75;
+    }
+    .service-desc strong { color: var(--ink); font-weight: 600; }
+
+    /* Feature grid */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 22px;
+    }
+    .feature-card {
+      background: var(--card);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 18px 20px;
+      transition: border-color 0.2s;
+    }
+    .feature-card:hover { border-color: var(--accent); }
+    .feature-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      margin-bottom: 6px;
+    }
+    .feature-title {
+      font-family: 'Inter Tight', sans-serif;
+      font-weight: 600;
+      font-size: 13.5px;
+      color: var(--ink);
+      margin-bottom: 8px;
+      line-height: 1.35;
+    }
+    .feature-body {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .feature-card.highlight {
+      border-color: var(--accent);
+      background: var(--accent-faded);
+    }
+    .feature-card.highlight .feature-body { color: var(--ink-soft); }
+
+    /* Architecture */
+    .arch {
+      background: var(--card);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 36px 28px;
+      margin: 22px 0;
+    }
+    .arch svg { width: 100%; height: auto; display: block; }
+
+    /* Contribution headline cards */
+    .contrib-card {
+      background: var(--card);
+      border: 1px solid var(--rule);
+      border-radius: 12px;
+      padding: 0;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .contrib-headline {
+      background: var(--accent-faded);
+      padding: 22px 28px;
+      border-bottom: 1px solid var(--rule);
+    }
+    .contrib-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+    .contrib-title {
+      font-family: 'Fraunces', serif;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.35;
+      letter-spacing: -0.01em;
+      margin-bottom: 8px;
+    }
+    .contrib-impact {
+      font-size: 13.5px;
+      color: var(--accent);
+      font-weight: 500;
+      line-height: 1.5;
+    }
+    .contrib-body {
+      padding: 24px 28px;
+    }
+    .contrib-body p,
+    .contrib-body li {
+      font-size: 13.5px;
+      color: var(--ink-soft);
+      line-height: 1.7;
+    }
+    .contrib-body p { margin-bottom: 10px; }
+    .contrib-body strong { color: var(--ink); font-weight: 600; }
+    .contrib-body code {
+      background: var(--code-bg);
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+    }
+
+    /* Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 13.5px;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--rule-soft);
+    }
+    th {
+      background: var(--accent-faded);
+      color: var(--ink);
+      font-weight: 600;
+      font-size: 12px;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      border-bottom: 2px solid var(--accent);
+    }
+    td:first-child { font-weight: 500; color: var(--ink); }
+    td.num { font-family: 'JetBrains Mono', monospace; }
+
+    pre {
+      background: var(--code-bg);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 16px 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      line-height: 1.65;
+      overflow-x: auto;
+      color: var(--ink);
+      margin: 14px 0;
+    }
+    pre .kw { color: var(--warn); font-weight: 600; }
+    pre .str { color: var(--accent); }
+    pre .com { color: var(--muted); font-style: italic; }
+    pre .ann { color: var(--accent); font-weight: 600; }
+
+    /* Decision comparison — 의사결정 비교 박스 */
+    .decision-comp {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin: 22px 0;
+    }
+    .dec-card {
+      background: var(--card);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 18px 20px;
+      position: relative;
+    }
+    .dec-card.rejected {
+      background: #fafaf6;
+      opacity: 0.85;
+    }
+    .dec-card.chosen {
+      border: 2px solid var(--accent);
+      background: var(--accent-faded);
+    }
+    .dec-status {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+    .dec-card.rejected .dec-status { color: var(--muted); }
+    .dec-card.chosen .dec-status { color: var(--accent); }
+    .dec-name {
+      font-family: 'Fraunces', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+    .dec-reason {
+      font-size: 12.5px;
+      color: var(--ink-soft);
+      line-height: 1.6;
+    }
+    .dec-reason strong { color: var(--ink); }
+
+    /* Trouble */
+    .trouble {
+      background: var(--card);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 0;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .trouble-header {
+      background: #f5f7f5;
+      padding: 14px 22px;
+      border-bottom: 1px solid var(--rule);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .trouble-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .trouble-tag {
+      background: var(--accent);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 12px;
+      border-radius: 12px;
+      letter-spacing: 0.02em;
+    }
+    .trouble-body {
+      display: grid;
+      grid-template-columns: 1fr 1.3fr 1.2fr;
+      gap: 0;
+    }
+    .trouble-cell {
+      padding: 20px 22px;
+      border-right: 1px solid var(--rule-soft);
+    }
+    .trouble-cell:last-child { border-right: none; }
+    .trouble-cell h4 {
+      font-size: 11px;
+      color: var(--accent);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 10px;
+    }
+    .trouble-cell p, .trouble-cell li {
+      font-size: 12.5px;
+      color: var(--ink-soft);
+      line-height: 1.6;
+    }
+    .trouble-cell ul { list-style: none; padding: 0; }
+    .trouble-cell li {
+      padding-left: 12px;
+      position: relative;
+      margin-bottom: 6px;
+    }
+    .trouble-cell li::before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+    }
+    .trouble-cell code {
+      background: var(--code-bg);
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+    }
+    .trouble-cell strong { color: var(--ink); }
+
+    /* Retro 3-tier */
+    .retro-block { margin-bottom: 22px; }
+    .retro-header {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--rule);
+    }
+    .retro-icon { font-size: 18px; width: 28px; text-align: center; }
+    .retro-title {
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-size: 18px;
+      color: var(--ink);
+    }
+    .retro-meta {
+      font-size: 12px;
+      color: var(--muted);
+      margin-left: auto;
+      font-style: italic;
+    }
+    .retro-good {
+      background: var(--accent-faded);
+      border-left: 4px solid var(--accent);
+      border-radius: 6px;
+      padding: 18px 22px;
+      font-size: 14px;
+      color: var(--ink-soft);
+      line-height: 1.65;
+    }
+    .retro-good strong { color: var(--ink); }
+    .retro-intent {
+      background: var(--neutral-soft);
+      border-left: 4px solid var(--neutral);
+      border-radius: 6px;
+      padding: 4px 0;
+    }
+    .retro-intent .item {
+      padding: 14px 22px;
+      border-bottom: 1px solid #e5e8e2;
+    }
+    .retro-intent .item:last-child { border-bottom: none; }
+    .retro-intent .item-title {
+      font-weight: 600;
+      color: var(--ink);
+      font-size: 13.5px;
+      margin-bottom: 6px;
+    }
+    .retro-intent .item-body {
+      font-size: 13px;
+      color: var(--ink-soft);
+      line-height: 1.65;
+    }
+    .retro-intent .item-body strong { color: var(--ink); }
+    .retro-intent .item-future {
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--neutral);
+      font-weight: 500;
+      padding-left: 14px;
+      position: relative;
+    }
+    .retro-intent .item-future::before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: var(--neutral);
+    }
+    .retro-real {
+      background: var(--warn-soft);
+      border-left: 4px solid var(--warn);
+      border-radius: 6px;
+      padding: 4px 0;
+    }
+    .retro-real .item {
+      padding: 14px 22px;
+      border-bottom: 1px solid #f4e6d4;
+    }
+    .retro-real .item:last-child { border-bottom: none; }
+    .retro-real .item-title {
+      font-weight: 600;
+      color: var(--ink);
+      font-size: 13.5px;
+      margin-bottom: 6px;
+    }
+    .retro-real .item-body {
+      font-size: 13px;
+      color: var(--ink-soft);
+      line-height: 1.65;
+    }
+    .retro-real .item-body strong { color: var(--warn); }
+    .retro-real .item-future {
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--warn);
+      font-weight: 500;
+      padding-left: 14px;
+      position: relative;
+    }
+    .retro-real .item-future::before { content: "→"; position: absolute; left: 0; }
+
+    .pill {
+      display: inline-block;
+      background: var(--accent-soft);
+      color: var(--accent);
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.02em;
+      vertical-align: middle;
+      margin-left: 6px;
+    }
+
+    footer {
+      margin-top: 80px;
+      padding-top: 28px;
+      border-top: 1px solid var(--rule);
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    @media (max-width: 720px) {
+      .wrap { padding: 48px 24px 80px; }
+      h1 { font-size: 32px; }
+      h2 { font-size: 24px; }
+      .two-col, .kpi-strip, .decision-comp { grid-template-columns: 1fr; }
+      .trouble-body { grid-template-columns: 1fr; }
+      .trouble-cell { border-right: none; border-bottom: 1px solid var(--rule-soft); }
+      .trouble-cell:last-child { border-bottom: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="back-link" href="index.html">← 포트폴리오 메인으로</a>
+
+  <!-- 01 — OVERVIEW -->
+  <section class="section">
+    <div class="section-tag">01 · OVERVIEW</div>
+    <h1><span class="marker">정합성 보장과 장애 격리를 설계한 B2B 물류 MSA</span></h1>
+    <div class="section-rule"></div>
+    <p class="lede">
+      직전 모놀리식(omin)에서 한 도메인 결함이 전체를 멈추고, 특정 도메인 전용 기술(PostGIS)을 전 팀원이 설치해야 했던 비효율을 직접 겪고
+      <strong>도메인별 독립 배포·기술 선택이 가능한 MSA</strong>로 확장. B2B 도메인을 코드에 녹이기 위해 <strong>DDD 4계층(헥사고날)</strong>을 적용하고,
+      서비스 간 통신은 "<strong>검증=동기(Feign), 통지=비동기(Kafka)</strong>"로 의도적으로 분리했습니다.
+    </p>
+
+    <div class="hero">
+      <div class="hero-title">
+        <em>"분산 트랜잭션 없이 정합성을, 장애 전파 없이 통신을."</em>
+      </div>
+      <div class="hero-sub">
+        전국 17개 허브를 거점으로 한 <strong>스파르타 물류</strong> — 업체·허브·상품·주문·배송을 MSA로 분리한 B2B 물류 시스템에서
+        <strong>company-service 전담 + DeliveryManager 도메인</strong> 설계.
+        Outbox 패턴 · Circuit Breaker · OR-Tools VRPTW · 비관적 락을 비즈니스 근거에서 출발해 채택.
+      </div>
+      <div class="hero-meta">
+        <span>2026 · 부트캠프 5인</span>
+        <span>담당: company-service + delivery-service 내 3도메인</span>
+        <span>Spring Cloud 2025 · Kafka · OR-Tools · Keycloak</span>
+      </div>
+    </div>
+
+    <div class="kpi-strip">
+      <div class="kpi">
+        <div class="kpi-num">at-least-once</div>
+        <div class="kpi-label"><strong>이벤트 정합성 보장</strong>Outbox 패턴 · 분산 트랜잭션 없이</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-num">5<span class="small">분</span> → 3<span class="small">초</span></div>
+        <div class="kpi-label"><strong>배송 배정 자동화</strong>수동 배정 → OR-Tools VRPTW (100건 기준 · 데모)</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-num">DB-level</div>
+        <div class="kpi-label"><strong>race 원천 차단</strong>비관적 락 · 재시도 로직 없이</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 — SERVICE OVERVIEW (프로젝트 소개) -->
+  <section class="section">
+    <div class="section-tag">02 · SERVICE OVERVIEW</div>
+    <h2>스파르타 물류 <span style="color:var(--muted); font-weight:400; font-size:22px;">— MSA 기반 국내 B2B 물류 관리 및 배송 시스템</span></h2>
+    <div class="section-rule"></div>
+
+    <div class="service-banner">
+      <div class="service-tagline">
+        전국 <strong>17개 지역 허브 센터</strong>를 거점으로 한, <strong>"공급업체 → 허브 → 허브 → 수령업체"</strong> 전 구간을 자동화한 B2B 물류 관리 플랫폼.
+      </div>
+      <div class="service-desc">
+        스파르타 물류는 전국 17개 도/광역시에 허브 센터를 보유한 가상의 B2B 물류 회사입니다. 각 허브는 여러 업체의 물건을 보관하며,
+        주문이 발생하면 시스템은 <strong>출발 허브 → 목적지 허브 간 화물 이동(허브 배송 담당자)</strong> 과 <strong>최종 허브 → 수령 업체 배송(업체 배송 담당자)</strong> 두 트랙을 분리해 처리합니다.
+        <br><br>
+        <strong>예시 시나리오</strong> — "부산 수산물 도매 업체가 경기도 일산의 건조 식품 가공품 50개를 주문" →
+        시스템이 <strong>경기도 허브 → 부산시 허브</strong>로 화물 이동을 계획하고, 도착하면 <strong>부산 허브 소속 업체 배송 담당자</strong>가 최종 업체로 전달.
+      </div>
+    </div>
+
+    <h3 style="margin-top:28px; margin-bottom:14px;">시스템 핵심 도메인 (8개 컨텍스트)</h3>
+    <div class="feature-grid">
+      <div class="feature-card highlight">
+        <div class="feature-num">01 · COMPANY <span style="color:var(--accent); font-weight:700;">★ 담당</span></div>
+        <div class="feature-title">업체 관리 (생산 · 수령)</div>
+        <div class="feature-body">생산업체·수령업체로 구분, 모든 업체는 특정 허브에 소속. 업체 삭제 시 주문/상품/배송 등 타 서비스에 이벤트 통지 필요.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-num">02 · HUB · HUBPATH</div>
+        <div class="feature-title">17개 허브 · 허브 간 경로</div>
+        <div class="feature-body">전국 도/광역시 17개 센터 관리 + 허브 간 이동 경로 매핑. 모든 화물의 시작/도착점.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-num">03 · PRODUCT</div>
+        <div class="feature-title">상품 · 재고 관리</div>
+        <div class="feature-body">모든 상품은 특정 업체와 허브에 소속. 주문 발생 시 재고 감소, 취소 시 복원.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-num">04 · ORDER</div>
+        <div class="feature-title">주문 라이프사이클</div>
+        <div class="feature-body">주문 생성 → 재고 검증·차감 → 배송 트리거. 재고 부족 시 주문 실패. 삭제 시 논리 삭제(deleted_at).</div>
+      </div>
+      <div class="feature-card highlight">
+        <div class="feature-num">05 · DELIVERY <span style="color:var(--accent); font-weight:700;">★ 담당</span></div>
+        <div class="feature-title">배송 · 담당자 · 경로 (3도메인 통합)</div>
+        <div class="feature-body">배송 본체 + DeliveryManager(허브당 10명 + 전체 10명) + DeliveryRoute(경로 기록)를 한 컨텍스트로 통합. <strong>매일 06:00 VRPTW 자동 배정</strong>.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-num">06 · USER · AUTH</div>
+        <div class="feature-title">4단계 권한 관리</div>
+        <div class="feature-body">마스터 / 허브 관리자 / 배송 담당자 / 업체 담당자. <strong>Keycloak + JWT</strong>로 권한 검증.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-num">07 · NOTIFICATION</div>
+        <div class="feature-title">Slack 메시지 관리</div>
+        <div class="feature-body">시스템·사용자 발신 슬랙 메시지 전부 엔티티에 저장. Incoming Webhook으로 외부 발송.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-num">08 · AI</div>
+        <div class="feature-title">AI 상품 정보 생성</div>
+        <div class="feature-body">상품 등록 시 LLM 기반 설명 자동 생성. AI 응답 로그는 별도 트랜잭션(REQUIRES_NEW)으로 분리해 본 로직 무영향.</div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:32px; margin-bottom:14px;">2-Track 배송 구조 — 발제문 기반</h3>
+    <table>
+      <thead>
+      <tr><th>트랙</th><th>역할</th><th>인원</th><th>배정 방식</th></tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td><strong>허브 배송 담당자</strong></td>
+        <td>허브 간 화물 이동 (경기도 허브 → 부산 허브)</td>
+        <td class="num">전체 10명</td>
+        <td>대기시간·순번 기반 <strong>라운드로빈</strong></td>
+      </tr>
+      <tr>
+        <td><strong>업체 배송 담당자</strong></td>
+        <td>최종 허브 → 수령 업체 배송</td>
+        <td class="num">허브당 10명</td>
+        <td><strong>OR-Tools VRPTW</strong> (시간창·차량 부하 균등)</td>
+      </tr>
+      </tbody>
+    </table>
+    <p style="font-size:13px; color:var(--ink-soft); margin-top:14px;">
+      두 트랙의 <strong>업무는 명확히 분리</strong> — 허브 배송 담당자는 허브 → 업체 배송 불가, 업체 배송 담당자는 허브 간 배송 불가.
+      이 도메인 특성을 코드로 강제하기 위해 <strong>배정 알고리즘 자체를 트랙별로 분리</strong>(라운드로빈 / VRPTW)했습니다.
+    </p>
+  </section>
+
+  <!-- 03 — DESIGN GOALS (이전 02 — 핵심 도전 + 핵심 기여) -->
+  <section class="section">
+    <div class="section-tag">03 · DESIGN GOALS</div>
+    <h2>설계 도전 과제와 핵심 기여</h2>
+    <div class="section-rule"></div>
+
+    <div class="two-col">
+      <div class="box">
+        <div class="box-title">핵심 도전 과제</div>
+        <ul>
+          <li>분산 트랜잭션 없이 <strong>이벤트 유실 · 유령 이벤트</strong> 차단 — DB 커밋과 Kafka 발행의 원자성 불가</li>
+          <li>외부 서비스 장애 시 <strong>연쇄 전파(cascading failure)</strong> 차단 — 대기 스레드 누적 문제</li>
+          <li>B2B의 <strong>시간창 SLA</strong> 준수 — 후처리 정렬 아닌 제약 조건으로 모델링 필요</li>
+          <li>seq 채번의 <strong>Read-Modify-Write race</strong> — 동시 등록 시 중복 발급 위험</li>
+        </ul>
+      </div>
+      <div class="box muted">
+        <div class="box-title">핵심 기여 (개인)</div>
+        <ul>
+          <li>company-service 전담 + DeliveryManager 도메인 <strong>DDD 4계층 헥사고날</strong> 설계</li>
+          <li>업체 삭제 이벤트의 <strong>Kafka + Outbox 패턴</strong> 구현 (Saga 대안 검토 후 채택)</li>
+          <li>user/hub/order 호출의 <strong>OpenFeign + Resilience4j CB</strong> 적용</li>
+          <li>매일 06:00 cron의 <strong>OR-Tools VRPTW</strong> 일괄 배송 최적화</li>
+          <li>seq 채번 <strong>비관적 락(PESSIMISTIC_WRITE)</strong> — 스터디에서 학습한 트레이드오프 적용</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 — ARCHITECTURE -->
+  <section class="section">
+    <div class="section-tag">04 · ARCHITECTURE</div>
+    <h2>시스템 아키텍처</h2>
+    <div class="section-rule"></div>
+    <p class="lede">
+      12개의 마이크로서비스를 <strong>Spring Cloud Gateway · Eureka</strong>로 묶고,
+      통신은 <strong>검증=동기(Feign), 통지=비동기(Kafka Outbox)</strong>로 분리합니다.
+      바운디드 컨텍스트별 PostgreSQL 분리(database-per-service)로 서비스 독립성·장애 격리를 확보했습니다.
+    </p>
+
+    <div class="arch">
+      <svg viewBox="0 0 880 700" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arr-sync" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#0d8754"/>
+          </marker>
+          <marker id="arr-async" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#b85c00"/>
+          </marker>
+          <marker id="arr-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#5a6b63"/>
+          </marker>
+        </defs>
+
+        <!-- ===== Left: Clients ===== -->
+        <rect x="20" y="100" width="70" height="42" rx="4" fill="#0e1410"/>
+        <text x="55" y="118" text-anchor="middle" fill="#fff" font-family="Inter Tight" font-size="11" font-weight="600">B2B 사용자</text>
+        <text x="55" y="132" text-anchor="middle" fill="#9aaaa0" font-family="JetBrains Mono" font-size="9">관리자</text>
+
+        <rect x="20" y="160" width="70" height="42" rx="4" fill="#0e1410"/>
+        <text x="55" y="178" text-anchor="middle" fill="#fff" font-family="Inter Tight" font-size="11" font-weight="600">B2B 사용자</text>
+        <text x="55" y="192" text-anchor="middle" fill="#9aaaa0" font-family="JetBrains Mono" font-size="9">업체·허브</text>
+
+        <line x1="92" y1="121" x2="148" y2="155" stroke="#5a6b63" stroke-width="1.5" marker-end="url(#arr-dark)"/>
+        <line x1="92" y1="181" x2="148" y2="170" stroke="#5a6b63" stroke-width="1.5" marker-end="url(#arr-dark)"/>
+
+        <!-- ===== Gateway · Eureka Docker container ===== -->
+        <rect x="150" y="80" width="130" height="240" rx="8" fill="none" stroke="#0d6cb4" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <text x="160" y="98" fill="#0d6cb4" font-family="JetBrains Mono" font-size="10" font-weight="700">🐳 docker</text>
+
+        <rect x="168" y="120" width="94" height="80" rx="6" fill="#fff" stroke="#0d8754" stroke-width="2"/>
+        <text x="215" y="135" text-anchor="middle" fill="#0d8754" font-family="JetBrains Mono" font-size="22">⏻</text>
+        <text x="215" y="165" text-anchor="middle" fill="#0e1410" font-family="Inter Tight" font-size="11" font-weight="600">gateway-</text>
+        <text x="215" y="178" text-anchor="middle" fill="#0e1410" font-family="Inter Tight" font-size="11" font-weight="600">service</text>
+        <text x="215" y="193" text-anchor="middle" fill="#5a6b63" font-family="JetBrains Mono" font-size="9">JWT · 라우팅</text>
+
+        <rect x="168" y="225" width="94" height="80" rx="6" fill="#fff" stroke="#d6dfd9" stroke-width="1.5"/>
+        <text x="215" y="240" text-anchor="middle" fill="#0d8754" font-family="JetBrains Mono" font-size="22">⏻</text>
+        <rect x="184" y="245" width="62" height="14" rx="2" fill="#e8f5ee"/>
+        <text x="215" y="255" text-anchor="middle" fill="#0d8754" font-family="JetBrains Mono" font-size="9" font-weight="600">NETFLIX EUREKA</text>
+        <text x="215" y="278" text-anchor="middle" fill="#0e1410" font-family="Inter Tight" font-size="11" font-weight="600">eureka-server</text>
+        <text x="215" y="293" text-anchor="middle" fill="#5a6b63" font-family="JetBrains Mono" font-size="9">Discovery</text>
+
+        <line x1="215" y1="200" x2="215" y2="223" stroke="#5a6b63" stroke-width="1" stroke-dasharray="2,2"/>
+        <text x="225" y="216" fill="#5a6b63" font-family="JetBrains Mono" font-size="8">register</text>
+
+        <!-- Client → Gateway -->
+        <line x1="148" y1="160" x2="166" y2="160" stroke="#5a6b63" stroke-width="1.5"/>
+
+        <!-- ===== Service Docker container ===== -->
+        <rect x="320" y="40" width="280" height="620" rx="8" fill="none" stroke="#0d6cb4" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <text x="330" y="58" fill="#0d6cb4" font-family="JetBrains Mono" font-size="10" font-weight="700">🐳 docker</text>
+
+        <!-- Bounded context legend -->
+        <text x="624" y="58" fill="#5a6b63" font-family="JetBrains Mono" font-size="9" font-weight="600">바운디드 컨텍스트</text>
+        <rect x="624" y="64" width="100" height="12" rx="2" fill="none" stroke="#b85c00" stroke-width="1" stroke-dasharray="3,2"/>
+        <text x="624" y="92" fill="#5a6b63" font-family="JetBrains Mono" font-size="9" font-weight="600">애그리거트</text>
+        <rect x="624" y="98" width="100" height="12" rx="2" fill="none" stroke="#3a8fcc" stroke-width="1" stroke-dasharray="3,2"/>
+
+        <!-- Gateway → Service container link -->
+        <line x1="280" y1="160" x2="318" y2="160" stroke="#5a6b63" stroke-width="1.5"/>
+        <line x1="318" y1="155" x2="280" y2="155" stroke="#5a6b63" stroke-width="1.5"/>
+
+        <!-- user 컨텍스트 -->
+        <rect x="335" y="80" width="250" height="62" rx="4" fill="none" stroke="#b85c00" stroke-width="1" stroke-dasharray="3,2"/>
+        <text x="345" y="76" class="ctx-tag" font-size="9.5">사용자 컨텍스트</text>
+        <rect x="345" y="88" width="230" height="48" rx="4" fill="none" stroke="#3a8fcc" stroke-width="1" stroke-dasharray="3,2"/>
+        <rect x="425" y="95" width="80" height="32" rx="4" fill="#e8f5ee"/>
+        <text x="465" y="107" text-anchor="middle" fill="#0d8754" font-family="JetBrains Mono" font-size="14">⏻</text>
+        <text x="465" y="122" text-anchor="middle" fill="#0e1410" font-family="Inter Tight" font-size="10" font-weight="600">user-service</text>
+
+        <!-- 업체 컨텍스트 ★ -->
+        <rect x="335" y="158" width="250" height="62" rx="4" fill="none" stroke="#b85c00" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <text x="345" y="154" class="ctx-tag" font-size="9.5">업체 컨텍스트 ★ 개인 담당</text>
+        <rect x="345" y="166" width="230" height="48" rx="4" fill="none" stroke="#3a8fcc" stroke-width="1" stroke-dasharray="3,2"/>
+        <rect x="425" y="173" width="80" height="32" rx="4" fill="#e8f5ee" stroke="#0d8754" stroke-width="2"/>
+        <text x="465" y="185" text-anchor="middle" fill="#0d8754" font-family="JetBrains Mono" font-size="14">⏻</text>
+        <text x="465" y="200" text-anchor="middle" fill="#0e1410" font-family="Inter Tight" font-size="10" font-weight="700">company-service</text>
+
+        <!-- 허브 컨텍스트 -->
+        <rect x="335" y="236" width="250" height="92" rx="4" fill="none" stroke="#b85c00" stroke-width="1" stroke-dasharray="3,2"/>
+        <text x="345" y="232" class="ctx-tag" font-size="9.5">허브 컨텍스트</text>
+        <rect x="345" y="244" width="230" height="78" rx="4" fill="none" stroke="#3a8fcc" stroke-width="1" stroke-dasharray="3,2"/>
+        <rect x="365" y="251" width="80" height="32" rx="4" fill="#e8f5ee"/>
+        <text x="405" y="263" text-anchor="middle" fill="#0d8754" font-family="JetBrains Mono" font-size="14">⏻</text>
+        <text x="405" y="278" text-anchor="middle" fill="#0e1410" font-family="Inter Tight" font-size="10" font-weight="600">hub-service</text>
+        <rect x="475" y="251" width="90" height="32" rx="4" fill="#e8f5ee"/>
+        <text x="520" y="263" text-anchor="middle" fill="#0d8754" font-family="JetBrains Mono" font-size="14">⏻</text>
+        <text x="520" y="278" text-anchor="middle" fill="#0e1410" font-family="Inter Tight" font-size="10" font-weight="600">hubpath-service</text>
+
+        <!-- 상품 컨텍스트 -->
+        <rect x="335" y="344" width="250" height="62" rx="4" fill="none" stroke="#b85c00" stroke-width="1" stroke-dasharray="3,2"/>
+        <text x="345" y="340" class="ctx-tag" font-size="9.5">상품 컨텍스트</text>
+        <rect x="345" y="352" width="230" height="48" rx="4" fill="none" stroke="#3a8fcc" stroke-width="1" stroke-dasharray="3,2"/>
+        <rect x="425" y="359" width="80" height="32" rx="4" fill="#e8f5ee"/>
+        <text x="465" y="371" text-anchor="middle" fill="#0d8754" font-family="JetBrains Mono" font-size="14">⏻</text>
+        <text x="465" y="386" text-anchor="middle" fill="#0e1410" font-family="Inter Tight" font-size="10" font-weight="600">product-service</text>
+
+        <!-- 주문 컨텍스트 -->
+        <rect x="335" y="422" width="250" height="62" rx="4" fill="none" stroke="#b85c00" stroke-width="1" stroke-dasharray="3,2"/>
+        <text x="345" y="418" class="ctx-tag" font-size="9.5">주문 컨텍스트</text>
+        <rect x="345" y="430" width="230" height="48" rx="4" fill="none" stroke="#3a8fcc" stroke-width="1" stroke-dasharray="3,2"/>
+        <rect x="425" y="437" width="80" height="32" rx="4" fill="#e8f5ee"/>
+        <text x="465" y="449" text-anchor="middle" fill="#0d8754" font-family="JetBrains Mono" font-size="14">⏻</text>
+        <text x="465" y="464" text-anchor="middle" fill="#0e1410" font-family="Inter Tight" font-size="10" font-weight="600">order-service</text>
+
+        <!-- 배송 컨텍스트 ★ — delivery + 2 domains 통합 -->
+        <rect x="335" y="500" width="250" height="98" rx="4" fill="none" stroke="#b85c00" stroke-width="1.5" stroke-dasharray="3,2"/>
+        <text x="345" y="496" class="ctx-tag" font-size="9.5">배송 컨텍스트 ★ DeliveryManager · Route 도메인 통합</text>
+
+        <rect x="345" y="508" width="230" height="82" rx="4" fill="none" stroke="#3a8fcc" stroke-width="1" stroke-dasharray="3,2"/>
+        <rect x="358" y="518" width="204" height="62" rx="4" fill="#e8f5ee" stroke="#0d8754" stroke-width="2"/>
+        <text x="460" y="535" text-anchor="middle" fill="#0d8754" font-family="JetBrains Mono" font-size="14">⏻</text>
+        <text x="460" y="552" text-anchor="middle" fill="#0e1410" font-family="Inter Tight" font-size="11" font-weight="700">delivery-service</text>
+        <text x="460" y="568" text-anchor="middle" fill="#5a6b63" font-family="JetBrains Mono" font-size="8.5">delivery (배송)</text>
+        <text x="460" y="578" text-anchor="middle" fill="#5a6b63" font-family="JetBrains Mono" font-size="8.5">+ DeliveryManager (담당자) + Route (경로)</text>
+
+        <!-- 메시지 컨텍스트 -->
+        <rect x="335" y="614" width="250" height="42" rx="4" fill="none" stroke="#b85c00" stroke-width="1" stroke-dasharray="3,2"/>
+        <text x="345" y="610" class="ctx-tag" font-size="9.5">메시지 컨텍스트</text>
+        <rect x="345" y="624" width="230" height="28" rx="4" fill="none" stroke="#3a8fcc" stroke-width="1" stroke-dasharray="3,2"/>
+        <rect x="425" y="628" width="80" height="20" rx="3" fill="#e8f5ee"/>
+        <text x="465" y="643" text-anchor="middle" fill="#0e1410" font-family="Inter Tight" font-size="9" font-weight="600">notification-service</text>
+
+        <!-- ===== Right: Postgres per service ===== -->
+        <g font-family="Inter Tight" font-size="11" font-weight="600">
+          <rect x="650" y="100" width="180" height="38" rx="4" fill="#fff" stroke="#3b6e8f" stroke-width="1.5"/>
+          <text x="665" y="123" fill="#3b6e8f" font-family="JetBrains Mono" font-size="14">🐘</text>
+          <text x="745" y="123" text-anchor="middle" fill="#3b6e8f">PostgreSQL</text>
+
+          <rect x="650" y="178" width="180" height="38" rx="4" fill="#fff" stroke="#3b6e8f" stroke-width="1.5"/>
+          <text x="665" y="201" fill="#3b6e8f" font-family="JetBrains Mono" font-size="14">🐘</text>
+          <text x="745" y="201" text-anchor="middle" fill="#3b6e8f">PostgreSQL</text>
+
+          <rect x="650" y="265" width="180" height="38" rx="4" fill="#fff" stroke="#3b6e8f" stroke-width="1.5"/>
+          <text x="665" y="288" fill="#3b6e8f" font-family="JetBrains Mono" font-size="14">🐘</text>
+          <text x="745" y="288" text-anchor="middle" fill="#3b6e8f">PostgreSQL</text>
+
+          <rect x="650" y="363" width="180" height="38" rx="4" fill="#fff" stroke="#3b6e8f" stroke-width="1.5"/>
+          <text x="665" y="386" fill="#3b6e8f" font-family="JetBrains Mono" font-size="14">🐘</text>
+          <text x="745" y="386" text-anchor="middle" fill="#3b6e8f">PostgreSQL</text>
+
+          <rect x="650" y="441" width="180" height="38" rx="4" fill="#fff" stroke="#3b6e8f" stroke-width="1.5"/>
+          <text x="665" y="464" fill="#3b6e8f" font-family="JetBrains Mono" font-size="14">🐘</text>
+          <text x="745" y="464" text-anchor="middle" fill="#3b6e8f">PostgreSQL</text>
+
+          <rect x="650" y="540" width="180" height="38" rx="4" fill="#fff" stroke="#3b6e8f" stroke-width="1.5"/>
+          <text x="665" y="563" fill="#3b6e8f" font-family="JetBrains Mono" font-size="14">🐘</text>
+          <text x="745" y="563" text-anchor="middle" fill="#3b6e8f">PostgreSQL</text>
+
+          <rect x="650" y="625" width="180" height="32" rx="4" fill="#fff" stroke="#3b6e8f" stroke-width="1.5"/>
+          <text x="665" y="646" fill="#3b6e8f" font-family="JetBrains Mono" font-size="13">🐘</text>
+          <text x="745" y="646" text-anchor="middle" fill="#3b6e8f" font-size="10">PostgreSQL</text>
+        </g>
+
+        <!-- Service → DB arrows -->
+        <line x1="585" y1="119" x2="648" y2="119" stroke="#5a6b63" stroke-width="1.5" marker-end="url(#arr-dark)"/>
+        <line x1="648" y1="123" x2="585" y2="123" stroke="#5a6b63" stroke-width="1.5"/>
+        <line x1="585" y1="197" x2="648" y2="197" stroke="#5a6b63" stroke-width="1.5" marker-end="url(#arr-dark)"/>
+        <line x1="648" y1="201" x2="585" y2="201" stroke="#5a6b63" stroke-width="1.5"/>
+        <line x1="585" y1="284" x2="648" y2="284" stroke="#5a6b63" stroke-width="1.5" marker-end="url(#arr-dark)"/>
+        <line x1="648" y1="288" x2="585" y2="288" stroke="#5a6b63" stroke-width="1.5"/>
+        <line x1="585" y1="382" x2="648" y2="382" stroke="#5a6b63" stroke-width="1.5" marker-end="url(#arr-dark)"/>
+        <line x1="648" y1="386" x2="585" y2="386" stroke="#5a6b63" stroke-width="1.5"/>
+        <line x1="585" y1="460" x2="648" y2="460" stroke="#5a6b63" stroke-width="1.5" marker-end="url(#arr-dark)"/>
+        <line x1="648" y1="464" x2="585" y2="464" stroke="#5a6b63" stroke-width="1.5"/>
+        <line x1="585" y1="559" x2="648" y2="559" stroke="#5a6b63" stroke-width="1.5" marker-end="url(#arr-dark)"/>
+        <line x1="648" y1="563" x2="585" y2="563" stroke="#5a6b63" stroke-width="1.5"/>
+        <line x1="585" y1="641" x2="648" y2="641" stroke="#5a6b63" stroke-width="1.5" marker-end="url(#arr-dark)"/>
+        <line x1="648" y1="645" x2="585" y2="645" stroke="#5a6b63" stroke-width="1.5"/>
+
+        <!-- Legend -->
+        <g font-family="JetBrains Mono" font-size="9.5">
+          <text x="20" y="678" fill="#0e1410" font-weight="700">범례:</text>
+          <rect x="60" y="670" width="14" height="11" rx="2" fill="none" stroke="#b85c00" stroke-width="1.5" stroke-dasharray="3,2"/>
+          <text x="80" y="680" fill="#5a6b63" font-weight="600">바운디드 컨텍스트</text>
+          <rect x="195" y="670" width="14" height="11" rx="2" fill="none" stroke="#3a8fcc" stroke-width="1.5" stroke-dasharray="3,2"/>
+          <text x="215" y="680" fill="#5a6b63" font-weight="600">애그리거트</text>
+          <rect x="295" y="670" width="14" height="11" rx="2" fill="#e8f5ee" stroke="#0d8754" stroke-width="2"/>
+          <text x="315" y="680" fill="#5a6b63" font-weight="600">★ 개인 담당</text>
+        </g>
+      </svg>
+    </div>
+
+    <p style="font-size:13px; color:var(--muted); font-style:italic; margin-top:14px; text-align:center;">
+      <strong>설계 의도</strong>: 12개 서비스를 7개 바운디드 컨텍스트(파선)로 묶고, 각 컨텍스트는 자기 PostgreSQL을 가짐(database-per-service).
+      배송 컨텍스트는 처음엔 <code style="background:var(--code-bg);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11.5px;">delivery / delivery_manager / delivery_route</code> 3개 서비스로 분할 시도했으나,
+      <strong>강한 응집성·동일 트랜잭션 경계 요구</strong> 때문에 <code style="background:var(--code-bg);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11.5px;">delivery-service</code> 한 컨텍스트로 통합하고 내부 도메인으로 분리.
+    </p>
+
+    <h3 style="margin-top:32px; margin-bottom:14px;">설계 의사결정과 근거</h3>
+    <table>
+      <thead>
+      <tr><th>결정</th><th>대안</th><th>선택 이유 — 트레이드오프 명시</th></tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>MSA + DDD 헥사고날</td>
+        <td>모놀리식 (omin)</td>
+        <td>직전 omin에서 한 도메인 결함이 전체를 멈추고 도메인 전용 기술(PostGIS)을 전 팀원이 설치해야 했던 비효율 직접 경험 → <strong>도메인별 독립 배포·기술 선택</strong>이 가능한 MSA로.</td>
+      </tr>
+      <tr>
+        <td>database-per-service</td>
+        <td>공유 DB · schema 분리</td>
+        <td>바운디드 컨텍스트별 PostgreSQL 분리 → 서비스 독립성·장애 격리. <strong>데이터 정합성은 Outbox 이벤트로 별도 보장.</strong></td>
+      </tr>
+      <tr>
+        <td>"검증=동기, 통지=비동기" 통신 분리</td>
+        <td>전부 동기 / 전부 비동기</td>
+        <td>정합성 검증("이 hub가 있나?")은 응답을 받아야 진행 가능 → 동기(Feign). 삭제 통지는 응답 불필요 → 비동기(Kafka). <strong>의도적 분리.</strong></td>
+      </tr>
+      <tr>
+        <td>Outbox 패턴</td>
+        <td>Saga · 2PC · 직접 Kafka 발행</td>
+        <td>단방향 통지·응답 불필요라 full Saga는 과함. 2PC는 분산 트랜잭션 회피. 직접 발행은 유실/유령 이벤트 위험 → <strong>at-least-once + 결과적 일관성</strong>의 Outbox가 적정.</td>
+      </tr>
+      <tr>
+        <td>단일 인스턴스 → 분산 락 생략</td>
+        <td>ShedLock · 리더 선출</td>
+        <td>각 서비스 단일 인스턴스 배포 토폴로지 → Outbox 스케줄러 중복 실행 자체가 발생 X. <strong>수평 확장 시</strong> ShedLock + 컨슈머 멱등 처리 추가 예정.</td>
+      </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 04 — CONTRIBUTION ① — Kafka + Outbox -->
+  <section class="section">
+    <div class="section-tag">05 · KEY CONTRIBUTION ①</div>
+    <div class="contrib-card">
+      <div class="contrib-headline">
+        <div class="contrib-num">📨 CONTRIBUTION #1</div>
+        <div class="contrib-title">이벤트 유실·유령 이벤트 없는 비동기 통지 — Kafka + Outbox 패턴</div>
+        <div class="contrib-impact">분산 트랜잭션 없이 at-least-once · 결과적 일관성 보장. 단위 테스트로 단일 이벤트 실패가 나머지 발행을 막지 않음 검증</div>
+      </div>
+      <div class="contrib-body">
+        <p><strong>P</strong> · 업체 삭제 시 주문·상품 등 타 서비스 통지가 필요한데, "DB 커밋 → Kafka 발행" 사이 발행 실패 시 <strong>이벤트 영구 유실</strong>(DB는 지워졌는데 남들은 모름), 발행 후 DB 롤백 시 <strong>유령 이벤트</strong>(다른 서비스는 삭제됐다고 알고 처리). 분산 트랜잭션(2PC)은 가용성을 해치고 MSA와 부적합.</p>
+        <p><strong>A</strong> · 삭제 트랜잭션 내 <code>OutboxEvent</code>(PENDING) <strong>원자 저장</strong> → DB 커밋과 함께 커밋(또는 함께 롤백). <code>OutboxEventScheduler</code>가 <code>@Scheduled(fixedDelay=10000)</code>로 10초마다 PENDING을 Kafka로 발행→<code>PUBLISHED</code>. 실패 시 PENDING 유지 → 다음 주기 자동 재발행.</p>
+        <p><strong>R</strong> · 분산 트랜잭션 없이 <strong>at-least-once 발행 + 결과적 일관성</strong> 보장. 단위 테스트로 단일 이벤트 실패가 나머지 발행을 막지 않음 검증.</p>
+      </div>
+    </div>
+
+    <h3 style="margin-top:28px; margin-bottom:14px;">대안 검토 — 옵션별 트레이드오프</h3>
+    <div class="decision-comp">
+      <div class="dec-card rejected">
+        <div class="dec-status">REJECTED · 2PC</div>
+        <div class="dec-name">분산 트랜잭션 코디네이터</div>
+        <div class="dec-reason">
+          모든 참여자가 잠금을 유지 → <strong>가용성 저하</strong>, MSA와 부적합. 코디네이터 자체가 SPOF.
+        </div>
+      </div>
+      <div class="dec-card rejected">
+        <div class="dec-status">REJECTED · Saga</div>
+        <div class="dec-name">보상 트랜잭션 체인</div>
+        <div class="dec-reason">
+          다중 단계 트랜잭션엔 강력하나, 본 케이스는 <strong>단방향 통지·응답 불필요</strong>라 full Saga는 과함. 보상 로직 작성 비용도 큼.
+        </div>
+      </div>
+      <div class="dec-card chosen">
+        <div class="dec-status">CHOSEN · OUTBOX</div>
+        <div class="dec-name">트랜잭셔널 Outbox</div>
+        <div class="dec-reason">
+          도메인 변경과 이벤트를 <strong>같은 트랜잭션에 기록</strong> → 별도 publisher가 polling으로 Kafka 발행 → 실패 시 PENDING 유지·재시도. <strong>at-least-once</strong>.
+        </div>
+      </div>
+    </div>
+
+    <pre><span class="com">// 업체 삭제 트랜잭션 내 Outbox 원자 저장</span>
+<span class="ann">@Transactional</span>
+<span class="kw">public void</span> deleteCompany(UUID companyId) {
+    companyRepository.delete(companyId);
+    outboxRepository.save(<span class="kw">new</span> OutboxEvent(
+        <span class="str">"company.deleted"</span>, companyId, payload, <span class="str">"PENDING"</span>
+    ));  <span class="com">// 같은 트랜잭션 — 원자 보장</span>
+}
+
+<span class="com">// 10초마다 PENDING → Kafka</span>
+<span class="ann">@Scheduled</span>(fixedDelay = <span class="str">10000</span>)
+<span class="kw">public void</span> publish() {
+    outboxRepository.findByStatus(<span class="str">"PENDING"</span>).forEach(event -> {
+        kafkaTemplate.send(event).addCallback(
+            ok -> outboxRepository.markPublished(event.getId()),
+            fail -> log.warn(<span class="str">"retry next tick"</span>)
+        );
+    });
+}</pre>
+  </section>
+
+  <!-- 05 — CONTRIBUTION ② — Circuit Breaker -->
+  <section class="section">
+    <div class="section-tag">06 · KEY CONTRIBUTION ②</div>
+    <div class="contrib-card">
+      <div class="contrib-headline">
+        <div class="contrib-num">🛡 CONTRIBUTION #2</div>
+        <div class="contrib-title">검증=동기, 통지=비동기 — Feign + Circuit Breaker로 통신 의도 분리</div>
+        <div class="contrib-impact">외부 서비스 장애의 연쇄 전파(cascading failure) 차단</div>
+      </div>
+      <div class="contrib-body">
+        <p><strong>P</strong> · 외부 서비스 호출이 타임아웃까지 블로킹되면 <strong>대기 스레드 누적 → 내 서비스까지 연쇄로 죽음</strong>(cascading failure). 단순 동기 호출은 한 서비스 장애가 전체로 번지는 구조.</p>
+        <p><strong>A</strong> · 통신 의도를 의도적으로 분리: <strong>"정합성 검증=동기(Feign)", "삭제 통지=비동기(Kafka)"</strong>. user/hub/order 호출은 <code>@CircuitBreaker</code> + <code>@Retry</code>로 감쌈. CB(window 10·실패율 50%·OPEN 10s·slow-call 3s·retry 3회/500ms)로 fallback 즉시 반환.</p>
+        <p><strong>R</strong> · CB OPEN 시 즉시 fallback 반환 → 대기 스레드 누적·연쇄 장애 차단. CB 상태전이(OPEN/CLOSED/HALF_OPEN)·호출차단·slow-call 전체 로깅.</p>
+      </div>
+    </div>
+
+    <pre><span class="ann">@Retry</span>(name = <span class="str">"hubService"</span>)
+<span class="ann">@CircuitBreaker</span>(name = <span class="str">"hubService"</span>, fallbackMethod = <span class="str">"hubServiceFallback"</span>)
+<span class="kw">public boolean</span> validateHubExists(UUID hubId) {
+    <span class="kw">return</span> hubClient.exists(hubId);  <span class="com">// 동기 검증</span>
+}
+
+<span class="kw">private boolean</span> hubServiceFallback(UUID hubId, Throwable t) {
+    log.warn(<span class="str">"Hub validation fallback — CB OPEN. hubId={}"</span>, hubId);
+    <span class="kw">return false</span>;  <span class="com">// 즉시 반환 → 스레드 점유 X</span>
+}</pre>
+
+    <table>
+      <thead>
+      <tr><th>설정 항목</th><th class="num">값</th><th>의도</th></tr>
+      </thead>
+      <tbody>
+      <tr><td>sliding window</td><td class="num">10 calls</td><td>최근 10콜로 실패율 산출 → 단발성 오류와 구분</td></tr>
+      <tr><td>failure rate threshold</td><td class="num">50%</td><td>절반 이상 실패면 OPEN — 과민 반응 회피</td></tr>
+      <tr><td>wait in OPEN</td><td class="num">10s</td><td>외부 서비스 복구 시간 부여</td></tr>
+      <tr><td>half-open calls</td><td class="num">3</td><td>OPEN 해제 전 시험 호출 — 다시 죽으면 OPEN 복귀</td></tr>
+      <tr><td>slow call threshold</td><td class="num">3s</td><td>응답 자체가 느린 케이스도 CB 트리거</td></tr>
+      <tr><td>retry</td><td class="num">3회 / 500ms</td><td>일시적 네트워크 결함 흡수</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 06 — CONTRIBUTION ③ — OR-Tools VRPTW -->
+  <section class="section">
+    <div class="section-tag">07 · KEY CONTRIBUTION ③</div>
+    <div class="contrib-card">
+      <div class="contrib-headline">
+        <div class="contrib-num">🚛 CONTRIBUTION #3</div>
+        <div class="contrib-title">시간창을 제약으로 모델링한 일괄 배송 최적화 — OR-Tools VRPTW</div>
+        <div class="contrib-impact">B2B SLA의 핵심(시간창 준수)을 first-class 제약으로. 수동 5분 → 자동 3초 (100건 기준 · 데모)</div>
+      </div>
+      <div class="contrib-body">
+        <p><strong>P</strong> · B2B 물류는 업체 영업시간(예: "오전 9~11시 입고")이 <strong>SLA의 핵심</strong>. 어기면 계약 위반 → <strong>시간창을 제약(constraint)으로 모델링</strong>해야지, 후처리 정렬로는 보장 불가. 단순 라운드로빈은 거리·시간창·차량 부하 균등을 못 고려해 비효율.</p>
+        <p><strong>A</strong> · <code>CompanyDeliveryAssignmentScheduler</code>가 <code>@Scheduled(cron="0 0 6 * * *")</code>로 매일 06:00 실행. 허브별 당일 배송을 모아 VRPTW 경로 최적화. 트랙 분리: <strong>허브 간=라운드로빈, 업체=OR-Tools VRPTW</strong>. Haversine 시간/거리 행렬 → time dimension(+30분 버퍼·최대 480분) → <strong>차량당 상한 <code>ceil(총건/담당자수)</code></strong>(부하 균등) → 시간창 ±30분 → solver <code>PATH_CHEAPEST_ARC</code> + <code>GUIDED_LOCAL_SEARCH</code>(타임리밋 5초). infeasible 시 시간창 단계적 완화 재시도, 그래도 실패면 예외. 스케줄러 레벨 <strong>3회 수동 재시도(10초 간격)</strong>.</p>
+        <p><strong>R</strong> · 시간창 제약을 first-class로 모델링해 <strong>SLA 보장 가능한 자동 배정 체계</strong> 확보. infeasible 시 시간창 완화로 가용성도 확보.</p>
+      </div>
+    </div>
+
+    <h3 style="margin-top:28px; margin-bottom:14px;">대안 검토 — 왜 OR-Tools인가</h3>
+    <div class="decision-comp">
+      <div class="dec-card rejected">
+        <div class="dec-status">REJECTED · K-means</div>
+        <div class="dec-name">거리 기반 군집화</div>
+        <div class="dec-reason">
+          시간창·차량용량을 <strong>제약으로 못 넣음</strong>. 클러스터링 후 시간창 검증은 사후 필터링 → 위반 건은 다음 날로 밀려 <strong>SLA 위반</strong>. 초기값 의존 휴리스틱이라 결과도 불안정.
+        </div>
+      </div>
+      <div class="dec-card rejected">
+        <div class="dec-status">REJECTED · pgRouting</div>
+        <div class="dec-name">경로 탐색 (A→B 최단)</div>
+        <div class="dec-reason">
+          경로 탐색엔 강하지만 <strong>"어떤 묶음을 누구에게 배정"하는 assignment는 안 풂</strong>. 지오공간 시각화·근사용에 가깝고 CSP 문제에는 부적합.
+        </div>
+      </div>
+      <div class="dec-card chosen">
+        <div class="dec-status">CHOSEN · OR-TOOLS</div>
+        <div class="dec-name">제약 만족 솔버 (CSP)</div>
+        <div class="dec-reason">
+          시간창·차량 용량·작업 시간을 <strong>first-class 제약으로 선언</strong> → 솔버가 제약 안에서 최적해 탐색. infeasible 시 시간창 완화 단계적 재시도 가능.
+        </div>
+      </div>
+    </div>
+
+    <pre><span class="com">// VRPTW 핵심 구성</span>
+RoutingIndexManager manager = <span class="kw">new</span> RoutingIndexManager(
+    nodes, vehicles, depot
+);
+routing.AddDimension(
+    timeCallback,
+    <span class="str">30</span>,        <span class="com">// 30분 버퍼 (slack)</span>
+    <span class="str">480</span>,       <span class="com">// 최대 라우트 시간 8시간</span>
+    <span class="kw">false</span>, <span class="str">"Time"</span>
+);
+
+<span class="com">// 차량당 상한 — 부하 균등</span>
+<span class="kw">int</span> maxPerVehicle = (<span class="kw">int</span>) Math.ceil((<span class="kw">double</span>) total / vehicles);
+
+<span class="com">// 솔버 — 휴리스틱 + 로컬 서치 + 5s 타임리밋</span>
+RoutingSearchParameters params = main.defaultRoutingSearchParameters()
+    .toBuilder()
+    .setFirstSolutionStrategy(FirstSolutionStrategy.PATH_CHEAPEST_ARC)
+    .setLocalSearchMetaheuristic(LocalSearchMetaheuristic.GUIDED_LOCAL_SEARCH)
+    .setTimeLimit(Duration.ofSeconds(<span class="str">5</span>))
+    .build();</pre>
+
+    <p style="font-size:13px; color:var(--ink-soft); margin-top:14px;">
+      <strong>왜 일괄(batch)인가</strong> — 실시간 배정 = 들어오는 순서대로 그리디 → <strong>국소 최적</strong>(지금 가까운 사람에게 줬더니 나중 배송이 꼬임). VRPTW는 <strong>당일 전체를 한 번에 모아야 전역 최적</strong>. B2B는 "즉시"보다 "오늘 안 정시 배송"이 중요 → 일괄이 비즈니스에 더 맞음.
+    </p>
+
+    <!-- 실제 OR-Tools 경로 시각화 -->
+    <div class="screenshot-card">
+      <div class="screenshot-header">
+        <div class="screenshot-title">📸 실제 OR-Tools VRPTW 솔버 출력 — 담당자별 경로 시각화</div>
+        <div class="screenshot-tag">VRPTW · 실측</div>
+      </div>
+      <div class="screenshot-img-wrap">
+        <img src="images/vrptw-route.png" alt="OR-Tools VRPTW 솔버가 산출한 5명 담당자의 경로 시각화 — 허브에서 출발해 여러 업체를 순회 후 복귀">
+      </div>
+      <div class="screenshot-caption">
+        <strong>실제 VRPTW 솔버 결과를 지도에 매핑한 경로 시각화</strong>. 각 색상이 한 담당자의 경로이며, 숫자는 방문 순서.
+        <strong>차량 경로 문제(VRP)</strong> 관점에서, 담당자 N명이 허브에서 출발해 여러 업체를 <strong>최적 순서로 순회한 뒤 복귀</strong>하는 경로를 자동 계산합니다.
+        <ul class="screenshot-points">
+          <li><strong>5명 담당자 분산</strong> — 같은 색끼리 묶여 한 담당자의 하루 동선. 거리 기반이 아닌 <strong>시간창·차량 용량 제약 안에서 최적해 탐색</strong></li>
+          <li><strong>방문 순서 명시</strong>(① ② ③ …) — 단순 클러스터링이 아닌 <strong>실제 순회 경로(sequence)</strong>까지 솔버가 결정</li>
+          <li><strong>업체별 시간창 적용</strong> — 각 업체의 수령 희망 시각을 제약(time window)으로 모델링 → 단순 왕복 대비 이동거리를 줄이면서 시간창까지 맞춤</li>
+          <li><strong>VRP 도구를 비즈니스에 맞게 활용한 사례</strong> — 단순 거리 최적화가 아닌, B2B의 SLA(영업시간 준수)를 first-class 제약으로 모델링한 결과</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 — CONTRIBUTION ④ — Pessimistic Lock -->
+  <section class="section">
+    <div class="section-tag">08 · KEY CONTRIBUTION ④</div>
+    <div class="contrib-card">
+      <div class="contrib-headline">
+        <div class="contrib-num">🔒 CONTRIBUTION #4</div>
+        <div class="contrib-title">짧고 잦은 임계구역엔 비관적 락 — seq 채번 race condition 해결</div>
+        <div class="contrib-impact">경력의 동시성 학습 → 스터디 발표 → 본 프로젝트 적용. 3단계 학습 곡선의 매듭</div>
+      </div>
+      <div class="contrib-body">
+        <p><strong>P</strong> · 배송담당자 등록 시 "최대 seq 조회 → +1 저장" 사이 동시 요청이 끼면 <strong>Read-Modify-Write race</strong> → 같은 seq가 두 번 발급.</p>
+        <p><strong>A</strong> · <code>@Lock(LockModeType.PESSIMISTIC_WRITE)</code>로 최대 seq row를 select for update. <em>대안 검토: 낙관적 락은 어차피 매번 충돌하는 채번엔 재시도 비용만 누적, 분산 락은 단일 인스턴스 토폴로지엔 과함 →</em> <strong>"충돌 잦고 짧은 임계구역"엔 비관적 락이 최적</strong>이라 판단.</p>
+        <p><strong>R</strong> · 동시 등록 요청에서도 seq 유일성 보장. 재시도 로직 없이 <strong>DB 레벨 원천 차단</strong>.</p>
+      </div>
+    </div>
+
+    <div class="decision-comp">
+      <div class="dec-card rejected">
+        <div class="dec-status">REJECTED · 낙관적 락</div>
+        <div class="dec-name">버전 충돌 → 재시도</div>
+        <div class="dec-reason">
+          채번은 <strong>매번 같은 row를 만짐</strong> → 거의 항상 버전 충돌 발생 → 재시도 비용만 누적되고 처리량 저하.
+        </div>
+      </div>
+      <div class="dec-card rejected">
+        <div class="dec-status">REJECTED · 분산 락</div>
+        <div class="dec-name">Redis · ZooKeeper</div>
+        <div class="dec-reason">
+          단일 인스턴스 배포 토폴로지엔 <strong>오버엔지니어링</strong>. 외부 의존성도 늘어남.
+        </div>
+      </div>
+      <div class="dec-card chosen">
+        <div class="dec-status">CHOSEN · 비관적 락</div>
+        <div class="dec-name">SELECT ... FOR UPDATE</div>
+        <div class="dec-reason">
+          임계구역이 <strong>짧고 충돌이 잦음</strong> → 락 대기 단점 최소화, 충돌 차단 장점 극대화. 재시도 로직 없이 DB 레벨 원천 차단.
+        </div>
+      </div>
+    </div>
+
+    <pre><span class="ann">@Lock</span>(LockModeType.PESSIMISTIC_WRITE)
+<span class="ann">@Query</span>(<span class="str">"select dm from DeliveryManager dm "</span>
+     + <span class="str">"where dm.hubId = :hubId order by dm.seq desc"</span>)
+Optional&lt;DeliveryManager&gt; findTopByHubIdOrderBySeqDesc(UUID hubId);
+<span class="com">// → SELECT ... FOR UPDATE — 동시 요청은 대기 후 순차 처리</span></pre>
+
+    <p style="font-size:13px; color:var(--ink-soft); margin-top:14px;">
+      <strong>3단계 학습 곡선 연결</strong> — 전 회사의 <strong>비동기 다운로드 race condition</strong>을 해결하면서 "정확히 어떤 락이 어느 상황에 맞는지" 몰랐던 게 학습 동기. 부트캠프 스터디에서 <strong>낙관적/비관적/분산 락 트레이드오프</strong>를 자청 발표. 본 프로젝트에서 <strong>"충돌 잦고 짧은 임계구역엔 비관적 락"</strong>을 실제로 적용 — 한 사이클 완결.
+    </p>
+  </section>
+
+  <!-- 08 — TROUBLESHOOTING -->
+  <section class="section">
+    <div class="section-tag">09 · TROUBLESHOOTING</div>
+    <h2>트러블슈팅 — 가설을 세우고 대안을 비교한 사례</h2>
+    <div class="section-rule"></div>
+
+    <div class="trouble">
+      <div class="trouble-header">
+        <div class="trouble-num">#01 · VRPTW infeasible — 시간창이 빡빡해 해 없음</div>
+        <div class="trouble-tag">제약 완화 재시도</div>
+      </div>
+      <div class="trouble-body">
+        <div class="trouble-cell">
+          <h4>현상 · 가설</h4>
+          <p>특정 일자에 업체 시간창이 좁고 배송 물량이 몰리면 OR-Tools가 <strong>infeasible</strong> 반환 → 자동 배정 실패. 단순 예외 throw는 가용성 저하.</p>
+        </div>
+        <div class="trouble-cell">
+          <h4>원인 분석 — 대안 검토</h4>
+          <ul>
+            <li>차량을 더 투입: 인력 자원 문제 — 시스템 제어 밖</li>
+            <li>모든 제약 무시 후 재계산: SLA 약속이 깨짐</li>
+            <li><strong>시간창만 단계적 완화</strong>: SLA 영향 최소화 + 가용성 확보</li>
+          </ul>
+        </div>
+        <div class="trouble-cell">
+          <h4>해결 & 검증</h4>
+          <p>시간창 ±30분 → ±60분 → ±90분 단계적 완화 재시도. 그래도 실패면 <code>ROUTE_OPTIMIZATION_FAILED</code> 예외로 운영자에게 알림. 스케줄러 레벨에서도 <strong>3회 수동 재시도(10초 간격)</strong>.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="trouble">
+      <div class="trouble-header">
+        <div class="trouble-num">#02 · 외부 서비스 장애가 연쇄 전파 — Circuit Breaker로 격리</div>
+        <div class="trouble-tag">cascading failure</div>
+      </div>
+      <div class="trouble-body">
+        <div class="trouble-cell">
+          <h4>현상 · 가설</h4>
+          <p>hub-service 일시 장애 시 company-service의 검증 호출이 타임아웃까지 블로킹 → <strong>대기 스레드 누적</strong> → company-service 자체 응답 지연.</p>
+        </div>
+        <div class="trouble-cell">
+          <h4>원인 분석 (Why → Why)</h4>
+          <ul>
+            <li>외부 호출 타임아웃까지 스레드 점유</li>
+            <li>풀에서 스레드가 빨리 소진</li>
+            <li>새 요청이 대기 큐로 쌓이고 결국 자기도 타임아웃</li>
+            <li>fail-fast가 없어 장애가 양방향 전파</li>
+          </ul>
+        </div>
+        <div class="trouble-cell">
+          <h4>해결 & 검증</h4>
+          <p>Resilience4j CB로 감싸 <strong>OPEN 시 fallback 즉시 반환</strong>. 스레드 점유 시간 = 타임아웃 → ~수 ms로 단축. <code>onStateTransition</code>·<code>onCallNotPermitted</code>·<code>onSlowCallRateExceeded</code> 전부 로깅으로 검증.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="trouble">
+      <div class="trouble-header">
+        <div class="trouble-num">#03 · seq 채번 동시성 — 비관적 락으로 원천 차단</div>
+        <div class="trouble-tag">race condition</div>
+      </div>
+      <div class="trouble-body">
+        <div class="trouble-cell">
+          <h4>현상 · 가설</h4>
+          <p>배송담당자 동시 등록 시 <strong>Read-Modify-Write race</strong> → 같은 seq가 두 번 발급될 수 있음.</p>
+        </div>
+        <div class="trouble-cell">
+          <h4>원인 분석 — 대안 비교</h4>
+          <ul>
+            <li>낙관적 락: 매번 충돌하는 채번엔 재시도 비용만 누적</li>
+            <li>분산 락: 단일 인스턴스 토폴로지엔 과함</li>
+            <li><strong>비관적 락</strong>: 짧고 잦은 임계구역에 최적</li>
+          </ul>
+        </div>
+        <div class="trouble-cell">
+          <h4>해결 & 검증</h4>
+          <p><code>@Lock(PESSIMISTIC_WRITE)</code>로 최대 seq row를 select for update. 재시도 로직 없이 DB 레벨 원천 차단. 동시 등록 시나리오 단위 테스트로 유일성 검증.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 — STACK -->
+  <section class="section">
+    <div class="section-tag">10 · STACK</div>
+    <h2>기술 스택</h2>
+    <div class="section-rule"></div>
+    <table>
+      <thead>
+      <tr><th>영역</th><th>스택</th></tr>
+      </thead>
+      <tbody>
+      <tr><td>Backend</td><td>Java 17 · Spring Boot 3.5.12 · <strong>Spring Cloud 2025.0.1</strong> (Eureka · Gateway · OpenFeign)</td></tr>
+      <tr><td>Messaging</td><td>Spring Kafka · <strong>Outbox 패턴</strong></td></tr>
+      <tr><td>Resilience</td><td>Resilience4j · <strong>Circuit Breaker · Retry</strong></td></tr>
+      <tr><td>Data</td><td>PostgreSQL (database-per-service) · Redis · JPA · QueryDSL</td></tr>
+      <tr><td>Optimization</td><td><strong>Google OR-Tools 9.12.4544 (VRPTW)</strong></td></tr>
+      <tr><td>Infra</td><td>Docker Compose</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 10 — RETRO -->
+  <section class="section">
+    <div class="section-tag">11 · RETROSPECTIVE</div>
+    <h2>회고 — 의도적 선택과 진짜 아쉬운 점을 구분하다</h2>
+    <div class="section-rule"></div>
+    <p class="lede">
+      "아쉬운 점"을 한 덩어리로 두면 의도적 트레이드오프와 진짜 실수가 섞여 약점처럼 보입니다.
+      <strong>여러 옵션을 따져본 결과 현 규모에 적절했던 선택</strong>과 <strong>더 챙겼어야 하는 부분</strong>을 명확히 구분합니다.
+    </p>
+
+    <div class="retro-block">
+      <div class="retro-header">
+        <div class="retro-icon">✅</div>
+        <div class="retro-title">잘한 것</div>
+      </div>
+      <div class="retro-good">
+        단순 CRUD를 넘어 <strong>이벤트 유실(Outbox) · 최적화(VRPTW) · 동시성(비관적 락)</strong> 등 운영 수준 문제를 <strong>비즈니스 근거에서 출발해</strong> 직접 설계. 스터디에서 학습한 락 트레이드오프를 실제 적용. "검증=동기, 통지=비동기"의 통신 의도 분리가 일관되게 관철됨.
+      </div>
+    </div>
+
+    <div class="retro-block">
+      <div class="retro-header">
+        <div class="retro-icon">🎯</div>
+        <div class="retro-title">의도적 선택</div>
+        <div class="retro-meta">트레이드오프를 따져보고 현 규모에 적절하다 판단한 부분</div>
+      </div>
+      <div class="retro-intent">
+        <div class="item">
+          <div class="item-title">배송 컨텍스트를 한 서비스로 통합 (delivery + manager + route)</div>
+          <div class="item-body">
+            초기 설계엔 <code>delivery / delivery_manager / delivery_route</code> 3개 서비스로 분할했으나, 실제 도메인 분석 결과 <strong>3개 도메인이 동일 트랜잭션 경계에서 함께 변경</strong>되는 강한 응집성을 보임 → 별도 서비스로 분리하면 분산 트랜잭션 비용만 증가한다고 판단해 <strong>delivery-service 한 컨텍스트로 통합 + 내부 도메인으로 분리</strong>.
+          </div>
+          <div class="item-future">"같은 트랜잭션에서 변하는 것은 같은 서비스로" — DDD의 애그리거트 경계 원칙을 실제 적용한 사례</div>
+        </div>
+        <div class="item">
+          <div class="item-title">Outbox 스케줄러가 단일 인스턴스 전제</div>
+          <div class="item-body">
+            분산 스케줄러·ShedLock·리더 선출 등 옵션을 검토했으나, <strong>각 마이크로서비스가 단일 인스턴스로 배포되는 현 토폴로지</strong>에선 스케줄러 중복 실행이 발생 X → 분산 락 도입은 오버엔지니어링.
+          </div>
+          <div class="item-future">수평 확장 시점엔 ShedLock(DB 락) 또는 컨슈머 측 멱등 처리(이벤트 ID dedup) 추가 예정</div>
+        </div>
+        <div class="item">
+          <div class="item-title">full Saga 대신 Outbox 채택</div>
+          <div class="item-body">
+            다중 서비스 트랜잭션엔 Saga(보상 트랜잭션)도 후보였으나, 우리 케이스는 <strong>단방향 통지·응답 불필요</strong>라 full Saga의 복잡도가 과함.
+          </div>
+          <div class="item-future">다중 단계 트랜잭션이 필요한 도메인에선 Saga가 정답 — 알고 있음</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="retro-block">
+      <div class="retro-header">
+        <div class="retro-icon">🛠</div>
+        <div class="retro-title">진짜 아쉬운 것</div>
+        <div class="retro-meta">더 챙겼어야 하는 부분</div>
+      </div>
+      <div class="retro-real">
+        <div class="item">
+          <div class="item-title">아키텍처 다이어그램 초기 버전과 코드의 불일치</div>
+          <div class="item-body">
+            초기 설계 그림엔 <code>delivery_manager-service</code>가 <strong>독립 서비스로 그려졌으나</strong>, 도메인 분석을 거치며 <code>delivery-service</code> 내 도메인으로 통합 결정. 다만 <strong>초기 그림과 디렉터리 구조를 즉시 정리하지 못함</strong> → 검토자가 코드와 그림이 다르다는 인상을 받을 위험.
+          </div>
+          <div class="item-future">설계 변경 시 그림·디렉터리·문서를 동시에 업데이트하는 습관 — 본 페이지 다이어그램은 최종 통합 버전으로 재작성</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    [이름] · 백엔드 개발자 — Portfolio v2026.05 · 다2조부르릉
+  </footer>
+</div>
+</body>
+</html>

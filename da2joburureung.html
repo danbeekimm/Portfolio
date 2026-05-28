@@ -265,6 +265,7 @@
       background: #fafaf6;
       padding: 18px;
       text-align: center;
+      position: relative;
     }
     .screenshot-img-wrap img {
       max-width: 100%;
@@ -273,6 +274,99 @@
       box-shadow: 0 2px 12px rgba(14, 20, 16, 0.08);
       display: block;
       margin: 0 auto;
+    }
+    /* Lightbox — 클릭 시 풀스크린 확대 */
+    .screenshot-img-wrap img[data-zoomable] {
+      cursor: zoom-in;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .screenshot-img-wrap img[data-zoomable]:hover {
+      transform: scale(1.01);
+      box-shadow: 0 4px 18px rgba(14, 20, 16, 0.15);
+    }
+    .screenshot-zoom-hint {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      background: rgba(14, 20, 16, 0.78);
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 4px 9px;
+      border-radius: 12px;
+      letter-spacing: 0.06em;
+      pointer-events: none;
+      opacity: 0.85;
+      backdrop-filter: blur(2px);
+    }
+    .lightbox-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 12, 9, 0.92);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      cursor: zoom-out;
+      padding: 40px;
+      overflow: hidden;
+    }
+    .lightbox-overlay.active { display: flex; }
+    .lightbox-overlay img {
+      max-width: 96vw;
+      max-height: 92vh;
+      border-radius: 6px;
+      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+      transform-origin: center center;
+      transition: transform 0.18s ease;
+      cursor: zoom-in;
+      user-select: none;
+      -webkit-user-drag: none;
+      touch-action: none;
+    }
+    .lightbox-overlay img.zoomed { cursor: grab; }
+    .lightbox-overlay.dragging img { cursor: grabbing; transition: none; }
+    .lightbox-hint {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      padding: 7px 14px;
+      border-radius: 16px;
+      pointer-events: none;
+    }
+    .lightbox-close {
+      position: fixed;
+      top: 20px;
+      right: 24px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 18px;
+      cursor: pointer;
+      letter-spacing: 0.08em;
+      transition: background 0.15s;
+    }
+    .lightbox-close:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    @media (max-width: 720px) {
+      .screenshot-zoom-hint { top: 14px; right: 14px; font-size: 9px; padding: 3px 7px; }
+      .lightbox-overlay { padding: 20px; }
+      .lightbox-close { top: 12px; right: 14px; font-size: 10px; padding: 6px 11px; }
+      .lightbox-hint { font-size: 9px; padding: 5px 10px; bottom: 12px; }
     }
     .screenshot-caption {
       padding: 16px 22px;
@@ -452,6 +546,24 @@
       border-radius: 3px;
       font-family: 'JetBrains Mono', monospace;
       font-size: 12px;
+    }
+    /* Approach-points — A 단락의 핵심 구성 요소 리스트 */
+    .approach-points {
+      list-style: none;
+      margin: 8px 0 14px 0;
+      padding: 12px 16px;
+      background: var(--code-bg);
+      border-left: 3px solid var(--rule);
+      border-radius: 0 4px 4px 0;
+    }
+    .approach-points li {
+      padding: 3px 0;
+      font-size: 13px;
+    }
+    .approach-points li + li {
+      border-top: 1px dashed var(--rule);
+      margin-top: 3px;
+      padding-top: 6px;
     }
 
     /* Table */
@@ -782,7 +894,7 @@
       </div>
       <div class="hero-meta">
         <span>2026 · 부트캠프 5인</span>
-        <span>담당: company-service + delivery-service 내 3도메인</span>
+        <span>담당: company-service + delivery-service 내 3개 도메인</span>
         <span>Spring Cloud 2025 · Kafka · OR-Tools · Keycloak</span>
       </div>
     </div>
@@ -815,14 +927,14 @@
       </div>
       <div class="service-desc">
         스파르타 물류는 전국 17개 도/광역시에 허브 센터를 보유한 가상의 B2B 물류 회사입니다. 각 허브는 여러 업체의 물건을 보관하며,
-        주문이 발생하면 시스템은 <strong>출발 허브 → 목적지 허브 간 화물 이동(허브 배송 담당자)</strong> 과 <strong>최종 허브 → 수령 업체 배송(업체 배송 담당자)</strong> 두 트랙을 분리해 처리합니다.
+        주문이 발생하면 시스템은 <strong>출발 허브 → 목적지 허브 간 화물 이동(허브 배송 담당자)</strong>과 <strong>최종 허브 → 수령 업체 배송(업체 배송 담당자)</strong> 두 트랙을 분리해 처리합니다.
         <br><br>
         <strong>예시 시나리오</strong> — "부산 수산물 도매 업체가 경기도 일산의 건조 식품 가공품 50개를 주문" →
         시스템이 <strong>경기도 허브 → 부산시 허브</strong>로 화물 이동을 계획하고, 도착하면 <strong>부산 허브 소속 업체 배송 담당자</strong>가 최종 업체로 전달.
       </div>
     </div>
 
-    <h3 style="margin-top:28px; margin-bottom:14px;">시스템 핵심 도메인 (8개 컨텍스트)</h3>
+    <h3 style="margin-top:28px; margin-bottom:14px;">시스템 핵심 도메인 (8개)</h3>
     <div class="feature-grid">
       <div class="feature-card highlight">
         <div class="feature-num">01 · COMPANY <span style="color:var(--accent); font-weight:700;">★ 담당</span></div>
@@ -846,7 +958,7 @@
       </div>
       <div class="feature-card highlight">
         <div class="feature-num">05 · DELIVERY <span style="color:var(--accent); font-weight:700;">★ 담당</span></div>
-        <div class="feature-title">배송 · 담당자 · 경로 (3도메인 통합)</div>
+        <div class="feature-title">배송 · 담당자 · 경로 (3개 도메인 통합)</div>
         <div class="feature-body">배송 본체 + DeliveryManager(허브당 10명 + 전체 10명) + DeliveryRoute(경로 기록)를 한 컨텍스트로 통합. <strong>매일 06:00 VRPTW 자동 배정</strong>.</div>
       </div>
       <div class="feature-card">
@@ -1226,7 +1338,7 @@
       <div class="contrib-headline">
         <div class="contrib-num">🛡 CONTRIBUTION #2</div>
         <div class="contrib-title">검증=동기, 통지=비동기 — Feign + Circuit Breaker로 통신 의도 분리</div>
-        <div class="contrib-impact">외부 서비스 장애의 연쇄 전파(cascading failure) 차단</div>
+        <div class="contrib-impact">외부 서비스 장애의 연쇄 전파 차단 — CB(window 10·실패율 50%·OPEN 10s·slow-call 3s) + Retry 3회로 fallback 즉시 반환</div>
       </div>
       <div class="contrib-body">
         <p><strong>P</strong> · 외부 서비스 호출이 타임아웃까지 블로킹되면 <strong>대기 스레드 누적 → 내 서비스까지 연쇄로 죽음</strong>(cascading failure). 단순 동기 호출은 한 서비스 장애가 전체로 번지는 구조.</p>
@@ -1248,17 +1360,20 @@
 
     <table>
       <thead>
-      <tr><th>설정 항목</th><th class="num">값</th><th>의도</th></tr>
+      <tr><th>설정 항목</th><th class="num">값</th><th>이 값으로 정한 이유</th></tr>
       </thead>
       <tbody>
-      <tr><td>sliding window</td><td class="num">10 calls</td><td>최근 10콜로 실패율 산출 → 단발성 오류와 구분</td></tr>
-      <tr><td>failure rate threshold</td><td class="num">50%</td><td>절반 이상 실패면 OPEN — 과민 반응 회피</td></tr>
-      <tr><td>wait in OPEN</td><td class="num">10s</td><td>외부 서비스 복구 시간 부여</td></tr>
-      <tr><td>half-open calls</td><td class="num">3</td><td>OPEN 해제 전 시험 호출 — 다시 죽으면 OPEN 복귀</td></tr>
-      <tr><td>slow call threshold</td><td class="num">3s</td><td>응답 자체가 느린 케이스도 CB 트리거</td></tr>
-      <tr><td>retry</td><td class="num">3회 / 500ms</td><td>일시적 네트워크 결함 흡수</td></tr>
+      <tr><td>sliding window</td><td class="num">10 calls</td><td>실패율 산출 표본 크기. 너무 작으면 1~2건 실패에 과민 반응, 너무 크면 장애 감지가 늦음 → 둘의 절충점</td></tr>
+      <tr><td>failure rate threshold</td><td class="num">50%</td><td>retry 3회를 통과하고도 절반이 깨지면 일시적 결함이 아니라 명백한 장애로 판단. 그 이하(예: 30%)면 단발성 오류에도 차단돼 과민</td></tr>
+      <tr><td>wait in OPEN</td><td class="num">10s</td><td>외부 서비스 재기동·순간 부하 해소에 통상 수~십수 초. 더 짧으면 복구 전 재요청이 몰려 재차 OPEN, 더 길면 정상화 후에도 차단 지속</td></tr>
+      <tr><td>half-open calls</td><td class="num">3</td><td>1건 성공은 우연일 수 있어 성급한 CLOSE를 방지. 3건 시험 호출로 실제 복구 여부를 확인 후 닫음</td></tr>
+      <tr><td>slow call threshold</td><td class="num">3s</td><td>등록 플로우가 허용할 수 있는 지연 상한. Feign read timeout보다 짧게 둬 '느린 성공'도 장애로 간주해 미리 차단</td></tr>
+      <tr><td>retry</td><td class="num">3회 / 500ms</td><td>패킷 손실·순간 GC 같은 일시 결함은 보통 1~2회 재시도로 흡수. 500ms 간격으로 순간 부하 분산, 3회 초과 시 일시 결함이 아니라 보고 CB에 위임</td></tr>
       </tbody>
     </table>
+    <p style="font-size:12.5px; color:var(--ink-soft); margin-top:12px;">
+      <strong>값 선정 전제</strong> — 데모 트래픽 기준의 보수적 baseline이다. Resilience4j 기본값을 출발점으로 위 근거에 따라 조정했고, <strong>운영 전환 시 실제 호출량·지연 분포로 부하 테스트 후 재튜닝</strong>하는 것을 전제로 한 초기값이다.
+    </p>
   </section>
 
   <!-- 06 — CONTRIBUTION ③ — OR-Tools VRPTW -->
@@ -1268,12 +1383,18 @@
       <div class="contrib-headline">
         <div class="contrib-num">🚛 CONTRIBUTION #3</div>
         <div class="contrib-title">시간창을 제약으로 모델링한 일괄 배송 최적화 — OR-Tools VRPTW</div>
-        <div class="contrib-impact">B2B SLA의 핵심(시간창 준수)을 first-class 제약으로. 수동 5분 → 자동 3초 (100건 기준 · 데모)</div>
+        <div class="contrib-impact">B2B SLA의 핵심(시간창 준수)을 사후 정렬이 아닌 솔버의 직접 제약으로 모델링. 수동 5분 → 자동 3초 (100건 기준 · 데모)</div>
       </div>
       <div class="contrib-body">
-        <p><strong>P</strong> · B2B 물류는 업체 영업시간(예: "오전 9~11시 입고")이 <strong>SLA의 핵심</strong>. 어기면 계약 위반 → <strong>시간창을 제약(constraint)으로 모델링</strong>해야지, 후처리 정렬로는 보장 불가. 단순 라운드로빈은 거리·시간창·차량 부하 균등을 못 고려해 비효율.</p>
-        <p><strong>A</strong> · <code>CompanyDeliveryAssignmentScheduler</code>가 <code>@Scheduled(cron="0 0 6 * * *")</code>로 매일 06:00 실행. 허브별 당일 배송을 모아 VRPTW 경로 최적화. 트랙 분리: <strong>허브 간=라운드로빈, 업체=OR-Tools VRPTW</strong>. Haversine 시간/거리 행렬 → time dimension(+30분 버퍼·최대 480분) → <strong>차량당 상한 <code>ceil(총건/담당자수)</code></strong>(부하 균등) → 시간창 ±30분 → solver <code>PATH_CHEAPEST_ARC</code> + <code>GUIDED_LOCAL_SEARCH</code>(타임리밋 5초). infeasible 시 시간창 단계적 완화 재시도, 그래도 실패면 예외. 스케줄러 레벨 <strong>3회 수동 재시도(10초 간격)</strong>.</p>
-        <p><strong>R</strong> · 시간창 제약을 first-class로 모델링해 <strong>SLA 보장 가능한 자동 배정 체계</strong> 확보. infeasible 시 시간창 완화로 가용성도 확보.</p>
+        <p><strong>P</strong> · B2B 물류는 업체 영업시간(예: "오전 9~11시 입고")이 <strong>SLA의 핵심</strong>. 어기면 계약 위반 → <strong>시간창을 제약(constraint — 솔버가 반드시 지켜야 하는 조건)으로 모델링</strong>해야지, 후처리 정렬로는 보장 불가. 단순 라운드로빈(들어온 순서대로 담당자에게 균등 배분)은 거리·시간창·차량 부하 균등을 못 고려해 비효율.</p>
+        <p><strong>A</strong> · 매일 06:00 스케줄러가 허브별 당일 배송을 모아 <strong>VRPTW로 일괄 최적화</strong>. 트랙 분리 — <strong>허브 간 = 라운드로빈, 업체 = OR-Tools VRPTW</strong>. 제약을 모두 만족하는 해가 없으면(infeasible) 시간창을 단계적으로 완화해 재시도.</p>
+        <ul class="approach-points">
+          <li><strong>입력</strong> — Haversine 공식(위·경도 좌표로 두 지점 간 직선거리 계산)으로 시간·거리 행렬 생성</li>
+          <li><strong>제약</strong> — 시간창 ±30분 · 라우트 최대 480분(8시간) · 차량당 상한 <code>ceil(총건/담당자수)</code>로 부하 균등</li>
+          <li><strong>솔버</strong> — 가까운 지점부터 이어 붙여 초기 경로를 빠르게 만드는 휴리스틱(<code>PATH_CHEAPEST_ARC</code>) + 그 경로를 반복 개선하며 부분 최적에 갇히지 않도록 탐색하는 기법(<code>GUIDED_LOCAL_SEARCH</code>), 탐색 5초 제한</li>
+          <li><strong>가용성</strong> — 해가 없을 때(infeasible) 시간창 단계적 완화 + 스케줄러 레벨 3회 재시도(10초 간격)</li>
+        </ul>
+        <p><strong>R</strong> · 시간창을 솔버의 직접 제약으로 모델링해 <strong>SLA 보장 가능한 자동 배정 체계</strong> 확보. 해가 없을 때도 시간창 완화로 가용성 확보.</p>
       </div>
     </div>
 
@@ -1283,44 +1404,62 @@
         <div class="dec-status">REJECTED · K-means</div>
         <div class="dec-name">거리 기반 군집화</div>
         <div class="dec-reason">
-          시간창·차량용량을 <strong>제약으로 못 넣음</strong>. 클러스터링 후 시간창 검증은 사후 필터링 → 위반 건은 다음 날로 밀려 <strong>SLA 위반</strong>. 초기값 의존 휴리스틱이라 결과도 불안정.
+          시간창·차량용량을 <strong>제약으로 못 넣음</strong>. 클러스터링 후 시간창 검증은 사후 필터링 → 위반 건은 다음 날로 밀려 <strong>SLA 위반</strong>. 초기값에 의존하는 휴리스틱(경험적 어림법)이라 결과도 불안정.
         </div>
       </div>
       <div class="dec-card rejected">
         <div class="dec-status">REJECTED · pgRouting</div>
         <div class="dec-name">경로 탐색 (A→B 최단)</div>
         <div class="dec-reason">
-          경로 탐색엔 강하지만 <strong>"어떤 묶음을 누구에게 배정"하는 assignment는 안 풂</strong>. 지오공간 시각화·근사용에 가깝고 CSP 문제에는 부적합.
+          경로 탐색엔 강하지만 <strong>"어떤 묶음을 누구에게 배정"하는 할당(assignment) 문제는 안 풂</strong>. 지리 공간 시각화·근사 계산용에 가깝고, 제약 만족 문제(CSP — 여러 제약을 동시에 만족하는 해를 찾는 문제)에는 부적합.
         </div>
       </div>
       <div class="dec-card chosen">
         <div class="dec-status">CHOSEN · OR-TOOLS</div>
         <div class="dec-name">제약 만족 솔버 (CSP)</div>
         <div class="dec-reason">
-          시간창·차량 용량·작업 시간을 <strong>first-class 제약으로 선언</strong> → 솔버가 제약 안에서 최적해 탐색. infeasible 시 시간창 완화 단계적 재시도 가능.
+          시간창·차량 용량·작업 시간을 <strong>솔버가 직접 지키는 제약으로 선언</strong> → 솔버가 제약 안에서 최적해 탐색. 해가 없으면 시간창 완화 단계적 재시도 가능.
         </div>
       </div>
     </div>
 
+    <h3 style="margin-top:28px; margin-bottom:14px;">OR-Tools VRPTW 구성요소 한눈에</h3>
+    <table>
+      <thead>
+        <tr><th>개념</th><th>코드 표현</th><th>의미</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Depot</td><td><code>depot</code> 인덱스</td><td>모든 라우트의 출발·복귀 지점(허브)</td></tr>
+        <tr><td>Dimension</td><td><code>AddDimension(...)</code></td><td>라우트 따라 누적되는 값(시간·거리·용량)에 제약 부여</td></tr>
+        <tr><td>Time Window</td><td>Dimension slack + 노드별 setRange</td><td>업체별 영업시간 — 도착 가능 구간</td></tr>
+        <tr><td>1st Solution Strategy</td><td><code>PATH_CHEAPEST_ARC</code></td><td>초기해를 빠르게 만드는 휴리스틱 (가까운 노드 우선)</td></tr>
+        <tr><td>Local Search Metaheuristic</td><td><code>GUIDED_LOCAL_SEARCH</code></td><td>초기해를 점진적으로 개선 — 국소최적 탈출 메커니즘</td></tr>
+        <tr><td>Time Limit</td><td><code>setTimeLimit</code></td><td>솔버 탐색 시간 상한 — 충분히 좋은 해에서 stop</td></tr>
+      </tbody>
+    </table>
+
     <pre><span class="com">// VRPTW 핵심 구성</span>
+<span class="com">// nodes: 방문 지점 수(허브+업체) / vehicles: 담당자 수 / depot: 출발·복귀 지점(허브) 인덱스</span>
 RoutingIndexManager manager = <span class="kw">new</span> RoutingIndexManager(
     nodes, vehicles, depot
 );
+
+<span class="com">// AddDimension: 시간/거리/용량처럼 라우트 따라 누적되는 값에 제약 부여</span>
 routing.AddDimension(
     timeCallback,
-    <span class="str">30</span>,        <span class="com">// 30분 버퍼 (slack)</span>
-    <span class="str">480</span>,       <span class="com">// 최대 라우트 시간 8시간</span>
-    <span class="kw">false</span>, <span class="str">"Time"</span>
+    <span class="str">30</span>,        <span class="com">// 노드별 대기 가능 여유(slack) — 시간창 도착에 30분 버퍼</span>
+    <span class="str">480</span>,       <span class="com">// 한 담당자 라우트 총 시간 상한(분) = 8시간</span>
+    <span class="kw">false</span>, <span class="str">"Time"</span>  <span class="com">// depot 시작 시점에 누적값 리셋 안 함</span>
 );
 
 <span class="com">// 차량당 상한 — 부하 균등</span>
 <span class="kw">int</span> maxPerVehicle = (<span class="kw">int</span>) Math.ceil((<span class="kw">double</span>) total / vehicles);
 
-<span class="com">// 솔버 — 휴리스틱 + 로컬 서치 + 5s 타임리밋</span>
+<span class="com">// 솔버 구성 = "초기해를 빠르게 + 그 해를 개선" 2단</span>
 RoutingSearchParameters params = main.defaultRoutingSearchParameters()
     .toBuilder()
-    .setFirstSolutionStrategy(FirstSolutionStrategy.PATH_CHEAPEST_ARC)
-    .setLocalSearchMetaheuristic(LocalSearchMetaheuristic.GUIDED_LOCAL_SEARCH)
+    .setFirstSolutionStrategy(FirstSolutionStrategy.PATH_CHEAPEST_ARC)         <span class="com">// 가까운 노드부터 그리디로 초기해 생성</span>
+    .setLocalSearchMetaheuristic(LocalSearchMetaheuristic.GUIDED_LOCAL_SEARCH) <span class="com">// 초기해를 개선하며 국소최적 탈출</span>
     .setTimeLimit(Duration.ofSeconds(<span class="str">5</span>))
     .build();</pre>
 
@@ -1335,16 +1474,15 @@ RoutingSearchParameters params = main.defaultRoutingSearchParameters()
         <div class="screenshot-tag">VRPTW · 실측</div>
       </div>
       <div class="screenshot-img-wrap">
-        <img src="images/vrptw-route.png" alt="OR-Tools VRPTW 솔버가 산출한 5명 담당자의 경로 시각화 — 허브에서 출발해 여러 업체를 순회 후 복귀">
+        <img src="images/vrptw-route-composed.png" alt="OR-Tools VRPTW 솔버가 산출한 5명 담당자의 경로 시각화 — 허브에서 출발해 여러 업체를 순회 후 복귀" data-zoomable>
+        <span class="screenshot-zoom-hint">CLICK TO ZOOM</span>
       </div>
       <div class="screenshot-caption">
         <strong>실제 VRPTW 솔버 결과를 지도에 매핑한 경로 시각화</strong>. 각 색상이 한 담당자의 경로이며, 숫자는 방문 순서.
-        <strong>차량 경로 문제(VRP)</strong> 관점에서, 담당자 N명이 허브에서 출발해 여러 업체를 <strong>최적 순서로 순회한 뒤 복귀</strong>하는 경로를 자동 계산합니다.
         <ul class="screenshot-points">
-          <li><strong>5명 담당자 분산</strong> — 같은 색끼리 묶여 한 담당자의 하루 동선. 거리 기반이 아닌 <strong>시간창·차량 용량 제약 안에서 최적해 탐색</strong></li>
-          <li><strong>방문 순서 명시</strong>(① ② ③ …) — 단순 클러스터링이 아닌 <strong>실제 순회 경로(sequence)</strong>까지 솔버가 결정</li>
-          <li><strong>업체별 시간창 적용</strong> — 각 업체의 수령 희망 시각을 제약(time window)으로 모델링 → 단순 왕복 대비 이동거리를 줄이면서 시간창까지 맞춤</li>
-          <li><strong>VRP 도구를 비즈니스에 맞게 활용한 사례</strong> — 단순 거리 최적화가 아닌, B2B의 SLA(영업시간 준수)를 first-class 제약으로 모델링한 결과</li>
+          <li><strong>5명 담당자별 색상 구분</strong> — 같은 색끼리 묶인 노드가 한 담당자의 하루 동선</li>
+          <li><strong>방문 순서 표시</strong>(① ② ③ …) — 솔버가 결정한 실제 순회 경로(sequence)</li>
+          <li><strong>허브 출발 → 업체 순회 → 허브 복귀</strong> — VRP의 전형적 라우트 구조가 그대로 출력에 반영</li>
         </ul>
       </div>
     </div>
@@ -1362,7 +1500,7 @@ RoutingSearchParameters params = main.defaultRoutingSearchParameters()
       <div class="contrib-body">
         <p><strong>P</strong> · 배송담당자 등록 시 "최대 seq 조회 → +1 저장" 사이 동시 요청이 끼면 <strong>Read-Modify-Write race</strong> → 같은 seq가 두 번 발급.</p>
         <p><strong>A</strong> · <code>@Lock(LockModeType.PESSIMISTIC_WRITE)</code>로 최대 seq row를 select for update. <em>대안 검토: 낙관적 락은 어차피 매번 충돌하는 채번엔 재시도 비용만 누적, 분산 락은 단일 인스턴스 토폴로지엔 과함 →</em> <strong>"충돌 잦고 짧은 임계구역"엔 비관적 락이 최적</strong>이라 판단.</p>
-        <p><strong>R</strong> · 동시 등록 요청에서도 seq 유일성 보장. 재시도 로직 없이 <strong>DB 레벨 원천 차단</strong>.</p>
+        <p><strong>R</strong> · 동시 등록 요청에서도 seq 유일성 보장. 재시도 로직 없이 <strong>DB 레벨 원천 차단</strong>. 추가로 <strong>락 타임아웃 3초</strong>를 명시해 장기 트랜잭션·데드락 시 <code>LockTimeoutException</code>으로 빠른 실패 처리 — 무한 대기로 인한 스레드 점유 차단.</p>
       </div>
     </div>
 
@@ -1391,10 +1529,11 @@ RoutingSearchParameters params = main.defaultRoutingSearchParameters()
     </div>
 
     <pre><span class="ann">@Lock</span>(LockModeType.PESSIMISTIC_WRITE)
+<span class="ann">@QueryHints</span>({<span class="ann">@QueryHint</span>(name = <span class="str">"jakarta.persistence.lock.timeout"</span>, value = <span class="str">"3000"</span>)})
 <span class="ann">@Query</span>(<span class="str">"select dm from DeliveryManager dm "</span>
      + <span class="str">"where dm.hubId = :hubId order by dm.seq desc"</span>)
 Optional&lt;DeliveryManager&gt; findTopByHubIdOrderBySeqDesc(UUID hubId);
-<span class="com">// → SELECT ... FOR UPDATE — 동시 요청은 대기 후 순차 처리</span></pre>
+<span class="com">// → SELECT ... FOR UPDATE — 동시 요청은 대기 후 순차 처리, 3초 초과 시 LockTimeoutException</span></pre>
 
     <p style="font-size:13px; color:var(--ink-soft); margin-top:14px;">
       <strong>3단계 학습 곡선 연결</strong> — 전 회사의 <strong>비동기 다운로드 race condition</strong>을 해결하면서 "정확히 어떤 락이 어느 상황에 맞는지" 몰랐던 게 학습 동기. 부트캠프 스터디에서 <strong>낙관적/비관적/분산 락 트레이드오프</strong>를 자청 발표. 본 프로젝트에서 <strong>"충돌 잦고 짧은 임계구역엔 비관적 락"</strong>을 실제로 적용 — 한 사이클 완결.
@@ -1415,19 +1554,27 @@ Optional&lt;DeliveryManager&gt; findTopByHubIdOrderBySeqDesc(UUID hubId);
       <div class="trouble-body">
         <div class="trouble-cell">
           <h4>현상 · 가설</h4>
-          <p>특정 일자에 업체 시간창이 좁고 배송 물량이 몰리면 OR-Tools가 <strong>infeasible</strong> 반환 → 자동 배정 실패. 단순 예외 throw는 가용성 저하.</p>
+          <ul>
+            <li>특정 일자에 업체 시간창 좁고 배송 물량 집중</li>
+            <li>OR-Tools가 <strong>infeasible</strong> 반환 → 자동 배정 실패</li>
+            <li>단순 예외 throw는 가용성 저하 → <strong>제약 완화 전략 필요</strong></li>
+          </ul>
         </div>
         <div class="trouble-cell">
           <h4>원인 분석 — 대안 검토</h4>
           <ul>
-            <li>차량을 더 투입: 인력 자원 문제 — 시스템 제어 밖</li>
+            <li>차량 추가 투입: 인력 자원 문제 — 시스템 제어 밖</li>
             <li>모든 제약 무시 후 재계산: SLA 약속이 깨짐</li>
             <li><strong>시간창만 단계적 완화</strong>: SLA 영향 최소화 + 가용성 확보</li>
           </ul>
         </div>
         <div class="trouble-cell">
           <h4>해결 & 검증</h4>
-          <p>시간창 ±30분 → ±60분 → ±90분 단계적 완화 재시도. 그래도 실패면 <code>ROUTE_OPTIMIZATION_FAILED</code> 예외로 운영자에게 알림. 스케줄러 레벨에서도 <strong>3회 수동 재시도(10초 간격)</strong>.</p>
+          <ul>
+            <li>시간창 <strong>±30분 → ±60분 → ±90분</strong> 단계적 완화 재시도</li>
+            <li>모두 실패 시 <code>ROUTE_OPTIMIZATION_FAILED</code> 예외로 운영자 알림</li>
+            <li>스케줄러 레벨 <strong>3회 수동 재시도</strong>(10초 간격)</li>
+          </ul>
         </div>
       </div>
     </div>
@@ -1440,7 +1587,10 @@ Optional&lt;DeliveryManager&gt; findTopByHubIdOrderBySeqDesc(UUID hubId);
       <div class="trouble-body">
         <div class="trouble-cell">
           <h4>현상 · 가설</h4>
-          <p>hub-service 일시 장애 시 company-service의 검증 호출이 타임아웃까지 블로킹 → <strong>대기 스레드 누적</strong> → company-service 자체 응답 지연.</p>
+          <ul>
+            <li>hub-service 일시 장애 시 company-service의 검증 호출이 타임아웃까지 블로킹</li>
+            <li><strong>대기 스레드 누적</strong> → company-service 자체 응답 지연</li>
+          </ul>
         </div>
         <div class="trouble-cell">
           <h4>원인 분석 (Why → Why)</h4>
@@ -1453,7 +1603,11 @@ Optional&lt;DeliveryManager&gt; findTopByHubIdOrderBySeqDesc(UUID hubId);
         </div>
         <div class="trouble-cell">
           <h4>해결 & 검증</h4>
-          <p>Resilience4j CB로 감싸 <strong>OPEN 시 fallback 즉시 반환</strong>. 스레드 점유 시간 = 타임아웃 → ~수 ms로 단축. <code>onStateTransition</code>·<code>onCallNotPermitted</code>·<code>onSlowCallRateExceeded</code> 전부 로깅으로 검증.</p>
+          <ul>
+            <li>Resilience4j CB로 감싸 <strong>OPEN 시 fallback 즉시 반환</strong></li>
+            <li>스레드 점유 시간 = 타임아웃 → 수 ms로 단축</li>
+            <li><code>onStateTransition</code> · <code>onCallNotPermitted</code> · <code>onSlowCallRateExceeded</code> 로깅 검증</li>
+          </ul>
         </div>
       </div>
     </div>
@@ -1466,7 +1620,10 @@ Optional&lt;DeliveryManager&gt; findTopByHubIdOrderBySeqDesc(UUID hubId);
       <div class="trouble-body">
         <div class="trouble-cell">
           <h4>현상 · 가설</h4>
-          <p>배송담당자 동시 등록 시 <strong>Read-Modify-Write race</strong> → 같은 seq가 두 번 발급될 수 있음.</p>
+          <ul>
+            <li>배송담당자 동시 등록 시 <strong>Read-Modify-Write race</strong></li>
+            <li>같은 seq가 두 번 발급될 수 있음</li>
+          </ul>
         </div>
         <div class="trouble-cell">
           <h4>원인 분석 — 대안 비교</h4>
@@ -1478,7 +1635,11 @@ Optional&lt;DeliveryManager&gt; findTopByHubIdOrderBySeqDesc(UUID hubId);
         </div>
         <div class="trouble-cell">
           <h4>해결 & 검증</h4>
-          <p><code>@Lock(PESSIMISTIC_WRITE)</code>로 최대 seq row를 select for update. 재시도 로직 없이 DB 레벨 원천 차단. 동시 등록 시나리오 단위 테스트로 유일성 검증.</p>
+          <ul>
+            <li><code>@Lock(PESSIMISTIC_WRITE)</code>로 최대 seq row를 <code>SELECT FOR UPDATE</code></li>
+            <li>재시도 로직 없이 DB 레벨 원천 차단</li>
+            <li>동시 등록 시나리오 단위 테스트로 유일성 검증</li>
+          </ul>
         </div>
       </div>
     </div>
@@ -1507,11 +1668,10 @@ Optional&lt;DeliveryManager&gt; findTopByHubIdOrderBySeqDesc(UUID hubId);
   <!-- 10 — RETRO -->
   <section class="section">
     <div class="section-tag">11 · RETROSPECTIVE</div>
-    <h2>회고 — 의도적 선택과 진짜 아쉬운 점을 구분하다</h2>
+    <h2>회고 — 잘한 것과 의도적 선택의 트레이드오프</h2>
     <div class="section-rule"></div>
     <p class="lede">
-      "아쉬운 점"을 한 덩어리로 두면 의도적 트레이드오프와 진짜 실수가 섞여 약점처럼 보입니다.
-      <strong>여러 옵션을 따져본 결과 현 규모에 적절했던 선택</strong>과 <strong>더 챙겼어야 하는 부분</strong>을 명확히 구분합니다.
+      프로젝트를 마치며 두 갈래로 정리. <strong>무엇을 잘했고</strong>, <strong>어떤 부분이 트레이드오프를 따진 의도적 선택이었는지</strong>. 각 선택의 한계와 다음 단계는 항목별 <strong>→ 라인</strong>에 함께 적었다.
     </p>
 
     <div class="retro-block">
@@ -1555,27 +1715,99 @@ Optional&lt;DeliveryManager&gt; findTopByHubIdOrderBySeqDesc(UUID hubId);
       </div>
     </div>
 
-    <div class="retro-block">
-      <div class="retro-header">
-        <div class="retro-icon">🛠</div>
-        <div class="retro-title">진짜 아쉬운 것</div>
-        <div class="retro-meta">더 챙겼어야 하는 부분</div>
-      </div>
-      <div class="retro-real">
-        <div class="item">
-          <div class="item-title">아키텍처 다이어그램 초기 버전과 코드의 불일치</div>
-          <div class="item-body">
-            초기 설계 그림엔 <code>delivery_manager-service</code>가 <strong>독립 서비스로 그려졌으나</strong>, 도메인 분석을 거치며 <code>delivery-service</code> 내 도메인으로 통합 결정. 다만 <strong>초기 그림과 디렉터리 구조를 즉시 정리하지 못함</strong> → 검토자가 코드와 그림이 다르다는 인상을 받을 위험.
-          </div>
-          <div class="item-future">설계 변경 시 그림·디렉터리·문서를 동시에 업데이트하는 습관 — 본 페이지 다이어그램은 최종 통합 버전으로 재작성</div>
-        </div>
-      </div>
-    </div>
   </section>
 
   <footer>
-    [이름] · 백엔드 개발자 — Portfolio v2026.05 · 다2조부르릉
+    [김단비] · 백엔드 개발자 — Portfolio v2026.05 · 다2조부르릉
   </footer>
 </div>
+
+<!-- Lightbox overlay -->
+<div class="lightbox-overlay" id="lightbox" role="dialog" aria-modal="true" aria-label="이미지 확대 보기">
+  <button class="lightbox-close" type="button" aria-label="닫기">ESC · 닫기</button>
+  <img src="" alt="">
+  <div class="lightbox-hint">드래그: 이동 · 휠: 배율 · ESC: 닫기</div>
+</div>
+
+<script>
+  (function () {
+    var overlay = document.getElementById('lightbox');
+    if (!overlay) return;
+    var overlayImg = overlay.querySelector('img');
+    var closeBtn = overlay.querySelector('.lightbox-close');
+
+    var ZOOM = 2.5;                       // 클릭 확대 배율 (fit 대비)
+    var scale = 1, tx = 0, ty = 0;        // 현재 배율 / 이동량(px)
+    var dragging = false, moved = false, sx = 0, sy = 0, ox = 0, oy = 0;
+
+    function apply() {
+      overlayImg.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + scale + ')';
+    }
+    function reset() {
+      scale = 1; tx = 0; ty = 0; moved = false;
+      overlayImg.classList.remove('zoomed');
+      overlayImg.style.transform = '';
+    }
+    function open(src, alt) {
+      reset();
+      overlayImg.src = src;
+      overlayImg.alt = alt || '';
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    function close() {
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+      setTimeout(function () { overlayImg.src = ''; reset(); }, 200);
+    }
+
+    document.querySelectorAll('img[data-zoomable]').forEach(function (img) {
+      img.addEventListener('click', function () {
+        open(img.currentSrc || img.src, img.alt);
+      });
+    });
+
+    // 드래그 팬 (확대 상태에서만)
+    overlayImg.addEventListener('pointerdown', function (e) {
+      if (scale === 1) return;
+      dragging = true; moved = false;
+      sx = e.clientX; sy = e.clientY; ox = tx; oy = ty;
+      overlay.classList.add('dragging');
+      try { overlayImg.setPointerCapture(e.pointerId); } catch (err) {}
+    });
+    overlayImg.addEventListener('pointermove', function (e) {
+      if (!dragging) return;
+      var dx = e.clientX - sx, dy = e.clientY - sy;
+      if (Math.abs(dx) > 3 || Math.abs(dy) > 3) moved = true;
+      tx = ox + dx; ty = oy + dy;
+      apply();
+    });
+    function endDrag(e) {
+      if (!dragging) return;
+      dragging = false;
+      overlay.classList.remove('dragging');
+      try { overlayImg.releasePointerCapture(e.pointerId); } catch (err) {}
+    }
+    overlayImg.addEventListener('pointerup', endDrag);
+    overlayImg.addEventListener('pointercancel', endDrag);
+
+    // 휠로 배율 조정
+    overlay.addEventListener('wheel', function (e) {
+      if (!overlay.classList.contains('active')) return;
+      e.preventDefault();
+      scale = Math.max(1, Math.min(5, scale + (e.deltaY < 0 ? 0.3 : -0.3)));
+      if (scale === 1) { reset(); }
+      else { overlayImg.classList.add('zoomed'); apply(); }
+    }, { passive: false });
+
+    // 배경 / 닫기 버튼 클릭 = 닫기
+    overlay.addEventListener('click', function (e) {
+      if (e.target === overlay || e.target === closeBtn) close();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && overlay.classList.contains('active')) close();
+    });
+  })();
+</script>
 </body>
 </html>

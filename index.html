@@ -203,6 +203,7 @@
       border-top: 1px dashed var(--rule);
       margin-bottom: 18px;
     }
+    .project-highlights.cols-4 { grid-template-columns: repeat(4, 1fr); gap: 10px; }
     .highlight { text-align: center; }
     .highlight-num {
       font-family: 'Fraunces', serif;
@@ -294,11 +295,32 @@
       background: var(--card);
       border: 1px solid var(--rule);
       border-radius: 12px;
-      padding: 28px 32px;
+      padding: 24px 28px;
     }
+    .skills-legend {
+      display: grid;
+      grid-template-columns: 130px 1fr 1fr;
+      gap: 16px;
+      padding-bottom: 14px;
+      margin-bottom: 8px;
+      border-bottom: 1px solid var(--rule);
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+    }
+    .skills-legend .legend-spacer {
+      /* 첫 컬럼 자리비움 — skill-area 컬럼과 정렬 */
+    }
+    .skills-legend .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .skills-legend .legend-icon { font-size: 13px; }
     .skill-row {
       display: grid;
-      grid-template-columns: 160px 1fr;
+      grid-template-columns: 130px 1fr 1fr;
       padding: 12px 0;
       border-bottom: 1px solid var(--rule-soft);
       gap: 16px;
@@ -314,11 +336,18 @@
       letter-spacing: 0.08em;
     }
     .skill-list {
-      font-size: 13.5px;
+      font-size: 13px;
       color: var(--ink-soft);
       line-height: 1.65;
     }
     .skill-list strong { color: var(--ink); font-weight: 600; }
+    .skill-list.exp { /* 실무 컬럼 별도 마커 필요 시 */ }
+    .skill-list.learn { /* 학습 컬럼 */ }
+    .skill-list .empty {
+      color: var(--muted);
+      font-style: italic;
+      opacity: 0.6;
+    }
 
     footer {
       margin-top: 80px;
@@ -333,10 +362,17 @@
     @media (max-width: 720px) {
       .wrap { padding: 56px 24px 80px; }
       .main-title { font-size: 40px; }
-      .project-highlights { grid-template-columns: 1fr; }
+      .project-highlights, .project-highlights.cols-4 { grid-template-columns: 1fr; }
       .project-card { padding: 24px 22px; }
       .project-title { font-size: 22px; }
-      .skill-row { grid-template-columns: 1fr; gap: 4px; }
+      .skill-row {
+        grid-template-columns: 1fr;
+        gap: 6px;
+        padding: 14px 0;
+      }
+      .skill-list.exp::before { content: "💼 실무 — "; color: var(--muted); font-size: 11px; }
+      .skill-list.learn::before { content: "🎓 학습·프로젝트 — "; color: var(--muted); font-size: 11px; }
+      .skills-legend { display: none; }
     }
   </style>
 </head>
@@ -369,8 +405,7 @@
     <h2>프로젝트 · 경력</h2>
     <div class="section-rule"></div>
     <p class="lede">
-      각 카드를 클릭하면 상세 페이지로 이동합니다. <strong>실무 경력 → MSA → LLMOps</strong> 순서로 읽으면
-      "현장에서 마주친 한계가 어떻게 다음 학습과 설계로 이어졌는지" 흐름이 보입니다.
+      세 작업을 시간순으로. <strong>실무에서 출발해 모놀리식·MSA를 거쳐 LLMOps에 닿은 궤적</strong> — 현장에서 마주친 한계가 학습 동기가 되고, 다음 프로젝트의 설계 결정으로 이어지는 흐름.
     </p>
 
     <!-- 경력 -->
@@ -379,7 +414,7 @@
         <div class="project-num">💼 EXPERIENCE · 실무 경력</div>
         <div class="project-period">2022.11 ~ 2025.03</div>
       </div>
-      <div class="project-title">SQL 의존성과 동시성을 운영 환경에서 풀어낸 3년</div>
+      <div class="project-title">SQL 의존성과 동시성을 운영 환경에서 풀어낸 2년</div>
       <div class="project-subtitle">풀스택 개발자 — 회원제 특허 SaaS의 고도화·운영</div>
       <div class="project-tagline">
         100% MyBatis 환경의 <strong>PostgreSQL → MSSQL 전면 마이그레이션</strong>을 옵티마이저·라운드트립 단위로 재설계하고,<br>
@@ -476,7 +511,7 @@
         AIOps는 AI를 운영 시스템 그 자체로 녹여낸 사례입니다.
       </div>
 
-      <div class="project-highlights">
+      <div class="project-highlights cols-4">
         <div class="highlight">
           <div class="highlight-num">2.38 → 4.04</div>
           <div class="highlight-label">faithfulness 향상 · 모델 교체</div>
@@ -488,6 +523,10 @@
         <div class="highlight">
           <div class="highlight-num">&lt; 1<span class="small">분</span></div>
           <div class="highlight-label">MTTD · 7종 alert 룰 차등</div>
+        </div>
+        <div class="highlight">
+          <div class="highlight-num">74<span class="small">%</span> ↓</div>
+          <div class="highlight-label">캐시 히트 응답 단축 · LLM 호출 스킵</div>
         </div>
       </div>
 
@@ -502,7 +541,7 @@
       </div>
 
       <div class="project-cta">
-        <div class="project-role">담당: <strong>assistant + notification + monitoring 단독 설계/구현</strong></div>
+        <div class="project-role">담당: <strong>assistant + notification + monitoring 전담 설계/구현</strong></div>
         <div class="read-more">상세 보기</div>
       </div>
     </a>
@@ -514,43 +553,88 @@
     <h2>기술 스택</h2>
     <div class="section-rule"></div>
     <div class="skills-block">
+      <div class="skills-legend">
+        <div class="legend-spacer"></div>
+        <div class="legend-item"><span class="legend-icon">💼</span> 실무 경험 (2년)</div>
+        <div class="legend-item"><span class="legend-icon">🎓</span> 학습·프로젝트</div>
+      </div>
+
       <div class="skill-row">
         <div class="skill-area">Language</div>
-        <div class="skill-list">Java 17 · JavaScript</div>
+        <div class="skill-list exp">Java 8 · JavaScript</div>
+        <div class="skill-list learn">Java 17 · TypeScript</div>
       </div>
+
       <div class="skill-row">
-        <div class="skill-area">Framework</div>
-        <div class="skill-list">Spring Boot 3.5 · Spring Data JPA · QueryDSL · Spring Security · <strong>Spring Cloud</strong> (Gateway · Eureka · Config · OpenFeign) · <strong>Spring AI 1.0</strong></div>
+        <div class="skill-area">Backend FW</div>
+        <div class="skill-list exp">Spring 4.x (Legacy)</div>
+        <div class="skill-list learn"><strong>Spring Boot 3.5</strong> · <strong>Spring Cloud</strong> (Gateway · Eureka · Config · OpenFeign) · <strong>Spring AI 1.0</strong> · Spring Security</div>
       </div>
+
+      <div class="skill-row">
+        <div class="skill-area">Frontend</div>
+        <div class="skill-list exp">JSP · AngularJS · jQuery</div>
+        <div class="skill-list learn">React · TypeScript · Tailwind CSS</div>
+      </div>
+
+      <div class="skill-row">
+        <div class="skill-area">Data Access</div>
+        <div class="skill-list exp">MyBatis · Stored Procedure (T-SQL)</div>
+        <div class="skill-list learn">Spring Data JPA · QueryDSL</div>
+      </div>
+
       <div class="skill-row">
         <div class="skill-area">Database</div>
-        <div class="skill-list">PostgreSQL (+PostGIS, <strong>pgvector</strong>) · MSSQL · MySQL · Redis</div>
+        <div class="skill-list exp">MSSQL · MySQL · PostgreSQL</div>
+        <div class="skill-list learn">PostgreSQL (+<strong>PostGIS · pgvector</strong>) · Redis</div>
       </div>
+
       <div class="skill-row">
         <div class="skill-area">Architecture</div>
-        <div class="skill-list"><strong>MSA · DDD · Hexagonal · Event-Driven</strong> · 모놀리식</div>
+        <div class="skill-list exp">모놀리식 (대규모 운영)</div>
+        <div class="skill-list learn"><strong>MSA · DDD · Hexagonal · Event-Driven</strong></div>
       </div>
+
       <div class="skill-row">
-        <div class="skill-area">Messaging / Resilience</div>
-        <div class="skill-list">Apache Kafka · <strong>Outbox Pattern</strong> · Resilience4j (Circuit Breaker)</div>
+        <div class="skill-area">Messaging<br>/ Resilience</div>
+        <div class="skill-list exp"><span class="empty">—</span></div>
+        <div class="skill-list learn">Apache Kafka · <strong>Outbox Pattern</strong> · Resilience4j (Circuit Breaker · Retry)</div>
       </div>
+
       <div class="skill-row">
         <div class="skill-area">Observability</div>
-        <div class="skill-list">Prometheus · Grafana · Loki · Promtail · Alertmanager · Zipkin</div>
+        <div class="skill-list exp">운영 로그 분석 · CS 패턴 추적</div>
+        <div class="skill-list learn">Prometheus · Grafana · Loki · Promtail · Alertmanager · Zipkin</div>
       </div>
+
       <div class="skill-row">
         <div class="skill-area">AI / LLM</div>
-        <div class="skill-list">Spring AI · RAG · pgvector · <strong>LLM-as-a-Judge</strong> (Eval · Pairwise) · <strong>LLM 기반 AIOps</strong> · Human-in-the-Loop</div>
+        <div class="skill-list exp"><span class="empty">—</span></div>
+        <div class="skill-list learn">Spring AI · RAG · pgvector · <strong>LLM-as-a-Judge</strong> (Eval · Pairwise) · <strong>LLM 기반 AIOps</strong> · Human-in-the-Loop</div>
       </div>
+
       <div class="skill-row">
-        <div class="skill-area">ETC</div>
-        <div class="skill-list">Google OR-Tools (VRPTW) · Apache POI · MyBatis · JUnit · Mockito · Docker · GitHub Actions</div>
+        <div class="skill-area">Optimization<br>/ Parsing</div>
+        <div class="skill-list exp">Apache POI (대용량 문서 파싱 · DRM 시그널 식별)</div>
+        <div class="skill-list learn">Google OR-Tools (VRPTW)</div>
+      </div>
+
+      <div class="skill-row">
+        <div class="skill-area">Test</div>
+        <div class="skill-list exp">JUnit · Mockito (팀 도입 주도)</div>
+        <div class="skill-list learn">JUnit · Mockito</div>
+      </div>
+
+      <div class="skill-row">
+        <div class="skill-area">DevOps</div>
+        <div class="skill-list exp"><span class="empty">—</span></div>
+        <div class="skill-list learn">Docker · Docker Compose · GitHub Actions</div>
       </div>
     </div>
   </section>
 
   <footer>
-    [이름] · 백엔드 개발자 — Portfolio v2026.05
+    [김단비] · 백엔드 개발자 — Portfolio v2026.05
   </footer>
 </div>
 </body>

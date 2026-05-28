@@ -145,7 +145,7 @@
         /* KPI strip */
         .kpi-strip {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 18px;
             margin: 32px 0 0;
         }
@@ -283,6 +283,24 @@
             border-radius: 3px;
             font-family: 'JetBrains Mono', monospace;
             font-size: 12px;
+        }
+        /* Approach-points — A 단락의 핵심 구성 요소 리스트 */
+        .approach-points {
+            list-style: none;
+            margin: 8px 0 14px 0;
+            padding: 12px 16px;
+            background: var(--code-bg);
+            border-left: 3px solid var(--rule);
+            border-radius: 0 4px 4px 0;
+        }
+        .approach-points li {
+            padding: 3px 0;
+            font-size: 13px;
+        }
+        .approach-points li + li {
+            border-top: 1px dashed var(--rule);
+            margin-top: 3px;
+            padding-top: 6px;
         }
 
         /* Eval table */
@@ -629,6 +647,102 @@
             display: block;
             margin: 0 auto;
         }
+        /* Lightbox — 클릭 시 풀스크린 확대 */
+        .screenshot-img-wrap {
+            position: relative;
+        }
+        .screenshot-img-wrap img[data-zoomable] {
+            cursor: zoom-in;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .screenshot-img-wrap img[data-zoomable]:hover {
+            transform: scale(1.01);
+            box-shadow: 0 4px 18px rgba(14, 20, 16, 0.15);
+        }
+        .screenshot-zoom-hint {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            background: rgba(14, 20, 16, 0.78);
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 4px 9px;
+            border-radius: 12px;
+            letter-spacing: 0.06em;
+            pointer-events: none;
+            opacity: 0.85;
+            backdrop-filter: blur(2px);
+        }
+        .lightbox-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(8, 12, 9, 0.92);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            cursor: zoom-out;
+            padding: 40px;
+            overflow: hidden;
+        }
+        .lightbox-overlay.active { display: flex; }
+        .lightbox-overlay img {
+            max-width: 96vw;
+            max-height: 92vh;
+            border-radius: 6px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+            transform-origin: center center;
+            transition: transform 0.18s ease;
+            cursor: zoom-in;
+            user-select: none;
+            -webkit-user-drag: none;
+            touch-action: none;
+        }
+        .lightbox-overlay img.zoomed { cursor: grab; }
+        .lightbox-overlay.dragging img { cursor: grabbing; transition: none; }
+        .lightbox-hint {
+            position: fixed;
+            bottom: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            padding: 7px 14px;
+            border-radius: 16px;
+            pointer-events: none;
+        }
+        .lightbox-close {
+            position: fixed;
+            top: 20px;
+            right: 24px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: 18px;
+            cursor: pointer;
+            letter-spacing: 0.08em;
+            transition: background 0.15s;
+        }
+        .lightbox-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        @media (max-width: 720px) {
+            .screenshot-zoom-hint { top: 14px; right: 14px; font-size: 9px; padding: 3px 7px; }
+            .lightbox-overlay { padding: 20px; }
+            .lightbox-close { top: 12px; right: 14px; font-size: 10px; padding: 6px 11px; }
+            .lightbox-hint { font-size: 9px; padding: 5px 10px; bottom: 12px; }
+        }
         .screenshot-caption {
             padding: 16px 22px;
             background: var(--card);
@@ -890,11 +1004,11 @@
                 <em>"LLM을 검증 가능하게(Eval/Pairwise), 운영을 안전하게(HITL·다층 방어) 만든다."</em>
             </div>
             <div class="hero-sub">
-                모의투자 플랫폼에서 도메인 사실성이 핵심인 RAG 챗봇 + LLM 기반 AIOps + 측정 가능한 관측 스택을 단독 설계.
+                모의투자 플랫폼에서 도메인 사실성이 핵심인 RAG 챗봇 + LLM 기반 AIOps + 측정 가능한 관측 스택을 주도 설계.
             </div>
             <div class="hero-meta">
                 <span>2026 · 부트캠프 5인</span>
-                <span>담당: assistant · notification · monitoring 단독</span>
+                <span>담당: assistant · notification · monitoring 전담</span>
                 <span>Java 17 · Spring AI 1.0 · pgvector · Kafka · GCP</span>
             </div>
         </div>
@@ -905,12 +1019,16 @@
                 <div class="kpi-label"><strong>faithfulness 향상</strong>RAG 모델 교체 (LLM-as-a-Judge 점수 기반)</div>
             </div>
             <div class="kpi">
-                <div class="kpi-num"><span class="small">환각률</span> 64.3<span class="small">%</span> → 8.3<span class="small">%</span></div>
+                <div class="kpi-num">64.3<span class="small">%</span> → <span style="color:var(--accent)">8.3<span class="small">%</span></span></div>
                 <div class="kpi-label"><strong>환각률 −56pp</strong>faithfulness &lt; 3 비율</div>
             </div>
             <div class="kpi">
                 <div class="kpi-num">&lt; 1<span class="small">분</span></div>
                 <div class="kpi-label"><strong>MTTD</strong>ServiceDown: scrape 15s × for 1m</div>
+            </div>
+            <div class="kpi">
+                <div class="kpi-num">74<span class="small">%</span> ↓</div>
+                <div class="kpi-label"><strong>캐시 히트 응답시간</strong>3.68s → 0.95s (3.9배) · LLM 생성 호출 스킵</div>
             </div>
         </div>
     </section>
@@ -1105,7 +1223,7 @@
                 <div class="box-title">핵심 도전 과제</div>
                 <ul>
                     <li>RAG 답변의 <strong>사실성(faithfulness)</strong> 정량 측정 — "느낌"이 아닌 <strong>점수·승률</strong>로 모델 결정</li>
-                    <li>LLM 평가의 함정 <strong>self-preference bias</strong> 차단 — Judge가 자기 출력에 후한 경향 회피</li>
+                    <li>LLM 평가의 2대 편향 차단 — <strong>self-preference bias</strong>(Judge가 자기 출력에 후한 경향) + <strong>position bias</strong>(Pairwise A/B 위치에 따른 편향)를 코드 레벨에서 모두 차단</li>
                     <li>단순 알림을 <strong>"원인 + 권장 조치"</strong>로 격상 — 운영자 컨텍스트 수집 단계 제거</li>
                     <li>LLM 자동 실행의 위험 — 인프라/PII/위변조의 <strong>다층 안전장치</strong> 필요</li>
                     <li>토이 프로젝트의 한계 — <strong>측정 가능한 관측 시스템</strong> 자체를 차별점으로</li>
@@ -1115,10 +1233,11 @@
                 <div class="box-title">핵심 기여 (개인)</div>
                 <ul>
                     <li>RAG 파이프라인 + <strong>LLM-as-a-Judge 3축 채점 + Pairwise</strong> 시스템</li>
-                    <li>Self-preference bias <strong>코드 레벨 차단</strong> + Judge 2종 교차</li>
+                    <li>Self-preference + Position bias <strong>코드 레벨 차단</strong> + Judge 2종 교차</li>
                     <li>Alertmanager → Redis dedup → Claude RCA → Slack <strong>HITL</strong> 파이프라인</li>
                     <li>Defense-in-Depth: <strong>인프라 보호 2중 차단 + HMAC-SHA256 + PII 마스킹</strong></li>
-                    <li>관측 스택 단독 구축 — Prometheus/Loki/Promtail/Grafana/Alertmanager + alert 룰 <strong>7종 `for:` 차등</strong></li>
+                    <li>관측 스택 주도 구축 — Prometheus/Loki/Promtail/Grafana/Alertmanager + alert 룰 <strong>7종 `for:` 차등</strong></li>
+                    <li>RAG 응답 <strong>pgvector 의미 캐시</strong> — 히트 시 latency <strong>74%↓</strong> · LLM 호출 스킵</li>
                 </ul>
             </div>
         </div>
@@ -1294,35 +1413,110 @@
                 <text x="865" y="280" text-anchor="middle" fill="#0e1410" font-family="Inter Tight" font-size="10" font-weight="600">GCP</text>
                 <text x="865" y="292" text-anchor="middle" fill="#0e1410" font-family="Inter Tight" font-size="10" font-weight="600">Registry</text>
 
-                <!-- ===== Two groups dashed boundary ===== -->
-                <!-- Assistant flow (green) -->
-                <path d="M 340 100 Q 230 100 220 250 Q 220 400 340 410 Q 460 420 470 580 Q 470 620 320 620 Q 220 620 220 400 Z"
-                      fill="none" stroke="#0d8754" stroke-width="2" stroke-dasharray="6,4" opacity="0.85"/>
-                <rect x="478" y="103" width="116" height="14" rx="3" fill="#0d8754"/>
-                <text x="536" y="113" text-anchor="middle" fill="#fff" font-family="JetBrains Mono" font-size="9" font-weight="600">AI Assistant 흐름</text>
-
-                <!-- Notification flow (orange) -->
-                <path d="M 416 100 Q 750 100 760 250 Q 770 400 660 410 Q 540 420 520 580 Q 520 630 660 630 Q 790 630 790 400 Z"
-                      fill="none" stroke="#b85c00" stroke-width="2" stroke-dasharray="6,4" opacity="0.85"/>
-                <rect x="640" y="103" width="116" height="14" rx="3" fill="#b85c00"/>
-                <text x="698" y="113" text-anchor="middle" fill="#fff" font-family="JetBrains Mono" font-size="9" font-weight="600">Notification 흐름</text>
-
-                <!-- ===== Legend ===== -->
+                <!-- ===== Legend — 담당 서비스 강조 + 외부 의존성 ===== -->
                 <g font-family="JetBrains Mono" font-size="9.5">
-                    <line x1="240" y1="660" x2="265" y2="660" stroke="#0d8754" stroke-width="2" stroke-dasharray="4,3"/>
-                    <text x="275" y="664" fill="#0e1410" font-weight="600">AI Assistant 흐름 (RAG · Eval · LLM)</text>
-                    <line x1="500" y1="660" x2="525" y2="660" stroke="#b85c00" stroke-width="2" stroke-dasharray="4,3"/>
-                    <text x="535" y="664" fill="#0e1410" font-weight="600">Notification 흐름 (메트릭 · 로그 · RCA)</text>
-                    <line x1="240" y1="678" x2="265" y2="678" stroke="#5a6b63" stroke-width="1" stroke-dasharray="3,2"/>
-                    <text x="275" y="682" fill="#5a6b63">외부 의존성 (Vercel · 증권 API · 네이버 뉴스 · Cloud SQL)</text>
+                    <rect x="240" y="653" width="13" height="13" rx="2" fill="#d97706" stroke="#0d8754" stroke-width="2.5"/>
+                    <text x="261" y="663" fill="#0e1410" font-weight="600">★ 담당 — AI Assistant</text>
+                    <rect x="440" y="653" width="13" height="13" rx="2" fill="#d97706" stroke="#b85c00" stroke-width="2.5"/>
+                    <text x="461" y="663" fill="#0e1410" font-weight="600">★ 담당 — Notification</text>
+                    <line x1="240" y1="680" x2="265" y2="680" stroke="#5a6b63" stroke-width="1" stroke-dasharray="3,2"/>
+                    <text x="275" y="684" fill="#5a6b63">외부 의존성 (Vercel · 증권 API · 네이버 뉴스 · Cloud SQL)</text>
                 </g>
             </svg>
         </div>
 
         <p style="font-size:13px; color:var(--muted); font-style:italic; margin-top:14px; text-align:center;">
-            두 흐름이 같은 인프라(APP·Redis·Monitoring·Infra·Kafka VM)를 공유하지만, 각자의 책임 영역을 점선으로 분리해 표현.
-            AI Assistant는 사용자 요청 처리, Notification은 운영 모니터링에 집중.
+            역할별 VM 토폴로지. 두 흐름의 단계별 상세는 아래 시퀀스 다이어그램 참고.
         </p>
+
+        <div class="flow-diagrams" style="margin-top:26px; display:flex; flex-direction:column; gap:18px;">
+            <!-- ① AI Assistant flow -->
+            <div style="background:var(--card); border:1px solid var(--rule); border-radius:10px; padding:14px 18px 8px;">
+                <svg viewBox="0 0 900 135" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AI Assistant 흐름 시퀀스 다이어그램">
+                    <defs>
+                        <marker id="fa-g" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#0d8754"/></marker>
+                    </defs>
+                    <text x="6" y="22" fill="#0e1410" font-family="Inter Tight" font-size="12.5" font-weight="700">① AI Assistant 흐름 <tspan fill="#5a6b63" font-weight="500">— 사용자 질의에서 RAG 응답까지</tspan></text>
+
+                    <!-- boxes -->
+                    <rect x="16"  y="46" width="112" height="40" rx="6" fill="#fff" stroke="#d6dfd9" stroke-width="1.3"/>
+                    <text x="72"  y="70" text-anchor="middle" fill="#0e1410" font-family="Inter Tight" font-size="11" font-weight="600">사용자</text>
+
+                    <rect x="156" y="46" width="112" height="40" rx="6" fill="#fff" stroke="#d6dfd9" stroke-width="1.3"/>
+                    <text x="212" y="70" text-anchor="middle" fill="#0e1410" font-family="Inter Tight" font-size="11" font-weight="600">Gateway</text>
+
+                    <rect x="296" y="46" width="112" height="40" rx="6" fill="#fff" stroke="#0d8754" stroke-width="2.2"/>
+                    <text x="352" y="65" text-anchor="middle" fill="#0e1410" font-family="Inter Tight" font-size="10.5" font-weight="700">Assistant</text>
+                    <text x="352" y="79" text-anchor="middle" fill="#0d8754" font-family="JetBrains Mono" font-size="8" font-weight="600">★ 담당</text>
+
+                    <rect x="436" y="46" width="112" height="40" rx="6" fill="#fff" stroke="#d6dfd9" stroke-width="1.3"/>
+                    <text x="492" y="65" text-anchor="middle" fill="#0e1410" font-family="Inter Tight" font-size="10.5" font-weight="600">pgvector</text>
+                    <text x="492" y="79" text-anchor="middle" fill="#5a6b63" font-family="JetBrains Mono" font-size="8.5">의미 캐시</text>
+
+                    <rect x="576" y="46" width="112" height="40" rx="6" fill="#fff" stroke="#d6dfd9" stroke-width="1.3"/>
+                    <text x="632" y="70" text-anchor="middle" fill="#0e1410" font-family="Inter Tight" font-size="11" font-weight="600">LLM</text>
+
+                    <rect x="716" y="46" width="112" height="40" rx="6" fill="#fff" stroke="#d6dfd9" stroke-width="1.3"/>
+                    <text x="772" y="65" text-anchor="middle" fill="#0e1410" font-family="Inter Tight" font-size="10.5" font-weight="600">Eval</text>
+                    <text x="772" y="79" text-anchor="middle" fill="#0e1410" font-family="Inter Tight" font-size="10.5" font-weight="600">Judge</text>
+
+                    <!-- forward arrows -->
+                    <line x1="128" y1="66" x2="154" y2="66" stroke="#0d8754" stroke-width="1.6" marker-end="url(#fa-g)"/>
+                    <line x1="268" y1="66" x2="294" y2="66" stroke="#0d8754" stroke-width="1.6" marker-end="url(#fa-g)"/>
+                    <line x1="408" y1="66" x2="434" y2="66" stroke="#0d8754" stroke-width="1.6" marker-end="url(#fa-g)"/>
+                    <line x1="548" y1="66" x2="574" y2="66" stroke="#0d8754" stroke-width="1.6" marker-end="url(#fa-g)"/>
+                    <text x="561" y="60" text-anchor="middle" fill="#5a6b63" font-family="JetBrains Mono" font-size="8">miss</text>
+                    <line x1="688" y1="66" x2="714" y2="66" stroke="#0d8754" stroke-width="1.6" marker-end="url(#fa-g)"/>
+
+                    <!-- cache-hit return path -->
+                    <path d="M 492 86 L 492 104 L 72 104 L 72 88" fill="none" stroke="#0d8754" stroke-width="1.5" stroke-dasharray="5,4" marker-end="url(#fa-g)"/>
+                    <text x="282" y="121" text-anchor="middle" fill="#0d8754" font-family="JetBrains Mono" font-size="9.5" font-weight="600">cache hit → 즉시 응답 · LLM 호출 스킵</text>
+                </svg>
+            </div>
+
+            <!-- ② Notification flow -->
+            <div style="background:var(--card); border:1px solid var(--rule); border-radius:10px; padding:14px 18px 8px;">
+                <svg viewBox="0 0 900 118" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Notification 흐름 시퀀스 다이어그램">
+                    <defs>
+                        <marker id="fa-o" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#b85c00"/></marker>
+                    </defs>
+                    <text x="6" y="22" fill="#0e1410" font-family="Inter Tight" font-size="12.5" font-weight="700">② Notification 흐름 <tspan fill="#5a6b63" font-weight="500">— 이상 탐지에서 Slack 승인까지</tspan></text>
+
+                    <rect x="16"  y="46" width="112" height="40" rx="6" fill="#fff" stroke="#d6dfd9" stroke-width="1.3"/>
+                    <text x="72"  y="70" text-anchor="middle" fill="#0e1410" font-family="Inter Tight" font-size="10" font-weight="600">Prometheus</text>
+
+                    <rect x="156" y="46" width="112" height="40" rx="6" fill="#fff" stroke="#d6dfd9" stroke-width="1.3"/>
+                    <text x="212" y="65" text-anchor="middle" fill="#0e1410" font-family="Inter Tight" font-size="10" font-weight="600">Alertmanager</text>
+                    <text x="212" y="79" text-anchor="middle" fill="#5a6b63" font-family="JetBrains Mono" font-size="8">match_re 라우팅</text>
+
+                    <rect x="296" y="46" width="112" height="40" rx="6" fill="#fff" stroke="#b85c00" stroke-width="2.2"/>
+                    <text x="352" y="65" text-anchor="middle" fill="#0e1410" font-family="Inter Tight" font-size="10" font-weight="700">notification-svc</text>
+                    <text x="352" y="79" text-anchor="middle" fill="#b85c00" font-family="JetBrains Mono" font-size="8" font-weight="600">★ 담당</text>
+
+                    <rect x="436" y="46" width="112" height="40" rx="6" fill="#fff" stroke="#d6dfd9" stroke-width="1.3"/>
+                    <text x="492" y="65" text-anchor="middle" fill="#0e1410" font-family="Inter Tight" font-size="10.5" font-weight="600">Redis</text>
+                    <text x="492" y="79" text-anchor="middle" fill="#5a6b63" font-family="JetBrains Mono" font-size="8.5">dedup</text>
+
+                    <rect x="576" y="46" width="112" height="40" rx="6" fill="#fff" stroke="#d6dfd9" stroke-width="1.3"/>
+                    <text x="632" y="65" text-anchor="middle" fill="#0e1410" font-family="Inter Tight" font-size="10.5" font-weight="600">Claude</text>
+                    <text x="632" y="79" text-anchor="middle" fill="#5a6b63" font-family="JetBrains Mono" font-size="8.5">RCA</text>
+
+                    <rect x="716" y="46" width="112" height="40" rx="6" fill="#fff" stroke="#d6dfd9" stroke-width="1.3"/>
+                    <text x="772" y="65" text-anchor="middle" fill="#0e1410" font-family="Inter Tight" font-size="10.5" font-weight="600">Slack</text>
+                    <text x="772" y="79" text-anchor="middle" fill="#5a6b63" font-family="JetBrains Mono" font-size="8.5">HITL 승인</text>
+
+                    <line x1="128" y1="66" x2="154" y2="66" stroke="#b85c00" stroke-width="1.6" marker-end="url(#fa-o)"/>
+                    <line x1="268" y1="66" x2="294" y2="66" stroke="#b85c00" stroke-width="1.6" marker-end="url(#fa-o)"/>
+                    <line x1="408" y1="66" x2="434" y2="66" stroke="#b85c00" stroke-width="1.6" marker-end="url(#fa-o)"/>
+                    <line x1="548" y1="66" x2="574" y2="66" stroke="#b85c00" stroke-width="1.6" marker-end="url(#fa-o)"/>
+                    <line x1="688" y1="66" x2="714" y2="66" stroke="#b85c00" stroke-width="1.6" marker-end="url(#fa-o)"/>
+
+                    <text x="492" y="102" text-anchor="middle" fill="#5a6b63" font-family="JetBrains Mono" font-size="8">중복 알림 병합</text>
+                    <text x="632" y="102" text-anchor="middle" fill="#5a6b63" font-family="JetBrains Mono" font-size="8">원인+조치 생성</text>
+                    <text x="772" y="102" text-anchor="middle" fill="#5a6b63" font-family="JetBrains Mono" font-size="8">운영자 승인 게이트</text>
+                </svg>
+            </div>
+        </div>
 
         <h3 style="margin-top:32px; margin-bottom:14px;">설계 의사결정과 근거</h3>
         <table>
@@ -1353,7 +1547,7 @@
             <tr>
                 <td>Human-in-the-Loop</td>
                 <td>LLM 전자동 실행</td>
-                <td>운영 컨테이너를 건드림 → <strong>AI는 추천까지, 실행은 사람 클릭</strong>. 자동화 효율과 인간 판단의 안정성의 균형.</td>
+                <td>운영 컨테이너를 건드림 → <strong>AI는 추천까지, 실행은 사람 클릭</strong>. 자동화 효율과 인간 판단 안정성 사이의 균형.</td>
             </tr>
             <tr>
                 <td>Reconciler(@Scheduled)</td>
@@ -1380,7 +1574,13 @@
             </div>
             <div class="contrib-body">
                 <p><strong>P</strong> · 대다수 RAG 프로젝트는 답변 품질을 "느낌"으로 판단하고 모델 교체를 "감"으로 결정 → 품질 회귀(regression) 위험을 막을 정량 체계 필요. 특히 LLM 평가의 가장 알려진 함정 <strong>self-preference bias</strong>(LLM이 자기 출력에 더 후한 경향, 연구로 보고됨)가 차단되지 않으면 평가 결과 자체가 신뢰 불가.</p>
-                <p><strong>A</strong> · pgvector 의미검색(topK×3 → 유사도 0.3·score-gap 0.8 컷오프 → 최종 topK=5) + <strong>3축 채점</strong>(Relevance/Faithfulness/ContextPrecision) + <strong>Pairwise A/B 위치 교차</strong> + <strong>Self-preference bias 코드 레벨 차단</strong>(Judge==생성모델이면 skip, temperature 0) + <strong>Judge 2종 교차 검증</strong>(claude-sonnet-4-6 + gpt-4o).</p>
+                <p><strong>A</strong> · <strong>검색 → 채점 → 비교</strong> 3단계로 정량 평가 파이프라인 구성. self-preference bias는 <strong>코드 레벨에서 원천 차단</strong> + Judge 2종 교차 검증으로 다중 방어.</p>
+                <ul class="approach-points">
+                    <li><strong>검색</strong> — pgvector 의미검색(topK×3 후 유사도 0.3·score-gap 0.8 컷오프 → 최종 topK=5)</li>
+                    <li><strong>채점</strong> — Relevance / Faithfulness / ContextPrecision <strong>3축 점수화</strong></li>
+                    <li><strong>비교</strong> — Pairwise A/B 위치 교차(앞쪽 편향 회피)</li>
+                    <li><strong>bias 방어</strong> — Judge==생성모델이면 채점 skip · Judge temperature 0 · Judge 2종(claude-sonnet-4-6 + gpt-4o) 교차 검증</li>
+                </ul>
                 <p><strong>R</strong> · 점수·승률 기반으로 <strong>gpt-4o-mini → claude-haiku 교체</strong>. <strong>OpenAI 자사 gpt-4o조차 gpt-4o-mini를 낮게 평가</strong> → 계열 편향 데이터로 반박.</p>
             </div>
         </div>
@@ -1441,7 +1641,8 @@
                 <div class="screenshot-tag">RAG · 출처 표시</div>
             </div>
             <div class="screenshot-img-wrap">
-                <img src="images/chatbot-ui.png" alt="AntCamp AI 챗봇 — 질문, 응답, 출처 가이드 표시, 상세 페이지">
+                <img src="images/chatbot-ui-composed.png" alt="AntCamp AI 챗봇 — 질문, 응답, 출처 가이드 표시, 상세 페이지" data-zoomable data-no-lightbox-zoom>
+                <span class="screenshot-zoom-hint">CLICK TO ZOOM</span>
             </div>
             <div class="screenshot-caption">
                 <strong>위 정량 평가 시스템(LLM-as-a-Judge · Pairwise)의 평가 대상</strong>이 된 사용자 챗봇 화면.
@@ -1467,7 +1668,13 @@
             </div>
             <div class="contrib-body">
                 <p><strong>P</strong> · Prometheus → Slack 단순 알림은 "임계값 초과" 사실만 전달 → 운영자가 Grafana·터미널을 왕복하며 원인 추적에 시간 소요(MTTR의 대부분). 동시에 LLM 자동 실행은 운영 컨테이너를 건드리므로 위험.</p>
-                <p><strong>A</strong> · Alertmanager webhook → Redis fingerprint <strong>dedup</strong>(SET NX, TTL 1h) → Prometheus(CPU/Heap/에러수/응답시간) + Loki(최근 10분 에러 로그) <strong>자동 수집</strong> → Claude(haiku) RCA → Slack Block Kit <strong>분석 + 복구 버튼 4종</strong>(restart/rollback/cache-clear/false-alarm). <strong>AI는 추천까지, 실행은 사람 클릭.</strong></p>
+                <p><strong>A</strong> · Alertmanager webhook부터 Slack 메시지까지의 파이프라인을 <strong>dedup → 컨텍스트 수집 → LLM 분석 → HITL 액션</strong> 4단계로 구성. <strong>AI는 추천까지, 실행은 사람 클릭</strong>이라는 안전선 확보.</p>
+                <ul class="approach-points">
+                    <li><strong>dedup</strong> — Redis fingerprint(<code>SET NX</code>, TTL 1h)로 중복 알림 차단</li>
+                    <li><strong>컨텍스트 수집</strong> — Prometheus(CPU/Heap/에러수/응답시간) + Loki(최근 10분 에러 로그) 자동 fetch</li>
+                    <li><strong>LLM 분석</strong> — Claude(haiku)가 메트릭·로그 기반 RCA(원인 분석 + 권장 조치) 생성</li>
+                    <li><strong>HITL 액션</strong> — Slack Block Kit으로 분석 + <strong>복구 버튼 4종</strong>(restart / rollback / cache-clear / false-alarm) 동시 노출</li>
+                </ul>
                 <p><strong>R</strong> · 알림 수신 후 수 초 내 "근거 메트릭/로그 + 권장 조치" 자동 게시. <strong>AI를 외부 API가 아닌 운영 모니터링 시스템 그 자체로 녹임.</strong></p>
                 <pre style="margin-top:14px;"><span class="com">// Slack 3초 응답 제약 → @Async ACK 후 메시지 갱신</span>
 <span class="kw">@Async</span>(<span class="str">"slackActionExecutor"</span>)
@@ -1486,11 +1693,11 @@
                 <div class="screenshot-tag">HITL · 실제 운영</div>
             </div>
             <div class="screenshot-img-wrap">
-                <img src="images/slack-hitl.png" alt="Slack #grafana 채널의 알림 — AI 장애 분석, 원인 분석, 복구 버튼 4종, 스레드 갱신">
+                <img src="images/slack-hitl-composed.png" alt="Slack #grafana 채널의 알림 — AI 장애 분석(400/401 시나리오), 복구 버튼 4종, 스레드 처리중→완료 갱신" data-zoomable data-no-lightbox-zoom>
+                <span class="screenshot-zoom-hint">CLICK TO ZOOM</span>
             </div>
             <div class="screenshot-caption">
-                <strong>실제 Slack 채널에 자동 게시된 LLM 기반 장애 분석 메시지</strong>와 복구 버튼 클릭 후 스레드 알림까지의 실제 동작 흐름.
-                단순 "임계값 초과" 알림이 아닌, <strong>AI가 메트릭·로그를 자동 수집해 원인을 분석하고 권장 조치까지 제시</strong>합니다.
+                <strong>실제 Slack 채널에 자동 게시된 LLM 기반 장애 분석 메시지</strong>와 복구 버튼 클릭 후 스레드 갱신까지의 동작 흐름.
                 <ul class="screenshot-points">
                     <li><strong>AI 장애 분석 리포트</strong> — antcamp-user HTTP 400 에러 발생 시점, 심각도(warning), 에러율(7건/5분)을 자동 포착</li>
                     <li><strong>원인 분석</strong> — 1순위 클라이언트 입력값 검증, 2순위 일시적 클라이언트 트래픽, 3순위 서버 상태 등 <strong>우선순위가 매겨진 분석</strong> 제공</li>
@@ -1546,12 +1753,19 @@
         <div class="contrib-card">
             <div class="contrib-headline">
                 <div class="contrib-num">📊 CONTRIBUTION #4</div>
-                <div class="contrib-title">측정 불가능한 운영을 측정 가능한 운영으로 — 관측 스택 단독 구축</div>
+                <div class="contrib-title">측정 불가능한 운영을 측정 가능한 운영으로 — 관측 스택 주도 구축</div>
                 <div class="contrib-impact">MTTD &lt; 1분 · alert 룰 7종 차등 설계 · 반복 알림 LLM 비용 0</div>
             </div>
             <div class="contrib-body">
-                <p>토이/부트캠프 프로젝트는 <strong>측정 시스템 부재로 정량 수치를 못 남기는</strong> 경우가 많다. "측정 가능한 시스템을 처음부터 만들었다"는 것 자체가 차별점.</p>
-                <p>Prometheus(15s scrape · 10 job) + Loki + Promtail(<code>docker_sd_configs</code> 컨테이너 자동발견) + Grafana(provisioning IaC) + Alertmanager 단독 구축. <strong>alert 룰 7종 `for:` 차등 설계</strong> — "터지면 큰가(심각도) × 자주 출렁이나(노이즈)"를 함께 반영.</p>
+                <p><strong>P</strong> · 토이/부트캠프 프로젝트는 <strong>측정 시스템 부재로 정량 수치를 못 남기는</strong> 경우가 많음. <em>"측정 가능한 시스템을 처음부터 만들었다"</em>는 것 자체가 차별점이며, alert 룰 설계 역시 노이즈와 심각도를 함께 고려해야 함.</p>
+                <p><strong>A</strong> · 관측 스택을 주도 구축하고 <strong>alert 룰 7종을 `for:` 지속조건으로 차등 설계</strong> — "터지면 큰가(심각도) × 자주 출렁이나(노이즈)"를 함께 반영.</p>
+                <ul class="approach-points">
+                    <li><strong>수집</strong> — Prometheus(15s scrape · 10 job) + Promtail(<code>docker_sd_configs</code> 컨테이너 자동 발견)</li>
+                    <li><strong>저장</strong> — Loki(로그) · Prometheus TSDB(메트릭)</li>
+                    <li><strong>시각화</strong> — Grafana provisioning IaC(대시보드 코드 관리)</li>
+                    <li><strong>알림</strong> — Alertmanager + 룰 7종 차등 설계(아래 표)</li>
+                </ul>
+                <p><strong>R</strong> · MTTD &lt; 1분, 반복 알림 LLM 비용 0(dedup). SPOF 해소 fallback까지 완비.</p>
             </div>
         </div>
 
@@ -1568,7 +1782,7 @@
             </tbody>
         </table>
         <p style="font-size:13px;color:var(--accent);margin-top:14px;">
-            <strong>★ SPOF 해소</strong> — notification-service 자기 장애 시 Alertmanager <code style="background:var(--code-bg);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11.5px;">match_re</code> fallback으로 Slack 직통(LLM 분석 없는 단순 텍스트로 알림 보존).
+            <strong>★ SPOF 해소</strong> — notification-service 자기 장애 시 Alertmanager <code style="background:var(--code-bg);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11.5px;">match_re</code>(라벨 정규식 매칭으로 알림 라우트 분기) fallback으로 Slack 직통(LLM 분석 없는 단순 텍스트로 알림 보존).
         </p>
 
         <!-- 실제 Grafana 대시보드 + 로그 뷰 -->
@@ -1578,7 +1792,8 @@
                 <div class="screenshot-tag">관측 스택 · 실측</div>
             </div>
             <div class="screenshot-img-wrap">
-                <img src="images/monitoring-dashboard.png" alt="Service Dashboard + Logs Dashboard — Prometheus 메트릭과 Loki 로그를 Grafana에서 통합 시각화">
+                <img src="images/monitoring-dashboard.png" alt="Service Dashboard + Logs Dashboard — Prometheus 메트릭과 Loki 로그를 Grafana에서 통합 시각화" data-zoomable>
+                <span class="screenshot-zoom-hint">CLICK TO ZOOM</span>
             </div>
             <div class="screenshot-caption">
                 <strong>"측정 가능한 시스템을 만들었다"의 직접적 증거</strong>. 좌측은 <strong>서비스 대시보드</strong>(Prometheus 메트릭), 우측은 <strong>로그 대시보드</strong>(Loki 집계)로
@@ -1587,16 +1802,59 @@
                     <li><strong>핵심 게이지</strong>(좌상단): CPU 사용률 0.0838% · JVM Heap 9.54% — 실시간 상태를 게이지로 즉시 가독</li>
                     <li><strong>시계열 패널 다수</strong>: CPU/메모리/HTTP 응답 시간/요청 수/스레드/GC/JVM CPU 사용률 등 <strong>서비스 헬스의 다축 추적</strong></li>
                     <li><strong>로그 통합 뷰</strong>(우측): notification-service의 INFO/WARN 로그 실시간 스트림. <strong>로그 라벨링</strong>으로 컨테이너별·서비스별 필터링 가능</li>
-                    <li><strong>Promtail Docker SD</strong>로 컨테이너 자동 발견 → 새 서비스 띄우면 자동으로 로그 수집 대상에 편입</li>
-                    <li><strong>provisioning IaC</strong>로 대시보드 정의 자체를 코드 관리 → 재현 가능</li>
                 </ul>
             </div>
         </div>
     </section>
 
-    <!-- SECTION 10 — TROUBLESHOOTING -->
+    <!-- SECTION 10 — KEY CONTRIBUTION ⑤ — RAG 응답 의미 캐시 -->
     <section class="section">
-        <div class="section-tag">10 · TROUBLESHOOTING</div>
+        <div class="section-tag">10 · KEY CONTRIBUTION ⑤</div>
+        <div class="contrib-card">
+            <div class="contrib-headline">
+                <div class="contrib-num">⚡ CONTRIBUTION #5</div>
+                <div class="contrib-title">반복 질문엔 LLM을 다시 부르지 않는다 — pgvector 의미 캐시로 응답 latency 단축</div>
+                <div class="contrib-impact">캐시 히트 시 응답 0.95s — 미스(긴 답변) 대비 74%↓ · 3.9배 · LLM 호출 자체 스킵으로 지연·비용 동시 절감</div>
+            </div>
+            <div class="contrib-body">
+                <p><strong>P</strong> · RAG 답변은 LLM 생성에 수 초가 걸리고, FAQ·약관·매매규칙처럼 <strong>동일·유사 질문이 반복</strong>되는 도메인에선 매번 풀 RAG를 도는 게 지연·비용 낭비.</p>
+                <p><strong>A</strong> · 첫 턴 질문을 임베딩해 <strong>pgvector 의미 캐시</strong>(<code>p_response_cache</code>)에서 <code>1 - cosine ≥ threshold</code> &amp; 미만료면 저장된 답변을 즉시 반환, 미스 시 풀 RAG 후 캐시에 적재(TTL은 config 값).</p>
+                <ul class="approach-points">
+                    <li><strong>의미 캐시</strong> — 질문 임베딩 → 코사인 유사도 임계값 이상이면 히트 → <strong>LLM 호출·벡터검색 생략</strong></li>
+                    <li><strong>적용 범위</strong> — 첫 턴(히스토리 빈 상태)에서만 조회/저장 → 단발성 질문 트래픽에 최적</li>
+                    <li><strong>측정으로 검증</strong> — hit율 · 클라이언트 wall-time · 서버 LLM <code>latencyMs</code>를 워크로드별로 분리 측정</li>
+                </ul>
+                <p><strong>R</strong> · 캐시 히트 시 <strong>0.95s</strong>로 미스(긴 답변 3.68s) 대비 <strong>2.73s↓ (74%, 3.9배)</strong>, LLM 생성(2.41s) 자체를 제거.</p>
+            </div>
+        </div>
+
+        <div class="eval-section">
+            <h3>측정 결과 — hit율 · latency</h3>
+            <table>
+                <thead>
+                <tr><th>구분</th><th class="num">클라이언트 wall-time (중앙값)</th><th class="num">서버 LLM latencyMs</th></tr>
+                </thead>
+                <tbody>
+                <tr><td>미스 — 긴 답변(100–185자)</td><td class="num">3.68s</td><td class="num">2.41s</td></tr>
+                <tr><td>미스 — 짧은 거절(82자)</td><td class="num">2.82s</td><td class="num">1.34s</td></tr>
+                <tr><td><strong>캐시 히트</strong></td><td class="win">0.95s</td><td class="win">LLM 호출 스킵</td></tr>
+                </tbody>
+            </table>
+            <table style="margin-top:14px;">
+                <thead>
+                <tr><th>워크로드</th><th class="num">hits/n</th><th class="num">hit율</th></tr>
+                </thead>
+                <tbody>
+                <tr><td>exact-repeat (동일 질문 재요청)</td><td class="num">10/10</td><td class="win">100%</td></tr>
+                <tr><td>paraphrase (동일 의도, 다른 표현)</td><td class="num">0/10</td><td class="lose">0%</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- SECTION 11 — TROUBLESHOOTING -->
+    <section class="section">
+        <div class="section-tag">11 · TROUBLESHOOTING</div>
         <h2>트러블슈팅 — 원인을 윗단까지 파고든 사례</h2>
         <div class="section-rule"></div>
         <p class="lede">
@@ -1611,8 +1869,11 @@
             <div class="trouble-body">
                 <div class="trouble-cell">
                     <h4>현상 · 가설</h4>
-                    <p>RAG 응답 생성은 평균 수 초 소요. 유저메시지 저장과 봇메시지 저장을 단일 <code>@Transactional</code>로 묶으면 <strong>LLM 응답 대기 내내 HikariCP 커넥션 점유</strong>.</p>
-                    <p style="margin-top:8px;">동시 요청 시 풀 고갈 → 그 위 <strong>톰캣 워커 스레드까지 블로킹</strong> → 전체 타임아웃.</p>
+                    <ul>
+                        <li>RAG 응답 생성은 평균 수 초 소요</li>
+                        <li>유저메시지·봇메시지 저장을 단일 <code>@Transactional</code>로 묶으면 <strong>LLM 응답 대기 내내 HikariCP 커넥션 점유</strong></li>
+                        <li>동시 요청 시 풀 고갈 → 톰캣 워커 스레드까지 블로킹 → 전체 타임아웃</li>
+                    </ul>
                 </div>
                 <div class="trouble-cell">
                     <h4>원인 분석 (Why → Why)</h4>
@@ -1625,9 +1886,11 @@
                 </div>
                 <div class="trouble-cell">
                     <h4>해결 & 검증</h4>
-                    <p style="margin-bottom:8px;"><strong>3구간 분리</strong>: 유저메시지 저장(T1) → LLM 호출(<strong>트랜잭션 없음</strong>) → 봇메시지 + COMPLETED(T2).</p>
-                    <p style="font-size:11.5px;color:var(--accent);font-weight:500;">→ omin 프로젝트 트랜잭션 경계 분리 교훈을 LLM 호출에 그대로 재사용</p>
-                    <p style="margin-top:10px;font-size:11.5px;color:var(--muted);font-style:italic;">측정 후속 계획: Micrometer <code>hikari_connections_active</code> + <code>llm_call_duration</code> 게이지로 점유 시간 정량화 예정.</p>
+                    <ul>
+                        <li><strong>3구간 분리</strong>: 유저메시지 저장(T1) → LLM 호출(<strong>트랜잭션 없음</strong>) → 봇메시지 + COMPLETED(T2)</li>
+                        <li>omin 프로젝트 트랜잭션 경계 분리 교훈을 LLM 호출에 그대로 재사용</li>
+                        <li><em>측정 후속 계획: Micrometer <code>hikari_connections_active</code> + <code>llm_call_duration</code> 게이지로 점유 시간 정량화 예정</em></li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -1640,8 +1903,11 @@
             <div class="trouble-body">
                 <div class="trouble-cell">
                     <h4>현상 · 가설</h4>
-                    <p>문서 인제스트는 <strong>청킹 → 임베딩 → 저장</strong> 3단계. 임베딩 단계 실패 시 청크는 DB에 남고 벡터는 비어 orphan 발생.</p>
-                    <p style="margin-top:8px;">재인제스트 시 단순 INSERT는 중복 벡터 생성.</p>
+                    <ul>
+                        <li>문서 인제스트는 <strong>청킹 → 임베딩 → 저장</strong> 3단계</li>
+                        <li>임베딩 단계 실패 시 청크는 DB에 남고 벡터는 비어 orphan 발생</li>
+                        <li>재인제스트 시 단순 INSERT는 중복 벡터 생성</li>
+                    </ul>
                 </div>
                 <div class="trouble-cell">
                     <h4>원인 분석</h4>
@@ -1653,7 +1919,11 @@
                 </div>
                 <div class="trouble-cell">
                     <h4>해결 & 검증</h4>
-                    <p style="margin-bottom:8px;">재인제스트 전 <strong>기존 벡터 선삭제</strong>(멱등성). <code>DocumentReconciler</code> 60s 주기로 <strong>10분 PROCESSING 감지 · 최대 3회 재시도 · PERMANENT 격리</strong>.</p>
+                    <ul>
+                        <li>재인제스트 전 <strong>기존 벡터 선삭제</strong>(멱등성)</li>
+                        <li><code>DocumentReconciler</code> 60s 주기로 10분 PROCESSING 감지</li>
+                        <li>최대 3회 재시도 · PERMANENT 격리</li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -1666,7 +1936,11 @@
             <div class="trouble-body">
                 <div class="trouble-cell">
                     <h4>현상 · 가설</h4>
-                    <p>한 채팅 세션에서 사용자가 빠르게 두 번 전송하면 "최대 seq 조회 → +1 저장" 사이 <strong>Read-Modify-Write race</strong> → 동일 seq 중복.</p>
+                    <ul>
+                        <li>한 채팅 세션에서 빠르게 두 번 전송</li>
+                        <li>"최대 seq 조회 → +1 저장" 사이 <strong>Read-Modify-Write race</strong></li>
+                        <li>동일 seq 중복 발급 가능</li>
+                    </ul>
                 </div>
                 <div class="trouble-cell">
                     <h4>원인 분석 — 대안 검토</h4>
@@ -1678,16 +1952,19 @@
                 </div>
                 <div class="trouble-cell">
                     <h4>해결 & 검증</h4>
-                    <p><code>findMaxSeqForUpdate</code>에 <code>@Lock(PESSIMISTIC_WRITE)</code>로 채번 구간 보호. 재시도 로직 없이 <strong>DB 레벨 원천 차단</strong>.</p>
-                    <p style="margin-top:10px;font-size:11.5px;color:var(--accent);font-weight:500;">→ 경력 "비동기 다운로드 race condition" → 스터디 "분산 락 발표" → 본 프로젝트 적용. 3단계 학습 곡선의 매듭.</p>
+                    <ul>
+                        <li><code>findMaxSeqForUpdate</code>에 <code>@Lock(PESSIMISTIC_WRITE)</code>로 채번 구간 보호</li>
+                        <li>재시도 로직 없이 <strong>DB 레벨 원천 차단</strong></li>
+                        <li>경력 race condition → 스터디 락 발표 → 본 프로젝트 적용. <strong>3단계 학습 곡선의 매듭</strong></li>
+                    </ul>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- SECTION 11 — STACK -->
+    <!-- SECTION 12 — STACK -->
     <section class="section">
-        <div class="section-tag">11 · STACK</div>
+        <div class="section-tag">12 · STACK</div>
         <h2>기술 스택</h2>
         <div class="section-rule"></div>
         <table>
@@ -1704,14 +1981,13 @@
         </table>
     </section>
 
-    <!-- SECTION 12 — RETRO — 3분할 구조 -->
+    <!-- SECTION 13 — RETRO — 3분할 구조 -->
     <section class="section">
-        <div class="section-tag">12 · RETROSPECTIVE</div>
+        <div class="section-tag">13 · RETROSPECTIVE</div>
         <h2>회고 — 의도적 선택과 진짜 아쉬운 점을 구분하다</h2>
         <div class="section-rule"></div>
         <p class="lede">
-            "아쉬운 점"을 한 덩어리로 두면 의도적 트레이드오프와 진짜 실수가 섞여 약점처럼 보입니다.
-            <strong>여러 옵션을 따져본 결과 현 규모에 적절했던 선택</strong>과 <strong>더 챙겼어야 하는 부분</strong>을 명확히 구분합니다.
+            프로젝트를 마치며 세 갈래로 정리. <strong>무엇을 잘했고</strong>, <strong>어떤 부분이 의도적 선택이었으며</strong>, <strong>어디가 진짜 아쉬웠는지</strong>.
         </p>
 
         <!-- ✅ 잘한 것 -->
@@ -1723,7 +1999,7 @@
             <div class="retro-good">
                 LLM을 "붙이기"가 아니라 <strong>검증 가능한 시스템</strong>(Eval/Pairwise · bias 차단)으로,
                 운영을 <strong>안전하게</strong>(Human-in-the-Loop · 다층 방어 · 자가복구) 만든 것.
-                그리고 토이 프로젝트의 한계인 "측정 수치 부재"를 <strong>관측 스택 단독 구축</strong>으로 정면 돌파.
+                그리고 토이 프로젝트의 한계인 "측정 수치 부재"를 <strong>관측 스택 주도 구축</strong>으로 정면 돌파.
             </div>
         </div>
 
@@ -1775,26 +2051,123 @@
             </div>
             <div class="retro-real">
                 <div class="item">
-                    <div class="item-title">ChatReconciler max-retry 상한 부재</div>
+                    <div class="item-title">의미 캐시 임계값이 엄격 — 유효 hit율 한계</div>
                     <div class="item-body">
-                        DocumentReconciler엔 적용했지만 ChatReconciler엔 누락 → <strong>무한 재시도 위험</strong>. 두 Reconciler 간 정책 일관성을 처음부터 챙겼어야 함.
+                        측정해 보니 코사인 ≈0.95 임계값이 사실상 <strong>동일 문구만 통과</strong>시켜, 같은 의도라도 표현이 다른 질문은 전부 미스(paraphrase hit율 0%). 캐시 히트도 ~0.95s 소요(질문 임베딩 왕복 1회). 측정 자체도 단일 클라이언트·소표본 기준이라 동시성/부하 하 수치는 아님.
                     </div>
-                    <div class="item-future">동일 패턴엔 동일 안전장치 — 정책 일관성 체크리스트 도입</div>
-                </div>
-                <div class="item">
-                    <div class="item-title">응답 캐시 hit율 · latency 측정 미구현</div>
-                    <div class="item-body">
-                        "측정 가능한 시스템"을 자처했으면서 정작 <strong>RAG 캐시 메트릭은 빠뜨림</strong>. Micrometer 커스텀 메트릭(<code>cache_hit_total</code>, <code>llm_call_duration</code>)을 처음부터 노출했어야 함.
-                    </div>
-                    <div class="item-future">후속 측정으로 핵심 RAG 경로의 정량 근거 확보 예정</div>
+                    <div class="item-future">임계값 0.90~0.92 완화(미묘하게 다른 질문에 오반환 위험과 트레이드오프) · 정규화 질문 exact-match 단축 경로 · 임베딩 캐싱 검토</div>
                 </div>
             </div>
         </div>
     </section>
 
     <footer>
-        [이름] · 백엔드 개발자 — Portfolio v2026.05 · ants-camp
+        [김단비] · 백엔드 개발자 — Portfolio v2026.05 · ants-camp
     </footer>
 </div>
+
+<!-- Lightbox overlay -->
+<div class="lightbox-overlay" id="lightbox" role="dialog" aria-modal="true" aria-label="이미지 확대 보기">
+    <button class="lightbox-close" type="button" aria-label="닫기">ESC · 닫기</button>
+    <img src="" alt="">
+    <div class="lightbox-hint">클릭: 확대 / 축소 · 드래그: 이동 · 휠: 배율 · ESC: 닫기</div>
+</div>
+
+<script>
+    (function () {
+        var overlay = document.getElementById('lightbox');
+        if (!overlay) return;
+        var overlayImg = overlay.querySelector('img');
+        var closeBtn = overlay.querySelector('.lightbox-close');
+        var hint = overlay.querySelector('.lightbox-hint');
+        var HINT_ZOOM = '클릭: 확대 / 축소 · 드래그: 이동 · 휠: 배율 · ESC: 닫기';
+        var HINT_NOZOOM = '드래그: 이동 · 휠: 배율 · ESC: 닫기';
+
+        var ZOOM = 2.5;                       // 클릭 확대 배율 (fit 대비)
+        var scale = 1, tx = 0, ty = 0;        // 현재 배율 / 이동량(px)
+        var dragging = false, moved = false, sx = 0, sy = 0, ox = 0, oy = 0;
+        var zoomDisabled = false;             // 라이트박스 내 클릭 확대 비활성 여부 (이미지별)
+
+        function apply() {
+            overlayImg.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + scale + ')';
+        }
+        function reset() {
+            scale = 1; tx = 0; ty = 0; moved = false;
+            overlayImg.classList.remove('zoomed');
+            overlayImg.style.transform = '';
+        }
+        function open(src, alt, noZoom) {
+            reset();
+            zoomDisabled = !!noZoom;
+            if (hint) hint.textContent = zoomDisabled ? HINT_NOZOOM : HINT_ZOOM;
+            overlayImg.src = src;
+            overlayImg.alt = alt || '';
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function close() {
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+            // src 비워서 메모리 해제 (큰 이미지일 경우)
+            setTimeout(function () { overlayImg.src = ''; reset(); }, 200);
+        }
+
+        document.querySelectorAll('img[data-zoomable]').forEach(function (img) {
+            img.addEventListener('click', function () {
+                open(img.currentSrc || img.src, img.alt, img.hasAttribute('data-no-lightbox-zoom'));
+            });
+        });
+
+        // 이미지 클릭 = 확대 ↔ 축소 토글 (드래그였으면 무시 / 일부 이미지는 비활성)
+        overlayImg.addEventListener('click', function (e) {
+            e.stopPropagation();
+            if (zoomDisabled) return;
+            if (moved) { moved = false; return; }
+            if (scale === 1) { scale = ZOOM; overlayImg.classList.add('zoomed'); apply(); }
+            else { reset(); }
+        });
+
+        // 드래그 팬 (확대 상태에서만)
+        overlayImg.addEventListener('pointerdown', function (e) {
+            if (scale === 1) return;
+            dragging = true; moved = false;
+            sx = e.clientX; sy = e.clientY; ox = tx; oy = ty;
+            overlay.classList.add('dragging');
+            try { overlayImg.setPointerCapture(e.pointerId); } catch (err) {}
+        });
+        overlayImg.addEventListener('pointermove', function (e) {
+            if (!dragging) return;
+            var dx = e.clientX - sx, dy = e.clientY - sy;
+            if (Math.abs(dx) > 3 || Math.abs(dy) > 3) moved = true;
+            tx = ox + dx; ty = oy + dy;
+            apply();
+        });
+        function endDrag(e) {
+            if (!dragging) return;
+            dragging = false;
+            overlay.classList.remove('dragging');
+            try { overlayImg.releasePointerCapture(e.pointerId); } catch (err) {}
+        }
+        overlayImg.addEventListener('pointerup', endDrag);
+        overlayImg.addEventListener('pointercancel', endDrag);
+
+        // 휠로 배율 조정
+        overlay.addEventListener('wheel', function (e) {
+            if (!overlay.classList.contains('active')) return;
+            e.preventDefault();
+            scale = Math.max(1, Math.min(5, scale + (e.deltaY < 0 ? 0.3 : -0.3)));
+            if (scale === 1) { reset(); }
+            else { overlayImg.classList.add('zoomed'); apply(); }
+        }, { passive: false });
+
+        // 배경 / 닫기 버튼 클릭 = 닫기
+        overlay.addEventListener('click', function (e) {
+            if (e.target === overlay || e.target === closeBtn) close();
+        });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && overlay.classList.contains('active')) close();
+        });
+    })();
+</script>
 </body>
 </html>

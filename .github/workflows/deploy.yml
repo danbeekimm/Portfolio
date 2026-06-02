@@ -20,6 +20,9 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            set -e
+            sudo git config --global --add safe.directory /var/www/my-static-site
             cd /var/www/my-static-site
-            sudo git pull origin main
+            sudo git fetch origin main
+            sudo git reset --hard origin/main
             sudo chown -R www-data:www-data /var/www/my-static-site

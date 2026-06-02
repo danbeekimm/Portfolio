@@ -1686,5 +1686,17 @@
     [김단비] · 백엔드 개발자 — Portfolio v2026.05 · 실무 경력
   </footer>
 </div>
+
+<script>
+  // 웹폰트 swap(FOUT)으로 콘텐츠가 reflow되면 초기 #해시 스크롤 위치가
+  // 어긋나 최상단으로 튀는 현상 보정 — 폰트/레이아웃 안정 후 재정렬
+  function reanchor() {
+    if (!location.hash) return;
+    var el = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    if (el) el.scrollIntoView({ behavior: 'auto' });  // CSS smooth 무시하고 즉시 정렬
+  }
+  window.addEventListener('load', reanchor);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(reanchor);
+</script>
 </body>
 </html>

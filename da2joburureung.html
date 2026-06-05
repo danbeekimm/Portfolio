@@ -51,6 +51,42 @@
     }
     .back-link:hover { color: var(--accent); }
 
+    /* 최상단 바 — back-link + GitHub 레포 홈 링크 */
+    .top-bar { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 32px; }
+    .top-bar .back-link { margin-bottom: 0; }
+    .repo-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600;
+      color: var(--ink-soft); text-decoration: none;
+      padding: 7px 16px; border: 1px solid var(--rule); border-radius: 20px;
+      background: var(--card); transition: all 0.2s;
+    }
+    .repo-link:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-faded); }
+    .repo-link svg { width: 15px; height: 15px; flex: none; }
+
+    /* 상세 코드 GitHub 링크 칩 */
+    .code-links {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+      margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--rule);
+    }
+    .code-links-label {
+      font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 600;
+      letter-spacing: 0.1em; color: var(--muted);
+    }
+    a.code-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500;
+      color: var(--accent); background: var(--accent-faded);
+      border: 1px solid var(--rule); border-radius: 13px;
+      padding: 3px 11px; text-decoration: none;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    a.code-link:hover { border-color: var(--accent); background: var(--accent-soft); }
+    a.code-link svg { width: 12px; height: 12px; flex: none; opacity: 0.75; }
+    a.code-link .hint { color: var(--muted); font-weight: 400; margin-left: 2px; }
+    .trouble-footer { padding: 12px 22px 14px; border-top: 1px solid var(--rule-soft); }
+    .trouble-footer .code-links { margin-top: 0; padding-top: 0; border-top: none; }
+
     .section-tag {
       font-family: 'JetBrains Mono', monospace;
       font-size: 11px;
@@ -860,6 +896,7 @@
       .wrap { padding: 48px 24px 80px; }
       h1 { font-size: 32px; }
       h2 { font-size: 24px; }
+      .top-bar { flex-direction: column; align-items: flex-start; gap: 10px; }
       .two-col, .kpi-strip, .decision-comp { grid-template-columns: 1fr; }
       .trouble-body { grid-template-columns: 1fr; }
       .trouble-cell { border-right: none; border-bottom: 1px solid var(--rule-soft); }
@@ -870,7 +907,10 @@
 <body>
 <div class="wrap">
 
-  <a class="back-link" href="index.html">← 포트폴리오 메인으로</a>
+  <div class="top-bar">
+    <a class="back-link" href="index.html">← 포트폴리오 메인으로</a>
+    <a class="repo-link" href="https://github.com/danbeekimm/da2joburureung" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>danbeekimm/da2joburureung</a>
+  </div>
 
   <!-- 01 — OVERVIEW -->
   <section class="section">
@@ -1282,6 +1322,13 @@
         <p><strong>P</strong> · 업체 삭제 시 주문·상품 등 타 서비스 통지가 필요한데, "DB 커밋 → Kafka 발행" 사이 발행 실패 시 <strong>이벤트 영구 유실</strong>(DB는 지워졌는데 남들은 모름), 발행 후 DB 롤백 시 <strong>유령 이벤트</strong>(다른 서비스는 삭제됐다고 알고 처리). 분산 트랜잭션(2PC)은 가용성을 해치고 MSA와 부적합.</p>
         <p><strong>A</strong> · 삭제 트랜잭션 내 <code>OutboxEvent</code>(PENDING) <strong>원자 저장</strong> → DB 커밋과 함께 커밋(또는 함께 롤백). <code>OutboxEventScheduler</code>가 <code>@Scheduled(fixedDelay=10000)</code>로 10초마다 PENDING을 Kafka로 발행→<code>PUBLISHED</code>. 실패 시 PENDING 유지 → 다음 주기 자동 재발행.</p>
         <p><strong>R</strong> · 분산 트랜잭션 없이 <strong>at-least-once 발행 + 결과적 일관성</strong> 보장. 단위 테스트로 단일 이벤트 실패가 나머지 발행을 막지 않음 검증.</p>
+        <div class="code-links">
+          <span class="code-links-label">CODE</span>
+          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/company-service/src/main/java/com/da2jobu/application/service/CompanyService.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>CompanyService.java<span class="hint">· deleteCompany 원자 저장</span></a>
+          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/company-service/src/main/java/com/da2jobu/infrastructure/messaging/outbox/OutboxEventScheduler.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>OutboxEventScheduler.java<span class="hint">· 10s 폴링 발행</span></a>
+          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/company-service/src/main/java/com/da2jobu/infrastructure/messaging/outbox/OutboxEvent.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>OutboxEvent.java<span class="hint">· 상태 모델</span></a>
+          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/company-service/src/test/java/com/da2jobu/infrastructure/messaging/outbox/OutboxEventSchedulerTest.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>OutboxEventSchedulerTest.java<span class="hint">· 단위 테스트</span></a>
+        </div>
       </div>
     </div>
 
@@ -1344,6 +1391,12 @@
         <p><strong>P</strong> · 외부 서비스 호출이 타임아웃까지 블로킹되면 <strong>대기 스레드 누적 → 내 서비스까지 연쇄로 죽음</strong>(cascading failure). 단순 동기 호출은 한 서비스 장애가 전체로 번지는 구조.</p>
         <p><strong>A</strong> · 통신 의도를 의도적으로 분리: <strong>"정합성 검증=동기(Feign)", "삭제 통지=비동기(Kafka)"</strong>. user/hub/order 호출은 <code>@CircuitBreaker</code> + <code>@Retry</code>로 감쌈. CB(window 10·실패율 50%·OPEN 10s·slow-call 3s·retry 3회/500ms)로 fallback 즉시 반환.</p>
         <p><strong>R</strong> · CB OPEN 시 즉시 fallback 반환 → 대기 스레드 누적·연쇄 장애 차단. CB 상태전이(OPEN/CLOSED/HALF_OPEN)·호출차단·slow-call 전체 로깅.</p>
+        <div class="code-links">
+          <span class="code-links-label">CODE</span>
+          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/company-service/src/main/java/com/da2jobu/infrastructure/client/HubClientImpl.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>HubClientImpl.java<span class="hint">· CB+fallback</span></a>
+          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/company-service/src/main/java/com/da2jobu/infrastructure/config/ResilienceConfig.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>ResilienceConfig.java<span class="hint">· 상태전이 로깅</span></a>
+          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/company-service/src/main/resources/application-docker.yml" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>application-docker.yml<span class="hint">· CB 설정값</span></a>
+        </div>
       </div>
     </div>
 
@@ -1395,6 +1448,13 @@
           <li><strong>가용성</strong> — 해가 없을 때(infeasible) 시간창 단계적 완화 + 스케줄러 레벨 3회 재시도(10초 간격)</li>
         </ul>
         <p><strong>R</strong> · 시간창을 솔버의 직접 제약으로 모델링해 <strong>SLA 보장 가능한 자동 배정 체계</strong> 확보. 해가 없을 때도 시간창 완화로 가용성 확보.</p>
+        <div class="code-links">
+          <span class="code-links-label">CODE</span>
+          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/delivery-service/src/main/java/com/da2jobu/deliveryservice/infrastructure/routing/OrToolsRouteOptimizationService.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>OrToolsRouteOptimizationService.java<span class="hint">· 솔버 구성</span></a>
+          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/delivery-service/src/main/java/com/da2jobu/deliveryservice/application/deliveryManager/service/CompanyDeliveryAssignmentService.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>CompanyDeliveryAssignmentService.java<span class="hint">· 시간창 완화</span></a>
+          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/delivery-service/src/main/java/com/da2jobu/deliveryservice/application/deliveryManager/scheduler/CompanyDeliveryAssignmentScheduler.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>CompanyDeliveryAssignmentScheduler.java<span class="hint">· 06:00 cron+재시도</span></a>
+          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/delivery-service/src/main/java/com/da2jobu/deliveryservice/application/deliveryManager/service/HubDeliveryAssignmentService.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>HubDeliveryAssignmentService.java<span class="hint">· 라운드로빈</span></a>
+        </div>
       </div>
     </div>
 
@@ -1501,6 +1561,10 @@ RoutingSearchParameters params = main.defaultRoutingSearchParameters()
         <p><strong>P</strong> · 배송담당자 등록 시 "최대 seq 조회 → +1 저장" 사이 동시 요청이 끼면 <strong>Read-Modify-Write race</strong> → 같은 seq가 두 번 발급.</p>
         <p><strong>A</strong> · <code>@Lock(LockModeType.PESSIMISTIC_WRITE)</code>로 최대 seq row를 select for update. <em>대안 검토: 낙관적 락은 어차피 매번 충돌하는 채번엔 재시도 비용만 누적, 분산 락은 단일 인스턴스 토폴로지엔 과함 →</em> <strong>"충돌 잦고 짧은 임계구역"엔 비관적 락이 최적</strong>이라 판단.</p>
         <p><strong>R</strong> · 동시 등록 요청에서도 seq 유일성 보장. 재시도 로직 없이 <strong>DB 레벨 원천 차단</strong>. 추가로 <strong>락 타임아웃 3초</strong>를 명시해 장기 트랜잭션·데드락 시 <code>LockTimeoutException</code>으로 빠른 실패 처리 — 무한 대기로 인한 스레드 점유 차단.</p>
+        <div class="code-links">
+          <span class="code-links-label">CODE</span>
+          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/delivery-service/src/main/java/com/da2jobu/deliveryservice/infrastructure/persistence/JpaDeliveryManagerRepository.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>JpaDeliveryManagerRepository.java<span class="hint">· @Lock+timeout 3000</span></a>
+        </div>
       </div>
     </div>
 
@@ -1577,6 +1641,13 @@ Optional&lt;DeliveryManager&gt; findTopByHubIdOrderBySeqDesc(UUID hubId);
           </ul>
         </div>
       </div>
+      <div class="trouble-footer">
+        <div class="code-links">
+          <span class="code-links-label">CODE</span>
+          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/delivery-service/src/main/java/com/da2jobu/deliveryservice/application/deliveryManager/service/CompanyDeliveryAssignmentService.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>CompanyDeliveryAssignmentService.java</a>
+          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/delivery-service/src/main/java/com/da2jobu/deliveryservice/application/deliveryManager/scheduler/CompanyDeliveryAssignmentScheduler.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>CompanyDeliveryAssignmentScheduler.java</a>
+        </div>
+      </div>
     </div>
 
     <div class="trouble">
@@ -1610,6 +1681,13 @@ Optional&lt;DeliveryManager&gt; findTopByHubIdOrderBySeqDesc(UUID hubId);
           </ul>
         </div>
       </div>
+      <div class="trouble-footer">
+        <div class="code-links">
+          <span class="code-links-label">CODE</span>
+          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/company-service/src/main/java/com/da2jobu/infrastructure/client/HubClientImpl.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>HubClientImpl.java</a>
+          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/company-service/src/main/java/com/da2jobu/infrastructure/config/ResilienceConfig.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>ResilienceConfig.java</a>
+        </div>
+      </div>
     </div>
 
     <div class="trouble">
@@ -1640,6 +1718,12 @@ Optional&lt;DeliveryManager&gt; findTopByHubIdOrderBySeqDesc(UUID hubId);
             <li>재시도 로직 없이 DB 레벨 원천 차단</li>
             <li>동시 등록 시나리오 단위 테스트로 유일성 검증</li>
           </ul>
+        </div>
+      </div>
+      <div class="trouble-footer">
+        <div class="code-links">
+          <span class="code-links-label">CODE</span>
+          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/delivery-service/src/main/java/com/da2jobu/deliveryservice/infrastructure/persistence/JpaDeliveryManagerRepository.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>JpaDeliveryManagerRepository.java</a>
         </div>
       </div>
     </div>

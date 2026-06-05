@@ -38,6 +38,52 @@
         }
         .wrap { max-width: 920px; margin: 0 auto; padding: 80px 56px 120px; }
 
+        /* 최상단 바 — back-link + GitHub 레포 홈 링크 */
+        .back-link {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--muted);
+            text-decoration: none;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            display: inline-block;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: var(--accent); }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 32px; }
+        .repo-link {
+            display: inline-flex; align-items: center; gap: 8px;
+            font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600;
+            color: var(--ink-soft); text-decoration: none;
+            padding: 7px 16px; border: 1px solid var(--rule); border-radius: 20px;
+            background: var(--card); transition: all 0.2s;
+        }
+        .repo-link:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-faded); }
+        .repo-link svg { width: 15px; height: 15px; flex: none; }
+
+        /* 상세 코드 GitHub 링크 칩 */
+        .code-links {
+            display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+            margin-top: 16px; padding-top: 14px; border-top: 1px dashed var(--rule);
+        }
+        .code-links-label {
+            font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 600;
+            letter-spacing: 0.1em; color: var(--muted);
+        }
+        a.code-link {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500;
+            color: var(--accent); background: var(--accent-faded);
+            border: 1px solid var(--rule); border-radius: 13px;
+            padding: 3px 11px; text-decoration: none;
+            transition: border-color 0.15s, background 0.15s;
+        }
+        a.code-link:hover { border-color: var(--accent); background: var(--accent-soft); }
+        a.code-link svg { width: 12px; height: 12px; flex: none; opacity: 0.75; }
+        a.code-link .hint { color: var(--muted); font-weight: 400; margin-left: 2px; }
+        .trouble-footer { padding: 12px 22px 14px; border-top: 1px solid var(--rule-soft); }
+        .trouble-footer .code-links { margin-top: 0; padding-top: 0; border-top: none; }
+
         /* Section header */
         .section-tag {
             font-family: 'JetBrains Mono', monospace;
@@ -978,6 +1024,7 @@
             .wrap { padding: 48px 24px 80px; }
             h1 { font-size: 32px; }
             h2 { font-size: 24px; }
+            .top-bar { flex-direction: column; align-items: flex-start; gap: 10px; }
             .two-col, .three-col, .kpi-strip { grid-template-columns: 1fr; }
             .trouble-body { grid-template-columns: 1fr; }
             .trouble-cell { border-right: none; border-bottom: 1px solid var(--rule-soft); }
@@ -987,6 +1034,11 @@
 </head>
 <body>
 <div class="wrap">
+
+    <div class="top-bar">
+        <a class="back-link" href="index.html">← 포트폴리오 메인으로</a>
+        <a class="repo-link" href="https://github.com/danbeekimm/ants-camp" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>danbeekimm/ants-camp</a>
+    </div>
 
     <!-- SECTION 01 — OVERVIEW (Positioning) -->
     <section class="section">
@@ -1582,6 +1634,12 @@
                     <li><strong>bias 방어</strong> — Judge==생성모델이면 채점 skip · Judge temperature 0 · Judge 2종(claude-sonnet-4-6 + gpt-4o) 교차 검증</li>
                 </ul>
                 <p><strong>R</strong> · 점수·승률 기반으로 <strong>gpt-4o-mini → claude-haiku 교체</strong>. <strong>OpenAI 자사 gpt-4o조차 gpt-4o-mini를 낮게 평가</strong> → 계열 편향 데이터로 반박.</p>
+                <div class="code-links">
+                    <span class="code-links-label">CODE</span>
+                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/assistant-service/src/main/java/io/antcamp/assistantservice/application/service/EvalProcessor.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>EvalProcessor.java<span class="hint">· Judge 채점·bias skip</span></a>
+                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/assistant-service/src/main/java/io/antcamp/assistantservice/application/service/PairwiseProcessor.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>PairwiseProcessor.java<span class="hint">· A/B 위치 교차</span></a>
+                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/assistant-service/src/main/java/io/antcamp/assistantservice/application/service/RetrievalReranker.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>RetrievalReranker.java<span class="hint">· 검색 컷오프</span></a>
+                </div>
             </div>
         </div>
 
@@ -1683,6 +1741,13 @@
     ActionResult result = executeAction(...);
     trySlack(<span class="str">"완료/실패 갱신"</span>, () -> alertPort.markAsHandled(...));
 }</pre>
+                <div class="code-links">
+                    <span class="code-links-label">CODE</span>
+                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/notification-service/src/main/java/io/antcamp/notificationservice/application/service/NotificationApplicationService.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>NotificationApplicationService.java<span class="hint">· dedup→RCA→HITL</span></a>
+                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/notification-service/src/main/java/io/antcamp/notificationservice/infrastructure/client/slack/SlackBlockBuilder.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>SlackBlockBuilder.java<span class="hint">· 복구 버튼 4종</span></a>
+                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/notification-service/src/main/java/io/antcamp/notificationservice/infrastructure/client/llm/ClaudeApiClient.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>ClaudeApiClient.java<span class="hint">· LLM RCA</span></a>
+                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/notification-service/src/main/java/io/antcamp/notificationservice/infrastructure/client/redis/RedisDeduplicationAdapter.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>RedisDeduplicationAdapter.java<span class="hint">· SET NX dedup</span></a>
+                </div>
             </div>
         </div>
 
@@ -1722,6 +1787,12 @@
                 <p><strong>P</strong> · LLM 제안 시스템은 ① 인프라 서비스 오작동(LLM이 gateway/kafka에 destructive action 권유), ② 외부 위변조 요청(공개 endpoint 노출), ③ LLM 입력으로의 PII/시크릿 유출 등 다층 위험을 동시에 가짐.</p>
                 <p><strong>A</strong> · 세 위험에 각각 독립적 방어선을 둠 (아래 3겹).</p>
                 <p><strong>R</strong> · 세 시나리오 모두 fallback 동작 검증 완료 — ① notification-service 자기 장애 시 Alertmanager <code>match_re</code> fallback으로 Slack 직통, ② LLM API 장애 시 단순 텍스트 fallback, ③ 비동기 ingest 실패 시 Reconciler 자가복구.</p>
+                <div class="code-links">
+                    <span class="code-links-label">CODE</span>
+                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/notification-service/src/main/java/io/antcamp/notificationservice/infrastructure/security/filter/SlackSignatureVerificationFilter.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>SlackSignatureVerificationFilter.java<span class="hint">· HMAC·replay·timing</span></a>
+                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/notification-service/src/main/java/io/antcamp/notificationservice/infrastructure/client/llm/PromptUtil.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>PromptUtil.java<span class="hint">· PII 마스킹</span></a>
+                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/notification-service/src/main/java/io/antcamp/notificationservice/infrastructure/config/NotificationProperties.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>NotificationProperties.java<span class="hint">· 인프라 화이트리스트</span></a>
+                </div>
             </div>
         </div>
 
@@ -1766,6 +1837,13 @@
                     <li><strong>알림</strong> — Alertmanager + 룰 7종 차등 설계(아래 표)</li>
                 </ul>
                 <p><strong>R</strong> · MTTD &lt; 1분, 반복 알림 LLM 비용 0(dedup). SPOF 해소 fallback까지 완비.</p>
+                <div class="code-links">
+                    <span class="code-links-label">CODE</span>
+                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/monitoring/prometheus/alert-rules.yaml" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>alert-rules.yaml<span class="hint">· 룰 7종 for: 차등</span></a>
+                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/monitoring/alertmanager/alertmanager.yaml" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>alertmanager.yaml<span class="hint">· match_re fallback</span></a>
+                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/monitoring/promtail/promtail.yaml" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>promtail.yaml<span class="hint">· docker_sd</span></a>
+                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/tree/dev/monitoring" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>monitoring/<span class="hint">· 스택 전체</span></a>
+                </div>
             </div>
         </div>
 
@@ -1825,6 +1903,11 @@
                     <li><strong>측정으로 검증</strong> — hit율 · 클라이언트 wall-time · 서버 LLM <code>latencyMs</code>를 워크로드별로 분리 측정</li>
                 </ul>
                 <p><strong>R</strong> · 캐시 히트 시 <strong>0.95s</strong>로 미스(긴 답변 3.68s) 대비 <strong>2.73s↓ (74%, 3.9배)</strong>, LLM 생성(2.41s) 자체를 제거.</p>
+                <div class="code-links">
+                    <span class="code-links-label">CODE</span>
+                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/assistant-service/src/main/java/io/antcamp/assistantservice/infrastructure/persistence/adapter/ResponseCacheAdapter.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>ResponseCacheAdapter.java<span class="hint">· 의미 캐시 조회/적재</span></a>
+                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/assistant-service/src/main/java/io/antcamp/assistantservice/application/service/RagApplicationService.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>RagApplicationService.java<span class="hint">· 첫 턴 캐시 흐름</span></a>
+                </div>
             </div>
         </div>
 
@@ -1893,6 +1976,12 @@
                     </ul>
                 </div>
             </div>
+            <div class="trouble-footer">
+                <div class="code-links">
+                    <span class="code-links-label">CODE</span>
+                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/assistant-service/src/main/java/io/antcamp/assistantservice/application/service/RagApplicationService.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>RagApplicationService.java<span class="hint">· T1→LLM(무TX)→T2</span></a>
+                </div>
+            </div>
         </div>
 
         <div class="trouble">
@@ -1926,6 +2015,12 @@
                     </ul>
                 </div>
             </div>
+            <div class="trouble-footer">
+                <div class="code-links">
+                    <span class="code-links-label">CODE</span>
+                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/assistant-service/src/main/java/io/antcamp/assistantservice/infrastructure/scheduler/DocumentReconciler.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>DocumentReconciler.java<span class="hint">· 60s 보정·3회·PERMANENT</span></a>
+                </div>
+            </div>
         </div>
 
         <div class="trouble">
@@ -1957,6 +2052,12 @@
                         <li>재시도 로직 없이 <strong>DB 레벨 원천 차단</strong></li>
                         <li>경력 race condition → 스터디 락 발표 → 본 프로젝트 적용. <strong>3단계 학습 곡선의 매듭</strong></li>
                     </ul>
+                </div>
+            </div>
+            <div class="trouble-footer">
+                <div class="code-links">
+                    <span class="code-links-label">CODE</span>
+                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/assistant-service/src/main/java/io/antcamp/assistantservice/infrastructure/persistence/jpa/JpaChatMessageRepository.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>JpaChatMessageRepository.java<span class="hint">· findMaxSeqForUpdate</span></a>
                 </div>
             </div>
         </div>

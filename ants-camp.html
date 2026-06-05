@@ -1663,7 +1663,7 @@
         <div class="contrib-card">
             <div class="contrib-headline">
                 <div class="contrib-num">🤖 CONTRIBUTION #2</div>
-                <div class="contrib-title">알림이 아니라 "원인 분석"을 보낸다 — LLM 기반 AIOps (Human-in-the-Loop)</div>
+                <div class="contrib-title">알림이 아니라 "원인 분석"을 전달 — LLM 기반 AIOps (Human-in-the-Loop)</div>
                 <div class="contrib-impact">MTTR 단축 + AI 자동화의 안전성을 사람 클릭으로 통제. 운영자의 컨텍스트 수집 단계 제거</div>
             </div>
             <div class="contrib-body">
@@ -1715,11 +1715,11 @@
         <div class="contrib-card">
             <div class="contrib-headline">
                 <div class="contrib-num">🛡️ CONTRIBUTION #3</div>
-                <div class="contrib-title">LLM이 운영 시스템을 만지는 위험을 다층으로 막다 — Defense-in-depth</div>
+                <div class="contrib-title">LLM이 운영 시스템을 만지는 위험을 다층으로 차단 — Defense-in-depth</div>
                 <div class="contrib-impact">장애 시나리오 3종에서 fallback 동작 검증 완료</div>
             </div>
             <div class="contrib-body">
-                <p><strong>P</strong> · LLM 제안 시스템은 ① 인프라 서비스 오작동(LLM이 gateway/kafka에 destructive action 권유), ② 외부 위변조 요청(공개 endpoint 노출), ③ LLM 입력으로의 PII/시크릿 유출 등 다층 위험을 동시에 갖는다.</p>
+                <p><strong>P</strong> · LLM 제안 시스템은 ① 인프라 서비스 오작동(LLM이 gateway/kafka에 destructive action 권유), ② 외부 위변조 요청(공개 endpoint 노출), ③ LLM 입력으로의 PII/시크릿 유출 등 다층 위험을 동시에 가짐.</p>
                 <p><strong>A</strong> · 세 위험에 각각 독립적 방어선을 둠 (아래 3겹).</p>
                 <p><strong>R</strong> · 세 시나리오 모두 fallback 동작 검증 완료 — ① notification-service 자기 장애 시 Alertmanager <code>match_re</code> fallback으로 Slack 직통, ② LLM API 장애 시 단순 텍스트 fallback, ③ 비동기 ingest 실패 시 Reconciler 자가복구.</p>
             </div>
@@ -2062,7 +2062,7 @@
     </section>
 
     <footer>
-        [김단비] · 백엔드 개발자 — Portfolio v2026.05 · ants-camp
+        김단비 · 백엔드 개발자 — Portfolio v2026.05 · ants-camp
     </footer>
 </div>
 

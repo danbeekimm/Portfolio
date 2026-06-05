@@ -1511,7 +1511,7 @@
     <div class="connection">
       <div class="connection-tag">→ 학습 연결 고리</div>
       <div class="connection-body">
-        "긴 로직 <strong>이전에</strong> 임계구역을 둔다"는 동시성 설계 원칙을 체득 <span class="arrow">→</span> 부트캠프에서 <strong>분산 락·동시성 제어를 자청 발표</strong>(낙관·비관·분산 락 트레이드오프) <span class="arrow">→</span> da2조부 프로젝트의 <strong>seq 채번 race condition</strong>에서 의식적으로 <strong>비관적 락(PESSIMISTIC_WRITE)</strong> 선택. 3단계 학습 곡선의 시작점.
+        "긴 로직 <strong>이전에</strong> 임계구역을 둔다"는 동시성 설계 원칙을 체득 <span class="arrow">→</span> 부트캠프에서 <strong>분산 락·동시성 제어를 자청 발표</strong>(낙관·비관·분산 락 트레이드오프) <span class="arrow">→</span> 다2조부 프로젝트의 <strong>seq 채번 race condition</strong>에서 의식적으로 <strong>비관적 락(PESSIMISTIC_WRITE)</strong> 선택. 3단계 학습 곡선의 시작점.
       </div>
     </div>
   </section>
@@ -1672,18 +1672,18 @@
     <div class="cycle-card">
       <div class="cycle-header">
         <div class="cycle-num">🔄 GROWTH CYCLE #2 — 동시성 제어</div>
-        <div class="cycle-title">비동기 다운로드 race 직감으로 해결 → 락 트레이드오프 발표 → da2조부 비관적 락 의식적 선택</div>
+        <div class="cycle-title">비동기 다운로드 race 직감으로 해결 → 락 트레이드오프 발표 → 다2조부 비관적 락 의식적 선택</div>
       </div>
       <div class="cycle-body">
         <p><strong>실무</strong> · "긴 로직 이전에 임계구역을 둔다"는 방식으로 race를 풀었지만, <strong>어떤 락이 어떤 상황에 맞는지 체계적으로 모름</strong>.</p>
         <p><strong>학습</strong> · 부트캠프 스터디에서 <strong>낙관적/비관적/분산 락 트레이드오프</strong>를 자청 발표. 각 락의 동작 원리·임계구역 크기·충돌 빈도에 따른 선택 기준을 코드 레벨로 검증.</p>
-        <p><strong>적용</strong> · da2조부 프로젝트의 <strong>seq 채번 race condition</strong>에 비관적 락(<code style="background:var(--code-bg);padding:1px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:12px;">PESSIMISTIC_WRITE</code>) 적용. 분산 락도 검토 후 "단일 인스턴스 토폴로지엔 오버엔지니어링"이라는 판단으로 배제 — <strong>여러 옵션을 알고 의도적으로 선택</strong>한 사례.</p>
+        <p><strong>적용</strong> · 다2조부 프로젝트의 <strong>seq 채번 race condition</strong>에 비관적 락(<code style="background:var(--code-bg);padding:1px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:12px;">PESSIMISTIC_WRITE</code>) 적용. 분산 락도 검토 후 "단일 인스턴스 토폴로지엔 오버엔지니어링"이라는 판단으로 배제 — <strong>여러 옵션을 알고 의도적으로 선택</strong>한 사례.</p>
       </div>
     </div>
   </section>
 
   <footer>
-    [김단비] · 백엔드 개발자 — Portfolio v2026.05 · 실무 경력
+    김단비 · 백엔드 개발자 — Portfolio v2026.05 · 실무 경력
   </footer>
 </div>
 

@@ -930,7 +930,7 @@
         주문이 발생하면 시스템은 <strong>출발 허브 → 목적지 허브 간 화물 이동(허브 배송 담당자)</strong>과 <strong>최종 허브 → 수령 업체 배송(업체 배송 담당자)</strong> 두 트랙을 분리해 처리합니다.
         <br><br>
         <strong>예시 시나리오</strong> — "부산 수산물 도매 업체가 경기도 일산의 건조 식품 가공품 50개를 주문" →
-        시스템이 <strong>경기도 허브 → 부산시 허브</strong>로 화물 이동을 계획하고, 도착하면 <strong>부산 허브 소속 업체 배송 담당자</strong>가 최종 업체로 전달.
+        시스템이 <strong>경기도 허브 → 부산 허브</strong>로 화물 이동을 계획하고, 도착하면 <strong>부산 허브 소속 업체 배송 담당자</strong>가 최종 업체로 전달.
       </div>
     </div>
 
@@ -1372,7 +1372,7 @@
       </tbody>
     </table>
     <p style="font-size:12.5px; color:var(--ink-soft); margin-top:12px;">
-      <strong>값 선정 전제</strong> — 데모 트래픽 기준의 보수적 baseline이다. Resilience4j 기본값을 출발점으로 위 근거에 따라 조정했고, <strong>운영 전환 시 실제 호출량·지연 분포로 부하 테스트 후 재튜닝</strong>하는 것을 전제로 한 초기값이다.
+      <strong>값 선정 전제</strong> — 데모 트래픽 기준의 보수적 baseline. Resilience4j 기본값을 출발점으로 위 근거에 따라 조정했고, <strong>운영 전환 시 실제 호출량·지연 분포로 부하 테스트 후 재튜닝</strong>하는 것을 전제로 한 초기값.
     </p>
   </section>
 
@@ -1464,7 +1464,7 @@ RoutingSearchParameters params = main.defaultRoutingSearchParameters()
     .build();</pre>
 
     <p style="font-size:13px; color:var(--ink-soft); margin-top:14px;">
-      <strong>왜 일괄(batch)인가</strong> — 실시간 배정 = 들어오는 순서대로 그리디 → <strong>국소 최적</strong>(지금 가까운 사람에게 줬더니 나중 배송이 꼬임). VRPTW는 <strong>당일 전체를 한 번에 모아야 전역 최적</strong>. B2B는 "즉시"보다 "오늘 안 정시 배송"이 중요 → 일괄이 비즈니스에 더 맞음.
+      <strong>왜 일괄(batch)인가</strong> — 실시간 배정 = 들어오는 순서대로 그리디 → <strong>국소 최적</strong>(지금 가까운 사람에게 줬더니 나중 배송이 꼬임). VRPTW는 <strong>당일 전체를 한 번에 모아야 전역 최적</strong>. B2B는 "즉시"보다 "당일 정시 배송"이 중요 → 일괄이 비즈니스에 더 맞음.
     </p>
 
     <!-- 실제 OR-Tools 경로 시각화 -->
@@ -1671,7 +1671,7 @@ Optional&lt;DeliveryManager&gt; findTopByHubIdOrderBySeqDesc(UUID hubId);
     <h2>회고 — 잘한 것과 의도적 선택의 트레이드오프</h2>
     <div class="section-rule"></div>
     <p class="lede">
-      프로젝트를 마치며 두 갈래로 정리. <strong>무엇을 잘했고</strong>, <strong>어떤 부분이 트레이드오프를 따진 의도적 선택이었는지</strong>. 각 선택의 한계와 다음 단계는 항목별 <strong>→ 라인</strong>에 함께 적었다.
+      프로젝트를 마치며 두 갈래로 정리. <strong>무엇을 잘했고</strong>, <strong>어떤 부분이 트레이드오프를 따진 의도적 선택이었는지</strong>. 각 선택의 한계와 다음 단계는 항목별 <strong>→ 라인</strong>에 함께 적음.
     </p>
 
     <div class="retro-block">
@@ -1718,7 +1718,7 @@ Optional&lt;DeliveryManager&gt; findTopByHubIdOrderBySeqDesc(UUID hubId);
   </section>
 
   <footer>
-    [김단비] · 백엔드 개발자 — Portfolio v2026.05 · 다2조부르릉
+    김단비 · 백엔드 개발자 — Portfolio v2026.05 · 다2조부르릉
   </footer>
 </div>
 

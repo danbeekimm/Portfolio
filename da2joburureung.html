@@ -1436,7 +1436,7 @@
       <div class="contrib-headline">
         <div class="contrib-num">🚛 CONTRIBUTION #3</div>
         <div class="contrib-title">시간창을 제약으로 모델링한 일괄 배송 최적화 — OR-Tools VRPTW</div>
-        <div class="contrib-impact">B2B SLA의 핵심(시간창 준수)을 사후 정렬이 아닌 솔버의 직접 제약으로 모델링. 수동 5분 → 자동 3초 (100건 기준 · 데모)</div>
+        <div class="contrib-impact">B2B SLA의 관건인 시간창 준수를 사후 정렬이 아니라 솔버의 직접 제약으로 모델링. 수동 5분 → 자동 3초 (100건 기준 · 데모)</div>
       </div>
       <div class="contrib-body">
         <p><strong>P</strong> · B2B 물류는 업체 영업시간(예: "오전 9~11시 입고")이 <strong>SLA의 핵심</strong>. 어기면 계약 위반 → <strong>시간창을 제약(constraint — 솔버가 반드시 지켜야 하는 조건)으로 모델링</strong>해야지, 후처리 정렬로는 보장 불가. 단순 라운드로빈(들어온 순서대로 담당자에게 균등 배분)은 거리·시간창·차량 부하 균등을 못 고려해 비효율.</p>
@@ -1560,7 +1560,7 @@ RoutingSearchParameters params = main.defaultRoutingSearchParameters()
       <div class="contrib-body">
         <p><strong>P</strong> · 배송담당자 등록 시 "최대 seq 조회 → +1 저장" 사이 동시 요청이 끼면 <strong>Read-Modify-Write race</strong> → 같은 seq가 두 번 발급.</p>
         <p><strong>A</strong> · <code>@Lock(LockModeType.PESSIMISTIC_WRITE)</code>로 최대 seq row를 select for update. <em>대안 검토: 낙관적 락은 어차피 매번 충돌하는 채번엔 재시도 비용만 누적, 분산 락은 단일 인스턴스 토폴로지엔 과함 →</em> <strong>"충돌 잦고 짧은 임계구역"엔 비관적 락이 최적</strong>이라 판단.</p>
-        <p><strong>R</strong> · 동시 등록 요청에서도 seq 유일성 보장. 재시도 로직 없이 <strong>DB 레벨 원천 차단</strong>. 추가로 <strong>락 타임아웃 3초</strong>를 명시해 장기 트랜잭션·데드락 시 <code>LockTimeoutException</code>으로 빠른 실패 처리 — 무한 대기로 인한 스레드 점유 차단.</p>
+        <p><strong>R</strong> · 동시 등록 요청에서도 seq 유일성 보장. 재시도 로직 없이 <strong>DB 레벨에서 차단</strong>. 추가로 <strong>락 타임아웃 3초</strong>를 명시해 장기 트랜잭션·데드락 시 <code>LockTimeoutException</code>으로 빠른 실패 처리 — 무한 대기로 인한 스레드 점유 차단.</p>
         <div class="code-links">
           <span class="code-links-label">CODE</span>
           <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/delivery-service/src/main/java/com/da2jobu/deliveryservice/infrastructure/persistence/JpaDeliveryManagerRepository.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>JpaDeliveryManagerRepository.java<span class="hint">· @Lock+timeout 3000</span></a>
@@ -1587,7 +1587,7 @@ RoutingSearchParameters params = main.defaultRoutingSearchParameters()
         <div class="dec-status">CHOSEN · 비관적 락</div>
         <div class="dec-name">SELECT ... FOR UPDATE</div>
         <div class="dec-reason">
-          임계구역이 <strong>짧고 충돌이 잦음</strong> → 락 대기 단점 최소화, 충돌 차단 장점 극대화. 재시도 로직 없이 DB 레벨 원천 차단.
+          임계구역이 <strong>짧고 충돌이 잦음</strong> → 락 대기 단점 최소화, 충돌 차단 장점 극대화. 재시도 로직 없이 DB 레벨에서 차단.
         </div>
       </div>
     </div>
@@ -1692,7 +1692,7 @@ Optional&lt;DeliveryManager&gt; findTopByHubIdOrderBySeqDesc(UUID hubId);
 
     <div class="trouble">
       <div class="trouble-header">
-        <div class="trouble-num">#03 · seq 채번 동시성 — 비관적 락으로 원천 차단</div>
+        <div class="trouble-num">#03 · seq 채번 동시성 — 비관적 락으로 차단</div>
         <div class="trouble-tag">race condition</div>
       </div>
       <div class="trouble-body">
@@ -1715,7 +1715,7 @@ Optional&lt;DeliveryManager&gt; findTopByHubIdOrderBySeqDesc(UUID hubId);
           <h4>해결 & 검증</h4>
           <ul>
             <li><code>@Lock(PESSIMISTIC_WRITE)</code>로 최대 seq row를 <code>SELECT FOR UPDATE</code></li>
-            <li>재시도 로직 없이 DB 레벨 원천 차단</li>
+            <li>재시도 로직 없이 DB 레벨에서 차단</li>
             <li>동시 등록 시나리오 단위 테스트로 유일성 검증</li>
           </ul>
         </div>

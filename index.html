@@ -363,6 +363,58 @@
       opacity: 0.6;
     }
 
+    /* AI workflow mini-section */
+    .ai-flow {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+    .ai-stage {
+      background: var(--card);
+      border: 1px solid var(--rule);
+      border-radius: 12px;
+      padding: 22px 24px;
+      border-top: 3px solid var(--accent);
+    }
+    .ai-stage-phase {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .ai-stage-tool {
+      font-family: 'Fraunces', serif;
+      font-size: 19px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 12px;
+      letter-spacing: -0.01em;
+    }
+    .ai-stage-body {
+      font-size: 13px;
+      color: var(--ink-soft);
+      line-height: 1.65;
+    }
+    .ai-closing {
+      background: var(--ink);
+      color: #fff;
+      border-radius: 10px;
+      padding: 20px 24px;
+      font-family: 'Fraunces', serif;
+      font-size: 19px;
+      font-weight: 600;
+      text-align: center;
+      letter-spacing: -0.01em;
+    }
+    @media (max-width: 720px) {
+      .ai-flow { grid-template-columns: 1fr; }
+      .ai-closing { font-size: 16px; }
+    }
+
     footer {
       margin-top: 80px;
       padding-top: 28px;
@@ -402,7 +454,7 @@
     </h1>
     <p class="main-sub">
       회원제 SaaS 운영팀에서 <strong>RDBMS 마이그레이션·동시성 제어·다국가 확장</strong>을 직접 풀어내고,<br>
-      그 한계를 학습 동기로 <strong>모놀리식 → MSA → LLMOps</strong>까지 설계 경험을 단계적으로 확장했습니다.<br>
+      그 한계가 공부할 이유가 되어 <strong>모놀리식 → MSA → LLMOps</strong>까지 설계 경험을 단계적으로 확장했습니다.<br>
       "왜 이 기술을 쓰는가"를 끝까지 묻고, 운영 환경의 정합성·신뢰성 문제를 설계 단계에서 해결합니다.
     </p>
     <div class="contact-strip">
@@ -474,7 +526,7 @@
       <div class="project-title">정합성 보장과 장애 격리를 설계한 B2B 물류 MSA</div>
       <div class="project-subtitle">12개 마이크로서비스 · DDD 4계층 헥사고날 · "검증=동기, 통지=비동기" 통신 분리</div>
       <div class="project-tagline">
-        직전 모놀리식의 한계(한 도메인 결함이 전체 멈춤)를 학습 동기로 <strong>MSA + DDD</strong>로 확장.<br> 분산 트랜잭션 없이
+        직전 모놀리식의 한계(한 도메인 결함이 전체 멈춤)를 계기로 <strong>MSA + DDD</strong>로 확장.<br> 분산 트랜잭션 없이
         <strong>Outbox 패턴</strong>으로 이벤트 정합성을 보장하고, <strong>OR-Tools VRPTW</strong>로 B2B 시간창 SLA를
         제약 조건으로 모델링했습니다.<br> 비관적 락은 스터디에서 학습한 트레이드오프를 실제 적용한 사례.
       </div>
@@ -490,7 +542,7 @@
         </div>
         <div class="highlight">
           <div class="highlight-num">DB-level</div>
-          <div class="highlight-label">비관적 락 race 원천 차단</div>
+          <div class="highlight-label">비관적 락으로 race 차단</div>
         </div>
       </div>
 
@@ -525,7 +577,7 @@
       <div class="project-tagline">
         대다수 RAG가 답변 품질을 "느낌"으로 판단할 때, <strong>LLM-as-a-Judge + Pairwise + Self-preference bias 차단</strong>으로
         모델 교체를 데이터로 결정했습니다. Prometheus·Loki·Claude를 묶어 <strong>알림에 원인 분석과 복구 액션을 자동 부착</strong>한
-        AIOps는 AI를 운영 시스템 그 자체로 녹여낸 사례입니다.
+        AIOps는 AI를 운영 시스템의 일부로 통합한 사례입니다.
       </div>
 
       <div class="project-highlights cols-4">
@@ -646,11 +698,51 @@
       </div>
 
       <div class="skill-row">
+        <div class="skill-area">Refactoring<br>/ Code Quality</div>
+        <div class="skill-list exp"><strong>SonarQube</strong> (월간 코드리뷰·리팩토링 운영)</div>
+        <div class="skill-list learn"><span class="empty">—</span></div>
+      </div>
+
+      <div class="skill-row">
         <div class="skill-area">DevOps</div>
         <div class="skill-list exp"><span class="empty">—</span></div>
         <div class="skill-list learn">Docker · Docker Compose · GitHub Actions</div>
       </div>
+
+      <div class="skill-row">
+        <div class="skill-area">Cloud / Deploy</div>
+        <div class="skill-list exp"><span class="empty">—</span></div>
+        <div class="skill-list learn"><strong>GCP</strong> (Compute Engine · Cloud SQL · Container Registry) · <strong>AWS</strong></div>
+      </div>
     </div>
+  </section>
+
+  <!-- AI WORKFLOW -->
+  <section class="section">
+    <div class="section-tag">HOW I WORK WITH AI</div>
+    <h2>AI와 일하는 방식</h2>
+    <div class="section-rule"></div>
+    <p class="lede">개발 사이클 단계마다 도구를 나눠 쓰고, <strong>마지막 판단은 항상 직접</strong> 합니다.</p>
+
+    <div class="ai-flow">
+      <div class="ai-stage">
+        <div class="ai-stage-phase">분석 · 설계</div>
+        <div class="ai-stage-tool">Claude Code</div>
+        <div class="ai-stage-body">레거시 호출 경로와 변경 이력 정리, 설계 대안 교차 검증에 사용. 핵심 지점은 디버거로 재현해 확인.</div>
+      </div>
+      <div class="ai-stage">
+        <div class="ai-stage-phase">구현 · 테스트</div>
+        <div class="ai-stage-tool">Claude Code</div>
+        <div class="ai-stage-body">테스트 초안 생성을 맡기고, 경계 조건과 검증 기준은 직접 설계.</div>
+      </div>
+      <div class="ai-stage">
+        <div class="ai-stage-phase">리뷰</div>
+        <div class="ai-stage-tool">CodeRabbit</div>
+        <div class="ai-stage-body">매 PR 자동 리뷰. 지적 사항은 수용 여부를 판단해 반영하고, 반복 지적은 컨벤션으로 정리.</div>
+      </div>
+    </div>
+
+    <div class="ai-closing">생성은 맡겨도, 검증은 맡기지 않는다.</div>
   </section>
 
   <footer>

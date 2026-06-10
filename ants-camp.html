@@ -1048,7 +1048,7 @@
         <p class="lede">
             모놀리식 → MSA → LLMOps로 이어진 설계 성장의 마지막 매듭. <strong>RAG 답변 품질을 LLM-as-a-Judge로 정량 평가</strong>하고,
             <strong>Prometheus·Loki·Claude를 묶어 알림에 원인 분석과 복구 액션까지 자동 부착</strong>하는 시스템을 설계·구현했습니다.
-            AI를 외부 API처럼 덧붙인 것이 아니라, <strong>운영 모니터링 시스템 그 자체로 녹여낸</strong> 것이 핵심입니다.
+            AI를 외부 API처럼 덧붙이는 데 그치지 않고, <strong>운영 모니터링 시스템의 일부로 통합한</strong> 점이 차별점입니다.
         </p>
 
         <div class="hero">
@@ -1143,7 +1143,7 @@
         <h2>왜 PGAL Stack인가 — 모니터링 도구 선택 근거</h2>
         <div class="section-rule"></div>
         <p class="lede">
-            MSA 환경의 핵심 비기능 요구는 <strong>장애 추적·실시간 메트릭·중앙 집중 로그·자동 알림</strong>입니다.
+            MSA 환경의 주요 비기능 요구는 <strong>장애 추적·실시간 메트릭·중앙 집중 로그·자동 알림</strong>입니다.
             ELK · CloudWatch · Datadog 등 후보를 <strong>운영 비용 · 의존성 · 우리 규모 적합성</strong> 세 축으로 비교한 결과,
             <strong>Prometheus + Grafana + Alertmanager + Loki + Promtail</strong>(이하 PGAL)이 적절하다고 판단했습니다.
         </p>
@@ -1274,7 +1274,7 @@
             <div class="box">
                 <div class="box-title">핵심 도전 과제</div>
                 <ul>
-                    <li>RAG 답변의 <strong>사실성(faithfulness)</strong> 정량 측정 — "느낌"이 아닌 <strong>점수·승률</strong>로 모델 결정</li>
+                    <li>RAG 답변의 <strong>사실성(faithfulness)</strong> 정량 측정 — 정량 <strong>점수·승률</strong>로 모델 결정</li>
                     <li>LLM 평가의 2대 편향 차단 — <strong>self-preference bias</strong>(Judge가 자기 출력에 후한 경향) + <strong>position bias</strong>(Pairwise A/B 위치에 따른 편향)를 코드 레벨에서 모두 차단</li>
                     <li>단순 알림을 <strong>"원인 + 권장 조치"</strong>로 격상 — 운영자 컨텍스트 수집 단계 제거</li>
                     <li>LLM 자동 실행의 위험 — 인프라/PII/위변조의 <strong>다층 안전장치</strong> 필요</li>
@@ -1594,7 +1594,7 @@
             <tr>
                 <td>Claude Haiku (장애 분석)</td>
                 <td>Opus · Sonnet</td>
-                <td>알림은 빈도 높고 빠른 요약이 핵심 → <strong>Opus 대비 약 1/10 비용</strong>, max_tokens 2000.</td>
+                <td>알림은 빈도 높고 빠른 요약이 관건 → <strong>Opus 대비 약 1/10 비용</strong>, max_tokens 2000.</td>
             </tr>
             <tr>
                 <td>Human-in-the-Loop</td>
@@ -1626,7 +1626,7 @@
             </div>
             <div class="contrib-body">
                 <p><strong>P</strong> · 대다수 RAG 프로젝트는 답변 품질을 "느낌"으로 판단하고 모델 교체를 "감"으로 결정 → 품질 회귀(regression) 위험을 막을 정량 체계 필요. 특히 LLM 평가의 가장 알려진 함정 <strong>self-preference bias</strong>(LLM이 자기 출력에 더 후한 경향, 연구로 보고됨)가 차단되지 않으면 평가 결과 자체가 신뢰 불가.</p>
-                <p><strong>A</strong> · <strong>검색 → 채점 → 비교</strong> 3단계로 정량 평가 파이프라인 구성. self-preference bias는 <strong>코드 레벨에서 원천 차단</strong> + Judge 2종 교차 검증으로 다중 방어.</p>
+                <p><strong>A</strong> · <strong>검색 → 채점 → 비교</strong> 3단계로 정량 평가 파이프라인 구성. self-preference bias는 <strong>코드 레벨에서 차단</strong> + Judge 2종 교차 검증으로 다중 방어.</p>
                 <ul class="approach-points">
                     <li><strong>검색</strong> — pgvector 의미검색(topK×3 후 유사도 0.3·score-gap 0.8 컷오프 → 최종 topK=5)</li>
                     <li><strong>채점</strong> — Relevance / Faithfulness / ContextPrecision <strong>3축 점수화</strong></li>
@@ -1649,7 +1649,7 @@
                 <div class="layer">
                     <div class="layer-num">① BIAS BLOCK</div>
                     <div class="layer-title">Self-preference 코드 레벨 차단</div>
-                    <p>Judge 모델 == 응답 생성 모델이면 채점 자체를 <strong>skip</strong>. 자기 출력에 후한 경향을 원천 회피.</p>
+                    <p>Judge 모델 == 응답 생성 모델이면 채점 자체를 <strong>skip</strong>. 자기 출력에 후한 경향을 회피.</p>
                 </div>
                 <div class="layer">
                     <div class="layer-num">② CROSS</div>
@@ -1707,8 +1707,8 @@
                 단순 응답에 그치지 않고 <strong>참조 문서의 출처를 함께 표시</strong>해 사용자가 근거를 직접 확인할 수 있도록 설계했습니다.
                 <ul class="screenshot-points">
                     <li><strong>질문 → 응답 → 출처 가이드</strong> 3단계 표시 — "전용 계좌는 언제 발급받을 수 있죠?" 질문에 RAG로 검색한 가이드 문서 기반 답변 생성</li>
-                    <li><strong>출처 칩 클릭</strong> → 우측 패널에서 참조한 가이드 문서의 핵심 내용 미리보기</li>
-                    <li><strong>"가이드 상세 페이지로 더 보기"</strong> 버튼 → 전체 문서 페이지로 이동, 답변의 근거를 끝까지 추적 가능</li>
+                    <li><strong>출처 칩 클릭</strong> → 우측 패널에서 참조한 가이드 문서의 주요 내용 미리보기</li>
+                    <li><strong>"가이드 상세 페이지로 더 보기"</strong> 버튼 → 전체 문서 페이지로 이동, 답변의 근거를 원문까지 추적 가능</li>
                     <li>세션 기반 대화 이력 관리 — 좌측 "문의 목록"에서 이전 대화 재조회 (세션 제목은 마지막 메시지로 자동 설정)</li>
                 </ul>
             </div>
@@ -1721,7 +1721,7 @@
         <div class="contrib-card">
             <div class="contrib-headline">
                 <div class="contrib-num">🤖 CONTRIBUTION #2</div>
-                <div class="contrib-title">알림이 아니라 "원인 분석"을 전달 — LLM 기반 AIOps (Human-in-the-Loop)</div>
+                <div class="contrib-title">단순 알림을 넘어 원인 분석을 전달 — LLM 기반 AIOps (Human-in-the-Loop)</div>
                 <div class="contrib-impact">MTTR 단축 + AI 자동화의 안전성을 사람 클릭으로 통제. 운영자의 컨텍스트 수집 단계 제거</div>
             </div>
             <div class="contrib-body">
@@ -1733,7 +1733,7 @@
                     <li><strong>LLM 분석</strong> — Claude(haiku)가 메트릭·로그 기반 RCA(원인 분석 + 권장 조치) 생성</li>
                     <li><strong>HITL 액션</strong> — Slack Block Kit으로 분석 + <strong>복구 버튼 4종</strong>(restart / rollback / cache-clear / false-alarm) 동시 노출</li>
                 </ul>
-                <p><strong>R</strong> · 알림 수신 후 수 초 내 "근거 메트릭/로그 + 권장 조치" 자동 게시. <strong>AI를 외부 API가 아닌 운영 모니터링 시스템 그 자체로 녹임.</strong></p>
+                <p><strong>R</strong> · 알림 수신 후 수 초 내 "근거 메트릭/로그 + 권장 조치" 자동 게시. <strong>AI를 운영 모니터링 시스템의 일부로 통합.</strong></p>
                 <pre style="margin-top:14px;"><span class="com">// Slack 3초 응답 제약 → @Async ACK 후 메시지 갱신</span>
 <span class="kw">@Async</span>(<span class="str">"slackActionExecutor"</span>)
 <span class="kw">public void</span> executeAndNotifyAsync(SlackActionCommand command) {
@@ -1941,7 +1941,7 @@
         <h2>트러블슈팅 — 원인을 윗단까지 파고든 사례</h2>
         <div class="section-rule"></div>
         <p class="lede">
-            "외부 호출 때문에 트랜잭션이 길어졌다"는 표면적 설명이 아닌, <strong>커넥션 풀 → 톰캣 워커 스레드 → 세션 한계</strong>까지 원인을 윗단으로 추적한 사례들.
+            "외부 호출 때문에 트랜잭션이 길어졌다"는 표면적 설명에서 멈추지 않고, <strong>커넥션 풀 → 톰캣 워커 스레드 → 세션 한계</strong>까지 원인을 윗단으로 추적한 사례들.
         </p>
 
         <div class="trouble">
@@ -2049,7 +2049,7 @@
                     <h4>해결 & 검증</h4>
                     <ul>
                         <li><code>findMaxSeqForUpdate</code>에 <code>@Lock(PESSIMISTIC_WRITE)</code>로 채번 구간 보호</li>
-                        <li>재시도 로직 없이 <strong>DB 레벨 원천 차단</strong></li>
+                        <li>재시도 로직 없이 <strong>DB 레벨에서 차단</strong></li>
                         <li>경력 race condition → 스터디 락 발표 → 본 프로젝트 적용. <strong>3단계 학습 곡선의 매듭</strong></li>
                     </ul>
                 </div>
@@ -2098,7 +2098,7 @@
                 <div class="retro-title">잘한 것</div>
             </div>
             <div class="retro-good">
-                LLM을 "붙이기"가 아니라 <strong>검증 가능한 시스템</strong>(Eval/Pairwise · bias 차단)으로,
+                LLM을 붙이는 데 그치지 않고 <strong>검증 가능한 시스템</strong>(Eval/Pairwise · bias 차단)으로,
                 운영을 <strong>안전하게</strong>(Human-in-the-Loop · 다층 방어 · 자가복구) 만든 것.
                 그리고 토이 프로젝트의 한계인 "측정 수치 부재"를 <strong>관측 스택 주도 구축</strong>으로 정면 돌파.
             </div>

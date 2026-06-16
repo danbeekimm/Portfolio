@@ -17,6 +17,13 @@ const PAGES = [
   { file: 'ants-camp.html',      title: '프로젝트 #2 — ants-camp',          tag: '03 · PROJECT' },
 ];
 
+// 풀스택 버전 번들 — 모두 fs/ 전용 페이지 사용(추후 분화 대비). 커버는 fs/index.html,
+// 상세는 fs/career.html 등 fs 사본(title·tag·printCss는 백엔드와 공유).
+const PAGES_FS = [
+  { file: 'fs/index.html', title: '커버 — 풀스택 Portfolio 메인', tag: 'COVER' },
+  ...PAGES.slice(1).map(p => ({ ...p, file: `fs/${p.file}` })),
+];
+
 const PRINT_CSS = `
   @page { size: A4; margin: 12mm 0; }
   html, body { background: #fbfbf8 !important; }
@@ -121,7 +128,9 @@ function resolveChromePath() {
   return undefined;
 }
 
-function buildTOCHTML(pages) {
+function buildTOCHTML(pages, opts = {}) {
+  const role = opts.role || 'BACKEND';
+  const roleKo = opts.roleKo || '백엔드 개발자';
   const rows = pages.map((p, i) => `
     <li class="toc-row">
       <div class="toc-num">${String(i + 1).padStart(2, '0')}</div>
@@ -161,10 +170,10 @@ function buildTOCHTML(pages) {
 <div class="toc-wrap">
   <div class="toc-eyebrow">TABLE OF CONTENTS</div>
   <h1 class="toc-h">목차</h1>
-  <div class="toc-sub">PORTFOLIO · 김단비 · BACKEND</div>
+  <div class="toc-sub">PORTFOLIO · 김단비 · ${role}</div>
   <div class="toc-rule"></div>
   <ol>${rows}</ol>
-  <div class="toc-footer">김단비 · 백엔드 개발자 — Portfolio v2026.05</div>
+  <div class="toc-footer">김단비 · ${roleKo} — Portfolio v2026.05</div>
 </div>
 </body>
 </html>`;
@@ -278,6 +287,76 @@ function addTocLinks(merged, rowBoxes, startIndices) {
   });
 }
 
+// 긴 한 페이지(통짜 세로) 버전을 만든다: TOC → 각 페이지를 자기 높이만큼의 단일 페이지로 렌더 → 병합.
+// tocOpts(role/roleKo)로 백엔드/풀스택 등 버전별 TOC 문구를 바꾼다. outName으로 결과 파일명을 지정.
+async function buildLongVersion(browser, pages, tocOpts, outName) {
+  const tocPath = path.join(ROOT, `_toc_${outName.replace(/\.pdf$/, '')}.html`);
+  fs.writeFileSync(tocPath, buildTOCHTML(pages, tocOpts));
+  try {
+    const longBuffers = [];
+
+    const tocPage = await browser.newPage();
+    await tocPage.setViewport({ width: 1024, height: 800, deviceScaleFactor: 2 });
+    await tocPage.goto(`file://${tocPath}`, { waitUntil: 'networkidle0' });
+    await stripDeadLinks(tocPage);
+    const tocH = await tocPage.evaluate(() => Math.max(document.body.scrollHeight, document.documentElement.scrollHeight));
+    const tocBoxes = await getTocBoxes(tocPage);
+    longBuffers.push(await tocPage.pdf({
+      width: '1024px',
+      height: `${tocH + 8}px`,
+      printBackground: true,
+      margin: { top: '0', right: '0', bottom: '0', left: '0' },
+    }));
+    await tocPage.close();
+
+    for (const p of pages) {
+      console.log(`  · ${p.file}`);
+      const pg = await browser.newPage();
+      longBuffers.push(await renderLong(pg, `file://${path.join(ROOT, p.file)}`));
+      await pg.close();
+    }
+
+    const long = await mergePdfs(longBuffers);
+    addTocLinks(long.merged, tocBoxes, long.startIndices);
+    fs.writeFileSync(path.join(ROOT, outName), await long.merged.save());
+    console.log(`✓ ${outName}`);
+  } finally {
+    fs.unlinkSync(tocPath);
+  }
+}
+
+// A4(인쇄용) 버전: TOC + 각 페이지를 A4 한 장씩 렌더 → 병합. PAGES(백엔드)만 대상.
+async function buildA4Version(browser, tocPath) {
+  console.log('▶ A4 버전 생성 중…');
+  const a4Buffers = [];
+
+  const tocPage = await browser.newPage();
+  // A4 인쇄 레이아웃과 동일한 조건(프린트 미디어 + A4 픽셀폭)에서 측정해야 링크 좌표가 맞음
+  await tocPage.emulateMediaType('print');
+  await tocPage.setViewport({ width: 794, height: 1123, deviceScaleFactor: 2 });
+  await tocPage.goto(`file://${tocPath}`, { waitUntil: 'networkidle0' });
+  await stripDeadLinks(tocPage);
+  const a4TocBoxes = await getTocBoxes(tocPage);
+  a4Buffers.push(await tocPage.pdf({
+    format: 'A4',
+    printBackground: true,
+    margin: { top: '0', right: '0', bottom: '0', left: '0' },
+  }));
+  await tocPage.close();
+
+  for (const p of PAGES) {
+    console.log(`  · ${p.file}`);
+    const pg = await browser.newPage();
+    a4Buffers.push(await renderA4(pg, `file://${path.join(ROOT, p.file)}`, p.scale, p.printCss));
+    await pg.close();
+  }
+
+  const a4 = await mergePdfs(a4Buffers);
+  addTocLinks(a4.merged, a4TocBoxes, a4.startIndices);
+  fs.writeFileSync(path.join(ROOT, 'portfolio-a4.pdf'), await a4.merged.save());
+  console.log('✓ portfolio-a4.pdf');
+}
+
 async function main() {
   // Write TOC HTML to temp file so it loads with file:// (so Google Fonts work)
   const tocPath = path.join(ROOT, '_toc.html');
@@ -289,70 +368,36 @@ async function main() {
     args: ['--no-sandbox'],
   });
 
+  // ONLY=fs|backend 면 해당 버전만 생성(미지정=전체). LONG_ONLY=1 또는 ONLY 지정 시 A4는 건너뜀.
+  const ONLY = process.env.ONLY;
+
   try {
-    // ===== A4 VERSION =====
-    console.log('▶ A4 버전 생성 중…');
-    const a4Buffers = [];
-
-    const tocPage = await browser.newPage();
-    // A4 인쇄 레이아웃과 동일한 조건(프린트 미디어 + A4 픽셀폭)에서 측정해야 링크 좌표가 맞음
-    await tocPage.emulateMediaType('print');
-    await tocPage.setViewport({ width: 794, height: 1123, deviceScaleFactor: 2 });
-    await tocPage.goto(`file://${tocPath}`, { waitUntil: 'networkidle0' });
-    await stripDeadLinks(tocPage);
-    const a4TocBoxes = await getTocBoxes(tocPage);
-    a4Buffers.push(await tocPage.pdf({
-      format: 'A4',
-      printBackground: true,
-      margin: { top: '0', right: '0', bottom: '0', left: '0' },
-    }));
-    await tocPage.close();
-
-    for (const p of PAGES) {
-      console.log(`  · ${p.file}`);
-      const pg = await browser.newPage();
-      a4Buffers.push(await renderA4(pg, `file://${path.join(ROOT, p.file)}`, p.scale, p.printCss));
-      await pg.close();
+    // ===== A4 VERSION ===== (LONG_ONLY=1 / ONLY 지정 시 건너뜀 — long 버전만 갱신)
+    if (process.env.LONG_ONLY || ONLY) {
+      console.log('▶ A4 버전 건너뜀 (long만 갱신)');
+    } else {
+      await buildA4Version(browser, tocPath);
     }
 
-    const a4 = await mergePdfs(a4Buffers);
-    addTocLinks(a4.merged, a4TocBoxes, a4.startIndices);
-    fs.writeFileSync(path.join(ROOT, 'portfolio-a4.pdf'), await a4.merged.save());
-    console.log('✓ portfolio-a4.pdf');
-
-    // ===== LONG VERSION =====
-    console.log('▶ 긴 한 페이지 버전 생성 중…');
-    const longBuffers = [];
-
-    const tocPage2 = await browser.newPage();
-    await tocPage2.setViewport({ width: 1024, height: 800, deviceScaleFactor: 2 });
-    await tocPage2.goto(`file://${tocPath}`, { waitUntil: 'networkidle0' });
-    await stripDeadLinks(tocPage2);
-    const tocH = await tocPage2.evaluate(() => Math.max(document.body.scrollHeight, document.documentElement.scrollHeight));
-    const longTocBoxes = await getTocBoxes(tocPage2);
-    longBuffers.push(await tocPage2.pdf({
-      width: '1024px',
-      height: `${tocH + 8}px`,
-      printBackground: true,
-      margin: { top: '0', right: '0', bottom: '0', left: '0' },
-    }));
-    await tocPage2.close();
-
-    for (const p of PAGES) {
-      console.log(`  · ${p.file}`);
-      const pg = await browser.newPage();
-      longBuffers.push(await renderLong(pg, `file://${path.join(ROOT, p.file)}`));
-      await pg.close();
+    // ===== LONG VERSION (백엔드) =====
+    if (ONLY !== 'fs') {
+      console.log('▶ 긴 한 페이지 버전 생성 중…');
+      await buildLongVersion(browser, PAGES, {}, 'portfolio-long.pdf');
     }
 
-    const long = await mergePdfs(longBuffers);
-    addTocLinks(long.merged, longTocBoxes, long.startIndices);
-    fs.writeFileSync(path.join(ROOT, 'portfolio-long.pdf'), await long.merged.save());
-    console.log('✓ portfolio-long.pdf');
+    // ===== LONG VERSION (풀스택 — /fs) =====
+    if (ONLY !== 'backend') {
+      console.log('▶ 풀스택(/fs) 긴 한 페이지 버전 생성 중…');
+      await buildLongVersion(browser, PAGES_FS, { role: 'FULLSTACK', roleKo: '풀스택 개발자' }, 'portfolio-fs-long.pdf');
+    }
   } finally {
     await browser.close();
     fs.unlinkSync(tocPath);
   }
 }
 
-main().catch(e => { console.error(e); process.exit(1); });
+if (require.main === module) {
+  main().catch(e => { console.error(e); process.exit(1); });
+}
+
+module.exports = { buildTOCHTML, PAGES, PAGES_FS };

@@ -1,0 +1,1702 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>실무 경력 — 운영 오너십 · 이슈 추적 · 마이그레이션 Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --accent: #0d8754;
+      --accent-soft: #e8f5ee;
+      --accent-faded: #f4faf7;
+      --ink: #0e1410;
+      --ink-soft: #2a3530;
+      --muted: #5a6b63;
+      --rule: #d6dfd9;
+      --rule-soft: #ebf0ec;
+      --bg: #fbfbf8;
+      --card: #ffffff;
+      --warn: #b85c00;
+      --warn-soft: #fff4e8;
+      --neutral: #6c7a72;
+      --neutral-soft: #f0f2ee;
+      --code-bg: #f3f4ef;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter Tight', -apple-system, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.65;
+      font-size: 15px;
+      letter-spacing: -0.005em;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 80px 56px 120px; }
+
+    .back-link {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      display: inline-block;
+      transition: color 0.2s;
+    }
+    .back-link:hover { color: var(--accent); }
+
+    .section-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      margin-bottom: 14px;
+      text-transform: uppercase;
+    }
+    h1 {
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-size: 42px;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      margin-bottom: 18px;
+    }
+    h1 .marker {
+      background: linear-gradient(transparent 60%, var(--accent-soft) 60%);
+      padding: 0 2px;
+    }
+    h2 {
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-size: 30px;
+      line-height: 1.2;
+      letter-spacing: -0.015em;
+      color: var(--ink);
+      margin-bottom: 16px;
+    }
+    h3 {
+      font-family: 'Inter Tight', sans-serif;
+      font-weight: 600;
+      font-size: 16px;
+      color: var(--ink);
+      margin-bottom: 10px;
+      letter-spacing: -0.01em;
+    }
+    .section-rule {
+      height: 2px;
+      background: var(--accent);
+      width: 100%;
+      margin: 0 0 28px;
+    }
+    .section { margin-bottom: 72px; scroll-margin-top: 24px; }
+    .lede {
+      font-size: 16px;
+      color: var(--ink-soft);
+      line-height: 1.75;
+      margin-bottom: 24px;
+    }
+    .lede strong { color: var(--ink); font-weight: 600; }
+
+    /* Hero */
+    .hero {
+      background: var(--ink);
+      color: #fff;
+      border-radius: 12px;
+      padding: 36px 38px;
+      margin-bottom: 32px;
+    }
+    .hero-title {
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-size: 26px;
+      line-height: 1.3;
+      letter-spacing: -0.015em;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+    .hero-title em {
+      color: var(--accent-soft);
+      font-style: normal;
+      background: rgba(13, 135, 84, 0.25);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+    .hero-sub {
+      color: #c5d0ca;
+      font-size: 14px;
+      line-height: 1.7;
+      margin-bottom: 22px;
+    }
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 22px;
+      font-size: 13px;
+      color: #a5b3ab;
+      font-family: 'JetBrains Mono', monospace;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 18px;
+    }
+    .hero-meta span::before {
+      content: "●";
+      color: var(--accent);
+      margin-right: 6px;
+      font-size: 8px;
+      vertical-align: middle;
+    }
+
+    /* Routine box — 코드 수정 루틴 */
+    .routine-box {
+      background: var(--card);
+      border: 1px solid var(--rule);
+      border-radius: 12px;
+      margin-top: 28px;
+      overflow: hidden;
+    }
+    .routine-header {
+      background: var(--ink);
+      color: #fff;
+      padding: 18px 24px;
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+    }
+    .routine-icon {
+      font-size: 18px;
+    }
+    .routine-title {
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-size: 17px;
+      color: #fff;
+      letter-spacing: -0.01em;
+    }
+    .routine-subtitle {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      color: #9aaaa0;
+      letter-spacing: 0.05em;
+      margin-left: auto;
+    }
+    .routine-body {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+    }
+    .routine-stage {
+      padding: 22px 24px;
+      border-right: 1px solid var(--rule-soft);
+    }
+    .routine-stage:last-child { border-right: none; }
+    .routine-stage-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+    .routine-stage-name {
+      font-family: 'Inter Tight', sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--ink);
+      margin-bottom: 12px;
+      line-height: 1.35;
+    }
+    .routine-stage ul {
+      list-style: none;
+      padding: 0;
+    }
+    .routine-stage li {
+      font-size: 12.5px;
+      color: var(--ink-soft);
+      padding-left: 16px;
+      position: relative;
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+    .routine-stage li:last-child { margin-bottom: 0; }
+    .routine-stage li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .routine-stage li strong { color: var(--ink); font-weight: 600; }
+    .routine-footer {
+      background: #fafaf6;
+      padding: 14px 24px;
+      border-top: 1px solid var(--rule);
+      font-size: 12.5px;
+      color: var(--ink-soft);
+      line-height: 1.6;
+      font-style: italic;
+    }
+    .routine-footer strong { color: var(--ink); font-style: normal; }
+
+    /* Routine box — 모바일 */
+    @media (max-width: 720px) {
+      .routine-body { grid-template-columns: 1fr; }
+      .routine-stage { border-right: none; border-bottom: 1px solid var(--rule-soft); }
+      .routine-stage:last-child { border-bottom: none; }
+    }
+
+    /* Ownership values — 3-card */
+    .value-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin: 32px 0 0;
+    }
+    .value-card {
+      background: var(--card);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 22px 24px;
+      border-top: 3px solid var(--accent);
+    }
+    .value-icon {
+      font-size: 22px;
+      margin-bottom: 10px;
+      line-height: 1;
+    }
+    .value-title {
+      font-family: 'Inter Tight', sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--ink);
+      margin-bottom: 8px;
+      line-height: 1.35;
+    }
+    .value-body {
+      font-size: 12.5px;
+      color: var(--ink-soft);
+      line-height: 1.65;
+    }
+    .value-body strong { color: var(--ink); }
+
+    /* Role strip */
+    .role-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin: 32px 0 0;
+    }
+    .role-card {
+      background: var(--card);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 22px 24px;
+    }
+    .role-card.main {
+      border: 2px solid var(--accent);
+      background: var(--accent-faded);
+    }
+    .role-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+    .role-title {
+      font-family: 'Inter Tight', sans-serif;
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+    .role-body {
+      font-size: 12.5px;
+      color: var(--ink-soft);
+      line-height: 1.6;
+    }
+    .role-body strong { color: var(--ink); }
+
+    /* Ownership case cards — 이슈 발견·추적·해결 */
+    .case-card {
+      background: var(--card);
+      border: 1px solid var(--rule);
+      border-radius: 12px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .case-header {
+      background: var(--accent-faded);
+      padding: 22px 28px;
+      border-bottom: 1px solid var(--rule);
+    }
+    .case-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      margin-bottom: 6px;
+    }
+    .case-title {
+      font-family: 'Fraunces', serif;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.35;
+      letter-spacing: -0.01em;
+      margin-bottom: 6px;
+    }
+    .case-subtitle {
+      font-size: 12.5px;
+      color: var(--accent);
+      font-weight: 500;
+      line-height: 1.5;
+    }
+    .case-body {
+      padding: 24px 28px;
+    }
+    .case-row {
+      display: grid;
+      grid-template-columns: 90px 1fr;
+      gap: 18px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--rule-soft);
+      align-items: start;
+    }
+    .case-row:last-child { border-bottom: none; }
+    .case-row-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding-top: 2px;
+    }
+    .case-row-body {
+      font-size: 13.5px;
+      color: var(--ink-soft);
+      line-height: 1.7;
+    }
+    .case-row-body strong { color: var(--ink); font-weight: 600; }
+    .case-row-body em { color: var(--accent); font-style: normal; font-weight: 500; }
+    .case-row-body code {
+      background: var(--code-bg);
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+    }
+
+    /* Work category — 5가지 업무 분류 */
+    .work-block {
+      background: var(--card);
+      border: 1px solid var(--rule);
+      border-radius: 12px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .work-block.main {
+      border: 2px solid var(--accent);
+    }
+    .work-header {
+      background: var(--accent-faded);
+      padding: 22px 28px;
+      border-bottom: 1px solid var(--rule);
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 16px;
+    }
+    .work-block.main .work-header {
+      background: var(--accent-soft);
+    }
+    .work-header-left { flex: 1; }
+    .work-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      margin-bottom: 6px;
+    }
+    .work-title {
+      font-family: 'Fraunces', serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+    }
+    .work-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      color: #fff;
+      background: var(--accent);
+      padding: 4px 12px;
+      border-radius: 12px;
+      letter-spacing: 0.05em;
+      flex-shrink: 0;
+    }
+    .work-body {
+      padding: 24px 28px;
+    }
+    .work-body p {
+      font-size: 13.5px;
+      color: var(--ink-soft);
+      line-height: 1.7;
+      margin-bottom: 10px;
+    }
+    .work-body p:last-child { margin-bottom: 0; }
+    .work-body strong { color: var(--ink); font-weight: 600; }
+    .work-body code {
+      background: var(--code-bg);
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+    }
+    .work-feature-list {
+      background: #fafaf6;
+      border-radius: 6px;
+      padding: 14px 18px;
+      margin-top: 10px;
+      list-style: none;
+    }
+    .work-feature-list li {
+      font-size: 12.5px;
+      color: var(--ink-soft);
+      padding-left: 14px;
+      position: relative;
+      line-height: 1.65;
+      margin-bottom: 6px;
+    }
+    .work-feature-list li:last-child { margin-bottom: 0; }
+    .work-feature-list li::before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .work-feature-list li strong { color: var(--ink); font-weight: 600; }
+
+    /* Process flow (시도 → 안되면 다음) */
+    .process-flow {
+      background: #fafaf6;
+      border-left: 3px solid var(--accent);
+      border-radius: 0 6px 6px 0;
+      padding: 18px 22px;
+      margin: 14px 0;
+    }
+    .process-step {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 10px;
+      align-items: baseline;
+    }
+    .process-step:last-child { margin-bottom: 0; }
+    .process-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+      flex-shrink: 0;
+      width: 28px;
+    }
+    .process-text {
+      font-size: 13px;
+      color: var(--ink-soft);
+      line-height: 1.6;
+      flex: 1;
+    }
+    .process-text strong { color: var(--ink); font-weight: 600; }
+    .process-text em {
+      color: var(--accent);
+      font-style: normal;
+      font-weight: 500;
+    }
+
+    /* Connection — 학습 연결 고리 */
+    .connection {
+      background: linear-gradient(135deg, var(--accent-faded) 0%, #fff 100%);
+      border-left: 4px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      padding: 18px 24px;
+      margin-top: 18px;
+    }
+    .connection-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      margin-bottom: 6px;
+    }
+    .connection-body {
+      font-size: 13px;
+      color: var(--ink-soft);
+      line-height: 1.7;
+    }
+    .connection-body strong { color: var(--ink); }
+    .connection-body .arrow {
+      color: var(--accent);
+      font-weight: 600;
+      margin: 0 4px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 13.5px;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--rule-soft);
+    }
+    th {
+      background: var(--accent-faded);
+      color: var(--ink);
+      font-weight: 600;
+      font-size: 12px;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      border-bottom: 2px solid var(--accent);
+    }
+    td:first-child { font-weight: 500; color: var(--ink); }
+
+    pre {
+      background: var(--code-bg);
+      border-left: 3px solid var(--accent);
+      border-radius: 4px;
+      padding: 16px 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      line-height: 1.65;
+      overflow-x: auto;
+      color: var(--ink);
+      margin: 14px 0;
+    }
+
+    /* Contribution — 이전 디자인 양식 복원 */
+    .contrib-card {
+      background: var(--card);
+      border: 1px solid var(--rule);
+      border-radius: 12px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .contrib-headline {
+      background: var(--accent-faded);
+      padding: 22px 28px;
+      border-bottom: 1px solid var(--rule);
+    }
+    .contrib-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+    .contrib-title {
+      font-family: 'Fraunces', serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.35;
+      letter-spacing: -0.01em;
+      margin-bottom: 8px;
+    }
+    .contrib-impact {
+      font-size: 13.5px;
+      color: var(--accent);
+      font-weight: 500;
+      line-height: 1.5;
+    }
+    .contrib-body {
+      padding: 24px 28px;
+    }
+    .contrib-body > p {
+      font-size: 13.5px;
+      color: var(--ink-soft);
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+    .contrib-body > p strong { color: var(--ink); font-weight: 600; }
+
+    /* Action sub-cards — ① ② ③ 단계별 카드 */
+    .action-list {
+      margin: 16px 0;
+      padding: 0;
+      list-style: none;
+    }
+    .action-item {
+      border-left: 3px solid var(--accent);
+      background: var(--accent-faded);
+      padding: 14px 20px;
+      margin-bottom: 12px;
+      border-radius: 0 6px 6px 0;
+    }
+    .action-item:last-child { margin-bottom: 0; }
+    .action-title {
+      font-weight: 600;
+      color: var(--ink);
+      font-size: 13.5px;
+      margin-bottom: 6px;
+    }
+    .action-body {
+      font-size: 13px;
+      color: var(--ink-soft);
+      line-height: 1.65;
+    }
+    .action-body strong { color: var(--ink); }
+    .action-body em {
+      display: block;
+      margin-top: 6px;
+      padding-top: 6px;
+      border-top: 1px dashed var(--rule);
+      font-style: italic;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .action-body em strong { color: var(--accent); font-weight: 600; }
+
+    /* Decision comparison — 3-열 옵션 비교 */
+    .decision-comp {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin: 22px 0;
+    }
+    .dec-card {
+      background: var(--card);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 18px 20px;
+    }
+    .dec-card.rejected {
+      background: #fafaf6;
+      opacity: 0.85;
+    }
+    .dec-card.chosen {
+      border: 2px solid var(--accent);
+      background: var(--accent-faded);
+    }
+    .dec-status {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+    .dec-card.rejected .dec-status { color: var(--muted); }
+    .dec-card.chosen .dec-status { color: var(--accent); }
+    .dec-name {
+      font-family: 'Fraunces', serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--ink);
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+    .dec-reason {
+      font-size: 12.5px;
+      color: var(--ink-soft);
+      line-height: 1.6;
+    }
+    .dec-reason strong { color: var(--ink); }
+
+    /* Sequence diagram wrapper */
+    .seq-flow {
+      background: var(--card);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 30px 28px;
+      margin: 22px 0;
+    }
+    .seq-flow svg { width: 100%; height: auto; display: block; }
+
+    /* Honest aside (DB Migration용) */
+    .honest-aside {
+      background: var(--neutral-soft);
+      border-left: 3px solid var(--neutral);
+      border-radius: 0 6px 6px 0;
+      padding: 14px 20px;
+      margin-top: 16px;
+      font-size: 12.5px;
+      color: var(--ink-soft);
+      line-height: 1.6;
+    }
+    .honest-aside strong { color: var(--ink); font-weight: 600; }
+    .honest-aside .aside-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px;
+      font-weight: 600;
+      color: var(--neutral);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    @media (max-width: 720px) {
+      .decision-comp { grid-template-columns: 1fr; }
+    }
+
+    /* Etc grid — 기타 운영 기여 */
+    .etc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 18px;
+    }
+    .etc-card {
+      background: var(--card);
+      border: 1px solid var(--rule);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 6px 6px 0;
+      padding: 16px 20px;
+    }
+    .etc-title {
+      font-family: 'Inter Tight', sans-serif;
+      font-weight: 600;
+      font-size: 13.5px;
+      color: var(--ink);
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+    .etc-title .tag {
+      display: inline-block;
+      background: var(--code-bg);
+      color: var(--muted);
+      padding: 1px 8px;
+      border-radius: 3px;
+      font-size: 9.5px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 500;
+      margin-left: 6px;
+      vertical-align: middle;
+      letter-spacing: 0.05em;
+    }
+    .etc-body {
+      font-size: 12.5px;
+      color: var(--ink-soft);
+      line-height: 1.6;
+    }
+    .etc-body strong { color: var(--ink); font-weight: 600; }
+
+    /* Deep-dive badge — 카드 우상단 표식 */
+    .etc-card.has-deepdive {
+      position: relative;
+      border-left-color: var(--accent);
+      border-left-width: 4px;
+    }
+    .etc-deepdive-badge {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      background: var(--accent);
+      color: #fff;
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 9px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .etc-card.has-deepdive .etc-title {
+      padding-right: 92px;
+    }
+
+    /* Deep-dive cross-reference link */
+    .etc-deepdive-link {
+      display: inline-block;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--rule);
+      font-size: 11.5px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      transition: color 0.15s;
+    }
+    .etc-deepdive-link:hover {
+      color: var(--ink);
+    }
+    .etc-deepdive-link::before {
+      content: "→ ";
+      font-family: 'Inter Tight', sans-serif;
+    }
+
+    @media (max-width: 720px) {
+      .etc-grid { grid-template-columns: 1fr; }
+      .etc-card.has-deepdive .etc-title { padding-right: 0; padding-top: 22px; }
+      .etc-deepdive-badge { top: 14px; right: 14px; }
+    }
+
+    /* Compact deep-dive card */
+    .dd-card {
+      background: var(--card);
+      border: 1px solid var(--rule);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 22px;
+    }
+    .dd-header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--rule);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .dd-icon {
+      font-size: 22px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .dd-headline {
+      flex: 1;
+    }
+    .dd-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      margin-bottom: 3px;
+    }
+    .dd-title {
+      font-family: 'Fraunces', serif;
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+    }
+    .dd-mode {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 12px;
+      letter-spacing: 0.05em;
+      flex-shrink: 0;
+    }
+    .dd-mode.honest {
+      background: var(--neutral-soft);
+      color: var(--neutral);
+    }
+    .dd-mode.confident {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+    .dd-mode.option {
+      background: #fff4e8;
+      color: var(--warn);
+    }
+    .dd-body {
+      padding: 22px 24px;
+    }
+    .dd-row {
+      display: grid;
+      grid-template-columns: 60px 1fr;
+      gap: 16px;
+      padding: 10px 0;
+      border-bottom: 1px dashed var(--rule-soft);
+      align-items: start;
+    }
+    .dd-row:last-child { border-bottom: none; }
+    .dd-row-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding-top: 4px;
+    }
+    .dd-row-body {
+      font-size: 13.5px;
+      color: var(--ink-soft);
+      line-height: 1.65;
+    }
+    .dd-row-body strong { color: var(--ink); font-weight: 600; }
+    .dd-row-body em { color: var(--accent); font-style: normal; font-weight: 500; }
+    .dd-row-body code {
+      background: var(--code-bg);
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+    }
+    .dd-aside {
+      background: var(--accent-faded);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 6px 6px 0;
+      padding: 12px 18px;
+      margin-top: 14px;
+      font-size: 12.5px;
+      color: var(--ink-soft);
+      line-height: 1.6;
+    }
+    .dd-aside strong { color: var(--ink); font-weight: 600; }
+    .dd-aside .aside-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 9.5px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    /* Growth Cycles */
+    .cycle-card {
+      background: var(--card);
+      border: 1px solid var(--rule);
+      border-radius: 12px;
+      margin-bottom: 18px;
+      overflow: hidden;
+    }
+    .cycle-header {
+      background: var(--accent-faded);
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--rule);
+    }
+    .cycle-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      margin-bottom: 4px;
+    }
+    .cycle-title {
+      font-family: 'Fraunces', serif;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.35;
+    }
+    .cycle-body {
+      padding: 20px 24px;
+    }
+    .cycle-body p {
+      font-size: 13px;
+      color: var(--ink-soft);
+      line-height: 1.7;
+      margin-bottom: 8px;
+    }
+    .cycle-body p:last-child { margin-bottom: 0; }
+    .cycle-body strong { color: var(--ink); font-weight: 600; }
+
+    footer {
+      margin-top: 80px;
+      padding-top: 28px;
+      border-top: 1px solid var(--rule);
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    @media (max-width: 720px) {
+      .wrap { padding: 48px 24px 80px; }
+      h1 { font-size: 32px; }
+      h2 { font-size: 24px; }
+      .role-strip, .value-strip { grid-template-columns: 1fr; }
+      .work-header { flex-direction: column; gap: 8px; }
+      .case-row { grid-template-columns: 1fr; gap: 6px; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <a class="back-link" href="index.html">← 포트폴리오 메인으로</a>
+
+  <!-- 01 — OVERVIEW -->
+  <section class="section">
+    <div class="section-tag">01 · OVERVIEW · 실무 경력</div>
+    <h1><span class="marker">이슈를 끝까지 추적하는 운영 오너십</span></h1>
+    <div class="section-rule"></div>
+    <p class="lede">
+      회원제 특허 SaaS의 <strong>6개 검색 사이트 유지보수·개선 담당</strong>으로, <strong>대량 문서 뷰어·엑셀 다운로드·비교보기</strong>를 메인으로 담당했습니다.
+      운영하면서 마주친 <strong>코드·기획·데이터의 불일치</strong>를 그냥 넘어가지 않고 원인까지 추적해 해결하는 방식으로 일했습니다.
+      담당 기능에 머무르지 않고 <strong>서비스의 상태 자체를 책임진다는 태도</strong>로 운영을 대했습니다.
+    </p>
+
+    <div class="hero">
+      <div class="hero-title">
+        <em>"이슈를 발견하면 넘어가지 않고, 보고하고, 해결까지 책임졌다."</em>
+      </div>
+      <div class="hero-sub">
+        대량 데이터를 다루는 회원제 SaaS — 6개 검색 사이트의 유지보수·개선.
+        대량 문서 뷰어·엑셀 다운로드·비교보기를 메인으로, 그 외 사용자 편의성·로그 분석·외부 API 연동·DB 마이그레이션까지
+        담당 영역을 좁게 한정하지 않고 서비스 전체의 상태를 능동적으로 관리했습니다.
+      </div>
+      <div class="hero-meta">
+        <span>풀스택 개발자</span>
+        <span>2022.11 ~ 2025.03</span>
+      </div>
+    </div>
+
+    <!-- 3대 가치 -->
+    <div class="value-strip">
+      <div class="value-card">
+        <div class="value-icon">🔍</div>
+        <div class="value-title">이슈를 그냥 넘기지 않는다</div>
+        <div class="value-body">
+          코드 동작이 어색하거나 데이터가 이상하면 <strong>원인을 직접 추적</strong>. 표면 증상에서 멈추지 않고 근본 원인까지 들고 가서 해결.
+        </div>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">🤝</div>
+        <div class="value-title">기획 단계부터 함께 협업한다</div>
+        <div class="value-body">
+          구현에 그치지 않고 <strong>기획 자문 · 사용자 관점 의견 제시 · 코드 불일치 검토</strong>까지 맡음. 기획팀과 활발히 소통하며 더 나은 방향을 같이 찾음.
+        </div>
+      </div>
+      <div class="value-card">
+        <div class="value-icon">🏠</div>
+        <div class="value-title">운영을 내 것으로 본다</div>
+        <div class="value-body">
+          담당 기능을 넘어 <strong>서비스 전체의 상태</strong>를 지켜봄. CS 문의·로그·이상 패턴을 능동적으로 모니터링.
+        </div>
+      </div>
+    </div>
+
+    <div class="role-strip">
+      <div class="role-card main">
+        <div class="role-num">★ MAIN ROLE</div>
+        <div class="role-title">6개 검색 사이트 유지보수·개선</div>
+        <div class="role-body">
+          담당 기능: <strong>대량 문서 뷰어(이지뷰어) · 엑셀 다운로드 · 비교보기</strong>
+          <br><br>
+          <span style="color:var(--accent); font-weight:600;">★ 이지뷰어 도면-텍스트 동기화 작업이 연간 사용자 만족도 조사에서 2위로 선정됨</span>
+        </div>
+      </div>
+      <div class="role-card">
+        <div class="role-num">+ ADDITIONAL</div>
+        <div class="role-title">유틸리티 · 편의성 개선</div>
+        <div class="role-body">
+          형광펜 · DRM 필터링 · 메인-서브 뷰어 연동 · 다운로드 한도 모니터링
+        </div>
+      </div>
+      <div class="role-card">
+        <div class="role-num">+ ADDITIONAL</div>
+        <div class="role-title">분석 · 연동 · 마이그레이션</div>
+        <div class="role-body">
+          로그 기반 사용자 행동 분석 · 외부 번역 API 연동 · PostgreSQL → MSSQL 마이그레이션
+        </div>
+      </div>
+    </div>
+
+    <!-- 🛠 코드 수정 루틴 박스 -->
+    <div class="routine-box">
+      <div class="routine-header">
+        <span class="routine-icon">🛠</span>
+        <span class="routine-title">코드 수정 루틴 — 유지보수 환경에서 익힌 작업 원칙</span>
+
+      </div>
+      <div class="routine-body">
+        <div class="routine-stage">
+          <div class="routine-stage-num">STAGE 01</div>
+          <div class="routine-stage-name">변경 전 — 코드만 보지 않는다</div>
+          <ul>
+            <li><strong>SVN history</strong>로 과거 결정 맥락 추적 — 이 코드가 왜 이렇게 짜였는지부터 확인</li>
+            <li><strong>기획서·과거 CS 이슈</strong> 확인 — <em>같은 문제 두 번 풀지 않기</em></li>
+            <li>DB 직접 조회로 <strong>코드가 가정한 데이터</strong>와 <strong>실제 데이터</strong>의 간극 확인</li>
+          </ul>
+        </div>
+        <div class="routine-stage">
+          <div class="routine-stage-num">STAGE 02</div>
+          <div class="routine-stage-name">변경 중 — 추측 대신 재현</div>
+          <ul>
+            <li><strong>버그 재현 시나리오부터 확정</strong> — "이 조건에서 100% 재현"을 만든 뒤 작업 시작</li>
+            <li>디버거 step-by-step으로 흐름 검증 — <em>코드 읽고 추론하지 않음</em></li>
+          </ul>
+        </div>
+        <div class="routine-stage">
+          <div class="routine-stage-num">STAGE 03</div>
+          <div class="routine-stage-name">변경 후 — 내 일이 끝나는 시점을 늦춘다</div>
+          <ul>
+            <li><strong>운영 로그 직접 확인</strong> — 변경 직후 며칠간 이상 패턴 추적</li>
+            <li><strong>관련 CS 인입 의식적으로 추적</strong> — <em>배포 후 며칠간을 작업의 마무리 구간으로 둠</em></li>
+          </ul>
+        </div>
+      </div>
+      <div class="routine-footer">
+        <strong>일관된 원칙</strong>: "맥락을 추적한다 + 추측 대신 재현으로 확인한다 + 내 일이 끝나는 시점을 며칠 뒤로 미룬다."
+        이 셋이 재직 기간 동안 큰 운영 사고 없이 작업을 유지한 실질적 근거.
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 — 일하는 방식 (오너십 사례) -->
+  <section class="section" id="section-02">
+    <div class="section-tag">02 · HOW I WORK</div>
+    <h2>이슈를 발견·추적·해결한 방식</h2>
+    <div class="section-rule"></div>
+    <p class="lede">
+      담당 기능의 경계를 좁게 두지 않았습니다. <strong>운영 중 이상한 점 → 보고 → 원인 추적 → 해결</strong>을 능동적으로 반복했고,
+      특히 <strong>기획과 코드의 불일치</strong>를 발견하면 기획팀과 직접 의논해 정정한 경험이 많습니다.
+    </p>
+
+    <!-- Case 1: 기획 협업 + 코드 불일치 검토 -->
+    <div class="case-card">
+      <div class="case-header">
+        <div class="case-num">🤝 CASE #1</div>
+        <div class="case-title">기획 단계부터 함께한 협업 — 자문 · 사용자 관점 · 코드 불일치 검토</div>
+        <div class="case-subtitle">기획과 사용자 사이를 잇는 역할로 일하기</div>
+      </div>
+      <div class="case-body">
+        <div class="case-row">
+          <div class="case-row-label">기획 자문</div>
+          <div class="case-row-body">
+            기획 초기 단계에서 <strong>시스템적으로 가능한 범위 · 비용 · 우회 방법</strong>에 대한 자문을 요청받음. 받은 기획을 그대로 구현하기보다, <em>이 방향이 운영에 어떤 부담을 줄지</em>를 함께 검토.
+          </div>
+        </div>
+        <div class="case-row">
+          <div class="case-row-label">사용자 관점</div>
+          <div class="case-row-body">
+            <strong>실제 사용자가 되어 서비스를 써보며</strong> 불편한 지점을 직접 체감. 기획에 적힌 흐름과 실제 사용 경험 사이의 간극을 발견하면 의견을 정리해서 공유. <em>"사용자 입장에서 편리한가"</em>를 기준으로 기획팀과 활발히 소통.
+          </div>
+        </div>
+        <div class="case-row">
+          <div class="case-row-label">코드 불일치 검토</div>
+          <div class="case-row-body">
+            새 기획안이 나오면 받자마자 <strong>"이 구조가 지금 코드와 맞나?"</strong>를 먼저 확인. 기획팀이 알고 있는 시스템 모습과 실제 운영 중인 코드의 동작이 다른 경우를 정리해서 공유 — 어느 쪽을 정정할지 의논해서 결정.
+          </div>
+        </div>
+        <div class="case-row">
+          <div class="case-row-label">결과</div>
+          <div class="case-row-body">
+            "막상 만들고 보니 의도와 다르다"는 재작업 비용을 사전에 줄이고, 기획팀도 시스템의 실제 모습을 더 정확히 알게 됨. <em>백엔드 구현을 넘어 기획·사용자·코드 사이를 잇는 역할로 자리매김</em>.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Case 2: 반복 CS 문의의 원인 분석 → 팀 논의 → 사전 차단 구현 -->
+    <div class="case-card" id="case-drm" style="scroll-margin-top:24px;">
+      <div class="case-header">
+        <div class="case-num">🔍 CASE #2</div>
+        <div class="case-title">반복 CS 문의의 원인 분석 → 팀 논의 → 사전 차단 구현</div>
+        <div class="case-subtitle">문제의 단서를 제공하고, 결정된 방향을 책임지고 완수한 사례</div>
+      </div>
+      <div class="case-body">
+        <div class="case-row">
+          <div class="case-row-label">상황</div>
+          <div class="case-row-body">
+            "문서 업로드 시 오류가 발생한다"는 사용자 문의가 반복 접수. 1차 대응은 CS팀이 <em>"E-DRM 해제 후 재업로드"</em>를 수동 안내하는 방식이었음.
+          </div>
+        </div>
+        <div class="case-row">
+          <div class="case-row-label">팀 결정·할당</div>
+          <div class="case-row-body">
+            <em>"수동 안내 대신 시스템 레벨에서 사전 차단하자"</em>는 방향이 팀에서 결정됨. 해당 작업이 본인에게 할당됨.
+          </div>
+        </div>
+        <div class="case-row">
+          <div class="case-row-label">원인 분석</div>
+          <div class="case-row-body">
+            반복되는 Exception 로그를 분석해, 사내 E-DRM 암호화 문서를 업로드할 때 Java 기반 문서 파서들이 던지는 <strong>특정 Exception 패턴</strong>이 존재함을 식별. <em>E-DRM 암호화로 문서의 바이너리 구조 자체가 변형되어 파서가 정상 문서로 인식하지 못하기 때문</em>이라, 무작위 에러가 아니라 일정한 원인이 있는 케이스임을 확인.
+          </div>
+        </div>
+        <div class="case-row">
+          <div class="case-row-label">구현·결과</div>
+          <div class="case-row-body">
+            업로드 단계에서 외부 분석 API에 넘기기 전에 <strong>사전 파싱으로 시그널을 감지</strong>해 "암호화 해제 후 재업로드" 안내 메시지를 노출. 파일 형식별로 도구를 분리해 <strong>MS Office 계열은 Apache POI, HWP는 hwplib</strong>으로 동일 패턴 적용. <em>일반 파싱 오류와 E-DRM 케이스를 명확히 분기</em> → 불명확한 Exception 화면이 명확한 안내로 바뀌고, <strong>동일 원인의 CS 문의 재발 없음</strong>.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 — CONTRIBUTIONS CATALOG -->
+  <section class="section" id="section-03">
+    <div class="section-tag">03 · CONTRIBUTIONS CATALOG</div>
+    <h2>운영 기여 한눈에 보기</h2>
+    <div class="section-rule"></div>
+    <p class="lede">
+      메인 업무(<strong>이지뷰어·엑셀 다운로드·비교보기</strong>)부터 마이그레이션·동시성·UX·다국가 출시·팀 문화까지,
+      운영 환경의 다양한 문제를 직접 해결한 작업들의 카탈로그.
+      <strong>★ DEEP DIVE</strong> 배지가 있는 항목은 본문에서 자세히 다룸.
+    </p>
+
+    <div class="etc-grid">
+      <div class="etc-card has-deepdive">
+        <span class="etc-deepdive-badge">★ Deep Dive</span>
+        <div class="etc-title">이지뷰어 ↔ 도면 팝업 실시간 동기화 <span class="tag" style="background:var(--accent); color:#fff;">사용자 만족도 ★ 2위</span></div>
+        <div class="etc-body">
+          이지뷰어 문헌 이동 시 별도 팝업 도면을 자동 동기화. <strong>URL 재호출 → 부분 렌더링(동기) → 비동기 + 콜백 재구성</strong>의 3단계로 깜빡임·포커스 강탈·동기 멈춤을 차례로 제거. <strong>연간 사용자 만족도 조사 2위</strong>.
+          <br><a class="etc-deepdive-link" href="#section-07">04 · DEEP DIVE — VIEWER UX</a>
+        </div>
+      </div>
+
+      <div class="etc-card has-deepdive">
+        <span class="etc-deepdive-badge">★ Deep Dive</span>
+        <div class="etc-title">PG → MSSQL 슬로우 쿼리 개선 <span class="tag">MyBatis · T-SQL</span></div>
+        <div class="etc-body">
+          MSSQL 2016에 <code style="background:var(--code-bg);padding:1px 4px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11.5px;">string_agg(DISTINCT)</code>가 없어 STUFF + FOR XML PATH 우회 → 성능 저하. 서브쿼리·JOIN·WHERE 구조 조정 후 <strong>임시 테이블 단계 분할</strong>로 해결, 기존 환경 대비 동일 응답 성능 유지.
+          <br><a class="etc-deepdive-link" href="#section-04">05 · DEEP DIVE — DB MIGRATION</a>
+        </div>
+      </div>
+
+      <div class="etc-card has-deepdive">
+        <span class="etc-deepdive-badge">★ Deep Dive</span>
+        <div class="etc-title">유료 다운로드 한도 우회 차단 <span class="tag">동시성</span></div>
+        <div class="etc-body">
+          1만 건 분할 비동기 처리에서 다중 창 동시 요청으로 한도 우회 가능했던 race condition을 <strong>사전 차감</strong>으로 해결. 락 기반 대안과 트레이드오프 비교 후 환경에 맞는 도구 선택.
+          <br><a class="etc-deepdive-link" href="#section-05">06 · DEEP DIVE — CONCURRENCY</a>
+        </div>
+      </div>
+
+      <div class="etc-card has-deepdive">
+        <span class="etc-deepdive-badge">★ Deep Dive</span>
+        <div class="etc-title">대규모 특허 번역 — fan-out 설계 의사결정 <span class="tag">UX 성능</span></div>
+        <div class="etc-body">
+          200건 번역 노출 시 <strong>서버 일괄 vs 클라이언트 fan-out</strong>의 트레이드오프(인프라 부하↑ vs 체감 응답성↑)를 정리. 인프라 수용량·페이지 UX 중요도를 근거로 fan-out 채택. 로딩 저하 우려에도 <strong>눈에 띄는 이슈 없이 출시</strong>.
+          <br><a class="etc-deepdive-link" href="#section-06">07 · DEEP DIVE — STREAMING UX</a>
+        </div>
+      </div>
+
+      <div class="etc-card has-deepdive">
+        <span class="etc-deepdive-badge">★ Deep Dive</span>
+        <div class="etc-title">E-DRM 암호화 문서 사전 차단 <span class="tag">Apache POI · hwplib</span></div>
+        <div class="etc-body">
+          반복 CS 문의의 원인 추적 → <em>E-DRM 암호화로 바이너리 구조가 변형되어 Java 파서가 일관된 Exception을 던지는 패턴</em>을 식별. 외부 API 호출 전 <strong>Apache POI(MS Office) · hwplib(HWP)로 사전 파싱 검증</strong>해 명확한 안내로 분기. <strong>동일 사유 CS 재발 없음</strong>.
+          <br><a class="etc-deepdive-link" href="#section-02">02 · HOW I WORK · CASE #2</a>
+        </div>
+      </div>
+
+      <div class="etc-card">
+        <div class="etc-title">EU 지역 서비스 신규 출시 <span class="tag">다국가</span></div>
+        <div class="etc-body">
+          검증된 타 국가 서비스의 구조·패턴을 분석해, <strong>EU 특화 요구(언어·지역 정책)를 반영하면서도 일관성 있는 구조</strong>로 안정적 출시. 기존 시스템의 추상화 레벨을 유지하며 확장한 사례.
+        </div>
+      </div>
+
+      <div class="etc-card">
+        <div class="etc-title">JUnit/Mockito 테스트 도입 주도 <span class="tag">팀 문화</span></div>
+        <div class="etc-body">
+          <strong>인증이 필요한 컨트롤러 테스트 방법론</strong>을 정립해 팀 대상 발표 → 팀 표준 가이드라인 마련. 적용에 그치지 않고 왜 그렇게 테스트해야 하는지까지 공유.
+        </div>
+      </div>
+
+      <div class="etc-card">
+        <div class="etc-title">비교 뷰어 스크롤 동기화 <span class="tag">UX 알고리즘</span></div>
+        <div class="etc-body">
+          기존 <strong>절대 이동거리 동기화</strong>는 길이가 다른 두 문서에서 어긋남 → <strong>이동거리 비율(0~1) 동기화</strong>로 변경해 양쪽 문서가 항상 같은 상대 위치를 보여줌. "UX 문제를 코드 구조로 푼" 사례.
+        </div>
+      </div>
+
+      <div class="etc-card">
+        <div class="etc-title">형광펜 대규모 고도화 <span class="tag">UX 데이터 모델</span></div>
+        <div class="etc-body">
+          드래깅·리사이징 레이어 도입, 색상 16 → 40+개 확장, 저장 포맷 <strong>XML → JSON</strong> 전환. 데이터 모델 자체를 재설계해 향후 기능 확장을 쉽게 만든 작업.
+        </div>
+      </div>
+
+      <div class="etc-card">
+        <div class="etc-title">로그 기반 사용자 행동 패턴 조사 <span class="tag">운영 지원</span></div>
+        <div class="etc-body">
+          CS·영업팀 요청을 받아 <strong>로그인 시간이 불규칙한 사용자 등 의심 패턴 대상자를 로그 다각 분석으로 조사</strong>해 운영팀에 보고. 단순 데이터 조회를 넘어 패턴 인식 관점으로 접근.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 — 이지뷰어 도면-텍스트 동기화 -->
+  <section class="section" id="section-07">
+    <div class="section-tag">04 · DEEP DIVE — VIEWER UX</div>
+    <div class="contrib-card">
+      <div class="contrib-headline">
+        <div class="contrib-num">★ DEEP DIVE — VIEWER UX</div>
+        <div class="contrib-title">이지뷰어 ↔ 도면 팝업 실시간 동기화 — 연간 사용자 만족도 ★ 2위</div>
+        <div class="contrib-impact">메인 담당 기능의 핵심 사용성 작업. 단계별로 문제 원인을 짚어 개선한 결과, 그 해 전체 개선 기능 중 사용자 만족도 2위로 선정</div>
+      </div>
+      <div class="contrib-body">
+        <p><strong>P</strong> · 메인 창에는 다수의 특허 문헌을 빠르게 탐색할 수 있는 <strong>"이지뷰어"</strong>가 있고, <strong>"도면 보기"</strong>를 클릭하면 별도 컨트롤러 URL을 호출해 전체 HTML을 받아오는 <strong>팝업 창</strong>이 열리는 구조. <em>A문헌 도면을 본 상태에서 이지뷰어로 다른 문헌을 탐색해도 팝업은 A문헌 도면 상태로 고정</em>되어, 사용자가 매번 "도면 보기"를 다시 클릭해야 하는 불편이 있었음.</p>
+
+        <p><strong>A</strong> · 이지뷰어 문헌 이동 시 팝업 도면이 자동 동기화되도록 개선. <strong>각 단계에서 드러난 문제 원인을 정확히 짚어 다음 단계로 이어감</strong>.</p>
+
+        <ul class="action-list">
+          <li class="action-item">
+            <div class="action-title">1차 — 팝업 자동 갱신 (URL 재호출)</div>
+            <div class="action-body">
+              B문헌으로 이동 시 도면 조회 컨트롤러 URL을 다시 호출해 <strong>팝업 창 전체를 새로 불러오는 방식</strong>.
+              <em><strong>남은 문제 3가지:</strong> ① 페이지 전체 재로딩으로 느림 ② 화면이 순간 하얗게 깜빡임 ③ 새 URL 로드 시 <strong>브라우저 보안 정책에 의해 포커스가 팝업 창으로 강제 이동</strong> → 이지뷰어에서 빠르게 문헌을 넘기던 탐색 흐름이 매번 끊김.</em>
+            </div>
+          </li>
+          <li class="action-item">
+            <div class="action-title">2차 — 부분 렌더링 (동기 AJAX)</div>
+            <div class="action-body">
+              깜빡임·포커스 강탈의 근본 원인이 <strong>"팝업 URL을 바꿔 페이지 전체를 재로딩"하는 데 있다고 판단</strong>. 팝업 HTML을 <strong>고정 영역(헤더·툴바) + 가변 영역(도면)</strong>으로 분할하고, 팝업 URL은 그대로 둔 채 <strong>가변 영역의 HTML 조각만 동기 AJAX로 받아 innerHTML로 교체</strong>.
+              <em><strong>해결:</strong> 깜빡임·포커스 강탈 사라지고 전송량 감소로 속도 개선. <strong>남은 문제:</strong> 동기 AJAX 특성상 응답 도착 전까지 메인 스레드가 멈춰 "순간 멈춤"이 인지됨.</em>
+            </div>
+          </li>
+          <li class="action-item">
+            <div class="action-title">3차 — 비동기 호출 + 콜백 기반 실행 순서 재구성</div>
+            <div class="action-body">
+              AJAX를 비동기로 변경. 단순히 동기→비동기 전환만으로는 부족하고, <strong>응답 시점에 의존하는 후속 로직(도면 초기화 JS 등)이 응답 완료 후 실행되도록 콜백 기반으로 코드 구조를 재정비</strong>.
+              <em><strong>해결:</strong> 응답 대기 중에도 사용자 입력에 반응 가능해져 멈춤 현상까지 해소. 1·2차에서 드러난 모든 문제(깜빡임·포커스 강탈·속도·멈춤)가 최종적으로 모두 개선됨.</em>
+            </div>
+          </li>
+        </ul>
+
+        <p><strong>R</strong> · <strong>연간 사용자 만족도 조사에서 그 해 개선 기능 중 2위로 선정</strong>. <em>기능이 동작하는 데 멈추지 않고 사용자 흐름을 끊지 않는 것까지 가져간 점</em>이 실질적 평가 근거.</p>
+
+        <div class="honest-aside" style="background:var(--accent-faded); border-left-color:var(--accent);">
+          <span class="aside-tag" style="color:var(--accent);">🔄 회고</span>
+          <em>AJAX 적용 자체</em>보다, 각 단계의 문제 원인을 정확히 짚어 다음 단계로 이어간 점이 중요했음.
+          <strong>페이지 전체 재로드 → 부분 교체 → 비동기화</strong>로의 흐름은 결과적으로 <strong>"브라우저가 강제하는 동작을 피하기 위해 점점 더 가벼운 단위로 갱신 범위를 좁혀 나간 과정"</strong>이었음.
+        </div>
+      </div>
+    </div>
+
+    <div class="connection">
+      <div class="connection-tag">→ 작업의 의미</div>
+      <div class="connection-body">
+        <em>기능 추가</em>를 넘어 <strong>브라우저가 강제하는 동작 단위를 좁혀 사용자 흐름을 보존하는</strong> 관점의 설계. 사용자 경험을 코드 구조 레벨에서 직접 풀어낸 작업.
+        <br><br>
+        <strong>점진적 응답성 개선(전체 재로딩 → 부분 렌더링 → 비동기 갱신)</strong>의 사고 패턴은 이후 <strong>대규모 특허 번역</strong>(서버 일괄 응답 → 클라이언트 fan-out + 점진 교체)으로 이어지고, 부트캠프 프로젝트의 <em>ants-camp 클라이언트 fan-out 구조</em>까지 일관되게 적용됨.
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 — DB 마이그레이션 -->
+  <section class="section" id="section-04">
+    <div class="section-tag">05 · DEEP DIVE — DB MIGRATION</div>
+    <div class="contrib-card">
+      <div class="contrib-headline">
+        <div class="contrib-num">🗄️ DEEP DIVE — DB MIGRATION</div>
+        <div class="contrib-title">PostgreSQL → MSSQL 마이그레이션 후 슬로우 쿼리 개선</div>
+        <div class="contrib-impact">시행착오로 해결한 작업을 이후 학습으로 원리 레벨에서 설명할 수 있게 된 사례</div>
+      </div>
+      <div class="contrib-body">
+        <p><strong>P</strong> · 팀 차원에서 PG → MSSQL(구버전, 2016) 전체 이관을 진행. 마이그레이션 후 <strong>특정 쿼리가 눈에 띄게 느려진 케이스</strong>를 담당해 개선. <em>특히 주된 원인은, 중복 제거 문자열 집계에서 PG의 <code style="background:var(--code-bg);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11.5px;">string_agg(DISTINCT)</code>가 MSSQL 2016에는 없어 <strong>STUFF + FOR XML PATH + DISTINCT 서브쿼리</strong>로 우회해야 했고, 이 우회 자체가 큰 성능 저하를 유발</em>.</p>
+
+        <p><strong>A</strong> · 같은 결과를 내는 여러 SQL 형태를 시도하며 단계적으로 접근:</p>
+
+        <ul class="action-list">
+          <li class="action-item">
+            <div class="action-title">① 호출 경로 식별 — 영향 범위 먼저 파악</div>
+            <div class="action-body">
+              슬로우 쿼리가 발생하는 화면·기능을 먼저 식별해 회귀 검증 범위를 가늠.
+              <em><strong>이유:</strong> 쿼리만 보고 고치면 같은 쿼리가 호출되는 다른 화면에서 회귀가 날 수 있음.</em>
+            </div>
+          </li>
+          <li class="action-item">
+            <div class="action-title">② 서브쿼리 ↔ JOIN ↔ UNION 변환 시도</div>
+            <div class="action-body">
+              서브쿼리로 짠 부분을 JOIN으로, JOIN을 UNION으로 바꿔보며 MSSQL에서 어떤 형태가 빠른지 실행 시간 측정으로 비교.
+              <em><strong>결과:</strong> 일부 쿼리는 개선, 일부는 미미.</em>
+            </div>
+          </li>
+          <li class="action-item">
+            <div class="action-title">③ WHERE절 구조 조정</div>
+            <div class="action-body">
+              조건 순서·표현 방식을 다양하게 시도.
+              <em><strong>결과:</strong> 미미한 개선. 근본 해결은 안 됨.</em>
+            </div>
+          </li>
+          <li class="action-item">
+            <div class="action-title">④ 임시 테이블로 단계 분할 — 결정적 해결</div>
+            <div class="action-body">
+              복잡한 한 방 쿼리를 단계별로 쪼개서 임시 테이블에 넣고 다음 단계에서 사용.
+              <em><strong>결과:</strong> 큰 개선 확인. <strong>이게 결정적이었음</strong>.</em>
+            </div>
+          </li>
+        </ul>
+
+        <p><strong>R</strong> · 벤더가 바뀌어도 <strong>기존 환경 대비 동일 수준의 응답 성능 유지</strong>하며 슬로우 쿼리 개선 완료.</p>
+
+        <div class="honest-aside">
+          <span class="aside-tag">📚 당시 한계와 이후 학습</span>
+          당시엔 옵티마이저 개념을 깊이 알지 못한 채 시행착오로 해결.
+          <strong>이후 학습 결과로 이해한 메커니즘</strong>: MSSQL 옵티마이저는 참여 테이블 수와 데이터 분포가 복잡해질수록 통계 추정이 빗나가 <em>잘못된 조인 순서나 비효율적 조인 방식(예: 해시 조인이 적절한데 중첩 루프를 택함)</em>을 선택하는 경향이 있음. 거대한 단일 쿼리를 통째로 던지면 옵티마이저가 길을 잃는 상황이었던 것. 임시 테이블 분할은 각 단계마다 데이터 크기·통계가 명확한 상태에서 옵티마이저가 판단하도록 강제하는 효과.
+          <strong>다음 작업 시 접근법</strong>: 실행 계획을 먼저 확인하고 옵티마이저의 추정·실제 차이를 진단한 뒤 접근.
+        </div>
+      </div>
+    </div>
+
+    <div class="connection">
+      <div class="connection-tag">→ 학습 연결 고리</div>
+      <div class="connection-body">
+        이 경험에서 <strong>SQL 의존성·벤더 종속성의 한계</strong>를 체감 <span class="arrow">→</span> <strong>ORM(JPA) 학습</strong>으로 직결<span class="arrow">→</span> 영속성 컨텍스트·벤더 독립 데이터 접근 계층 설계를 학습 <span class="arrow">→</span> 부트캠프 프로젝트의 <strong>JPA + QueryDSL 설계</strong>에 적용.
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 — 비동기 동시성 -->
+  <section class="section" id="section-05">
+    <div class="section-tag">06 · DEEP DIVE — CONCURRENCY</div>
+    <div class="contrib-card">
+      <div class="contrib-headline">
+        <div class="contrib-num">⚡ DEEP DIVE — CONCURRENCY</div>
+        <div class="contrib-title">임계구역을 긴 로직 뒤에서 맨 앞으로 옮긴 비동기 동시성 설계</div>
+        <div class="contrib-impact">1만 건 분할 비동기 처리에서 다중 창 동시 요청을 통한 한도 우회 원천 차단 + 비동기 모니터링 누락 제거</div>
+      </div>
+      <div class="contrib-body">
+        <p><strong>P</strong> · 1만 건 규모 다운로드를 100건씩 분할 비동기 처리하는 회원제 기능에서, 이용량을 <strong>모든 처리 완료 후</strong> 집계하는 구조 → 사용자가 여러 창에서 동시에 다운로드하면 <strong>검사 시점에 한도가 비어있어 제한 우회</strong>(race condition). 비동기 특성상 실패 다운로드의 모니터링 알림도 누락.</p>
+
+        <p><strong>A</strong> · 임계구역의 위치 자체를 재설계 — 옵션별로 트레이드오프 비교:</p>
+      </div>
+    </div>
+
+    <h3 style="margin-top:28px; margin-bottom:14px;">대안 검토 — 동시성 보호 옵션 비교</h3>
+    <div class="decision-comp">
+      <div class="dec-card rejected">
+        <div class="dec-status">REJECTED · DB 락</div>
+        <div class="dec-name">SELECT ... FOR UPDATE</div>
+        <div class="dec-reason">
+          비동기 처리 시간(수 초~수십 초) 동안 락 점유 → <strong>처리량 저하 + 다른 정상 요청까지 블로킹</strong>.
+        </div>
+      </div>
+      <div class="dec-card rejected">
+        <div class="dec-status">REJECTED · 분산 락</div>
+        <div class="dec-name">Redis · ZooKeeper</div>
+        <div class="dec-reason">
+          단일 DB 환경에 <strong>오버엔지니어링</strong>. 외부 의존성 추가 + 운영 복잡도 상승. 본 문제는 DB 한 곳에서 풀 수 있음.
+        </div>
+      </div>
+      <div class="dec-card chosen">
+        <div class="dec-status">CHOSEN · 임계구역 재배치</div>
+        <div class="dec-name">사전 차감 (Front-loading)</div>
+        <div class="dec-reason">
+          이용량 집계를 <strong>critical section 가장 앞으로 이동</strong>하고 사전 차감 방식 전환. 락 없이도 race 차단 + 실패 시 롤백 가능.
+        </div>
+      </div>
+    </div>
+
+    <div class="seq-flow">
+      <svg viewBox="0 0 800 320" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arr-rev" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#b85c00"/>
+          </marker>
+          <marker id="arr-good" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#0d8754"/>
+          </marker>
+        </defs>
+
+        <!-- Before -->
+        <text x="40" y="30" font-family="Inter Tight" font-size="14" font-weight="700" fill="#b85c00">❌ BEFORE — 사후 집계 (race 발생)</text>
+
+        <rect x="40" y="50" width="100" height="40" rx="5" fill="#fff" stroke="#b85c00" stroke-width="1.5"/>
+        <text x="90" y="74" text-anchor="middle" font-family="Inter Tight" font-size="11" font-weight="600">요청 수신</text>
+
+        <rect x="170" y="50" width="180" height="40" rx="5" fill="#fff4e8" stroke="#b85c00" stroke-width="1.5"/>
+        <text x="260" y="68" text-anchor="middle" font-family="Inter Tight" font-size="11" font-weight="600">100건 × 100 비동기 실행</text>
+        <text x="260" y="82" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#b85c00">긴 처리 시간 (수십 초)</text>
+
+        <rect x="380" y="50" width="180" height="40" rx="5" fill="#b85c00"/>
+        <text x="470" y="68" text-anchor="middle" fill="#fff" font-family="Inter Tight" font-size="11" font-weight="600">완료 후 이용량 집계</text>
+        <text x="470" y="82" text-anchor="middle" fill="#ffd9b3" font-family="JetBrains Mono" font-size="9">← critical section (너무 늦음)</text>
+
+        <line x1="140" y1="70" x2="168" y2="70" stroke="#b85c00" stroke-width="1.5" marker-end="url(#arr-rev)"/>
+        <line x1="350" y1="70" x2="378" y2="70" stroke="#b85c00" stroke-width="1.5" marker-end="url(#arr-rev)"/>
+
+        <text x="595" y="56" font-family="Inter Tight" font-size="11" font-weight="600" fill="#b85c00">❌ 처리 중 새 요청 통과</text>
+        <text x="595" y="72" font-family="Inter Tight" font-size="11" font-weight="600" fill="#b85c00">❌ 한도 우회 가능</text>
+        <text x="595" y="88" font-family="Inter Tight" font-size="11" font-weight="600" fill="#b85c00">❌ 실패 모니터링 누락</text>
+
+        <!-- Divider -->
+        <line x1="40" y1="130" x2="760" y2="130" stroke="#d6dfd9" stroke-width="1" stroke-dasharray="4,4"/>
+
+        <!-- After -->
+        <text x="40" y="170" font-family="Inter Tight" font-size="14" font-weight="700" fill="#0d8754">✅ AFTER — 사전 차감 (race 차단)</text>
+
+        <rect x="40" y="190" width="100" height="40" rx="5" fill="#fff" stroke="#0d8754" stroke-width="1.5"/>
+        <text x="90" y="214" text-anchor="middle" font-family="Inter Tight" font-size="11" font-weight="600">요청 수신</text>
+
+        <rect x="170" y="190" width="180" height="40" rx="5" fill="#0d8754"/>
+        <text x="260" y="208" text-anchor="middle" fill="#fff" font-family="Inter Tight" font-size="11" font-weight="600">사전 체크 · 집계 선반영</text>
+        <text x="260" y="222" text-anchor="middle" fill="#c9ead9" font-family="JetBrains Mono" font-size="9">← critical section (앞으로 이동)</text>
+
+        <rect x="380" y="190" width="180" height="40" rx="5" fill="#fff" stroke="#0d8754" stroke-width="1.5"/>
+        <text x="470" y="208" text-anchor="middle" font-family="Inter Tight" font-size="11" font-weight="600">100건 × 100 비동기 실행</text>
+        <text x="470" y="222" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#0d8754">긴 처리도 락 없이 안전</text>
+
+        <rect x="590" y="190" width="170" height="40" rx="5" fill="#f4faf7" stroke="#0d8754" stroke-width="1.5"/>
+        <text x="675" y="208" text-anchor="middle" font-family="Inter Tight" font-size="11" font-weight="600">완료 후 성공/실패 분기</text>
+        <text x="675" y="222" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#0d8754">모니터링 메트릭 발송</text>
+
+        <line x1="140" y1="210" x2="168" y2="210" stroke="#0d8754" stroke-width="1.5" marker-end="url(#arr-good)"/>
+        <line x1="350" y1="210" x2="378" y2="210" stroke="#0d8754" stroke-width="1.5" marker-end="url(#arr-good)"/>
+        <line x1="560" y1="210" x2="588" y2="210" stroke="#0d8754" stroke-width="1.5" marker-end="url(#arr-good)"/>
+
+        <text x="40" y="270" font-family="Inter Tight" font-size="12" fill="#5a6b63" font-style="italic">
+          요점: 긴 시간 소요 로직 <tspan font-weight="700" fill="#0e1410">이전에</tspan> 임계구역을 두면 락 없이도 race를 막을 수 있다.
+        </text>
+        <text x="40" y="290" font-family="Inter Tight" font-size="12" fill="#5a6b63" font-style="italic">
+          비동기 모니터링은 호출자 예외 컨텍스트 밖에서 발생하므로 완료 분기에서 <tspan font-weight="700" fill="#0e1410">명시적 메트릭·로깅</tspan>이 필수.
+        </text>
+      </svg>
+    </div>
+
+    <div class="contrib-card">
+      <div class="contrib-body" style="padding-top:18px;">
+        <p><strong>R</strong> · 동시 다발 요청을 통한 이용량 제한 우회를 <strong>구조적으로 차단</strong>, 비동기 환경 모니터링 누락 제거.</p>
+
+        <div class="honest-aside" style="background:var(--accent-faded); border-left-color:var(--accent);">
+          <span class="aside-tag" style="color:var(--accent);">📚 당시 한계와 이후 학습</span>
+          당시엔 <strong>"여러 방법 중 사전 차감이 맞다"</strong>는 판단으로 해결했으나, 락 기반 대안을 체계적으로 비교하지 못한 상태였음.
+          <strong>이후 학습 결과로 정리한 대안</strong>: 비관적 락(<code style="background:var(--code-bg);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11.5px;">PESSIMISTIC_WRITE</code>)으로 차감 row를 잠그거나, 낙관적 락(<code style="background:var(--code-bg);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11.5px;">@Version</code>)으로 충돌 시 재시도하는 방식.
+          <strong>해당 환경에서의 판단 근거</strong>: 다운로드 처리 시간이 길어 락 대기 비용이 크므로 사전 차감이 적합. 현재는 환경에 따라 도구를 선택할 수 있는 단계에 도달.
+        </div>
+      </div>
+    </div>
+
+    <div class="connection">
+      <div class="connection-tag">→ 학습 연결 고리</div>
+      <div class="connection-body">
+        "긴 로직 <strong>이전에</strong> 임계구역을 둔다"는 동시성 설계 원칙을 체득 <span class="arrow">→</span> 부트캠프에서 <strong>분산 락·동시성 제어를 자청 발표</strong>(낙관·비관·분산 락 트레이드오프) <span class="arrow">→</span> 다2조부 프로젝트의 <strong>seq 채번 race condition</strong>에서 의식적으로 <strong>비관적 락(PESSIMISTIC_WRITE)</strong> 선택. 3단계 학습 곡선의 시작점.
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 — 번역 streaming 패턴 -->
+  <section class="section" id="section-06">
+    <div class="section-tag">07 · DEEP DIVE — STREAMING UX</div>
+    <div class="contrib-card">
+      <div class="contrib-headline">
+        <div class="contrib-num">⚡ DEEP DIVE — STREAMING UX</div>
+        <div class="contrib-title">대규모 특허 번역 — 서버 일괄 vs 클라이언트 fan-out, 트레이드오프 기반 선택</div>
+        <div class="contrib-impact">두 방식의 비용·체감 응답성 트레이드오프를 정리해 의사결정. 인프라 부하 증가를 감수하고 UX를 택한 근거가 분명한 사례</div>
+      </div>
+      <div class="contrib-body">
+        <p><strong>P</strong> · 특허 검색 결과 한 화면에 최대 <strong>200건</strong>의 항목이 노출되며, 각 항목의 제목·요약을 사용자의 언어로 번역해 함께 표시해야 함. 번역 API는 건당 수백 ms 단위라 누적 시간이 큼. 팀 내에서 <em>"번역 도입 후 로딩 속도 저하"</em>에 대한 우려가 있었음.</p>
+
+        <p><strong>A</strong> · 두 가지 방식의 트레이드오프를 비교 후, 인프라 수용량과 UX 중요도를 근거로 방식 B 선택. 프론트와 협업해 응답 처리 흐름 설계.</p>
+
+        <ul class="action-list">
+          <li class="action-item">
+            <div class="action-title">① 방식 A vs B 트레이드오프 정리</div>
+            <div class="action-body">
+              <strong>A</strong>: 서버가 200건 번역 후 한 번에 응답 — 통신은 1회로 효율적이나 사용자는 전부 번역될 때까지 빈 화면 대기.
+              <strong>B</strong>: 원문 즉시 응답 + 클라이언트가 항목별로 번역 fan-out — 서버 통신 1회 → 최대 200회로 증가(<strong>인프라 부하↑</strong>), 대신 첫 화면 대기 시간(TTFB) 극적 단축.
+              <em><strong>판단 기준:</strong> 어느 쪽이 빠른가보다, 어느 쪽 비용을 감당할 수 있고 어느 쪽 가치가 더 중요한가를 두 축으로 결정.</em>
+            </div>
+          </li>
+          <li class="action-item">
+            <div class="action-title">② B 선택 근거 — 인프라 수용량 + UX 중요도</div>
+            <div class="action-body">
+              우리 인프라가 200회 동시 요청 수준을 감당 가능하다는 정보가 있었고, 해당 페이지는 사용자 경험이 중요한 페이지로 분류되어 있었음 → <strong>비용은 감당 가능, 가치는 우위</strong>라는 결론으로 B 채택.
+            </div>
+          </li>
+          <li class="action-item">
+            <div class="action-title">③ 구현 — 원문 즉시 렌더 + 비동기 도착 순 교체</div>
+            <div class="action-body">
+              서버는 번역되지 않은 원본을 먼저 빠르게 응답해 화면을 즉시 그림. 이후 클라이언트가 각 항목별로 번역 API를 비동기 호출하고, 응답이 도착하는 순서대로 해당 영역만 원본→번역문으로 교체.
+              <em><strong>사용자 경험:</strong> 빈 화면 0초 → 원본 즉시 노출 → 번역 도착 항목부터 자연스럽게 갱신.</em>
+            </div>
+          </li>
+        </ul>
+
+        <p><strong>R</strong> · 팀 내에서 우려가 있던 <strong>"번역 도입 후 로딩 속도 저하"가 눈에 띄는 이슈 없이 출시</strong>. 인프라 부하 증가라는 비용을 사전에 인지·감수한 결정이라 출시 후에도 예상 범위 내에서 동작.</p>
+
+        <div class="honest-aside" style="background:var(--accent-faded); border-left-color:var(--accent);">
+          <span class="aside-tag" style="color:var(--accent);">📚 당시 한계와 이후 학습</span>
+          당시엔 트레이드오프를 직접 비교해 적용했으나, 이것이 일반화된 패턴임은 인식하지 못한 상태였음.
+          <strong>이후 학습 결과로 이해한 패턴</strong>: <strong>Client fan-out · Progressive Rendering</strong> — <strong>TTFB(첫 반응 시간) 단축이 체감 응답성을 결정한다</strong>는 원칙이며, <strong>HTTP 스트리밍·SSE·GraphQL @defer</strong> 등 표준이 같은 철학에서 출발.
+          <strong>다음 작업 시 접근법</strong>: <strong>SSE 같은 표준 프로토콜</strong>이나 <strong>viewport 우선순위 큐</strong>를 함께 검토해 인프라 부하도 같이 줄이는 방향 가능.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 — 스택 -->
+  <section class="section">
+    <div class="section-tag">08 · STACK</div>
+    <h2>경력 중 사용 스택</h2>
+    <div class="section-rule"></div>
+    <table>
+      <thead>
+      <tr><th>영역</th><th>스택</th></tr>
+      </thead>
+      <tbody>
+      <tr><td>Language / Framework</td><td><strong>Java 8</strong> · <strong>Spring 4.x (Legacy)</strong> · JavaScript</td></tr>
+      <tr><td>Data Access</td><td><strong>MyBatis</strong> · Stored Procedure (T-SQL)</td></tr>
+      <tr><td>Database</td><td>PostgreSQL → <strong>MSSQL 마이그레이션</strong></td></tr>
+      <tr><td>Document Parsing</td><td><strong>Apache POI</strong> (MS Office) · <strong>hwplib</strong> (HWP) — E-DRM 시그널 식별</td></tr>
+      <tr><td>Test</td><td>JUnit · Mockito</td></tr>
+      <tr><td>Frontend (Legacy)</td><td>JSP · <strong>AngularJS</strong> · jQuery 계열 — 비동기 렌더링·형광펜 레이어·스크롤·이미지 동기화</td></tr>
+      </tbody>
+    </table>
+    <p class="lede" style="margin-top:20px; font-size:14px; color:var(--muted);">
+      위는 <strong>레거시 코드베이스 운영 환경</strong>의 스택. 부트캠프 프로젝트(Java 17 · Spring Boot 3.5 · React/TS 등)에서 <strong>모던 스택으로 학습·적용 병행</strong> → 다음 섹션(GROWTH MAP) 참조.
+    </p>
+  </section>
+
+  <!-- 09 — Growth Cycles -->
+  <section class="section">
+    <div class="section-tag">09 · GROWTH MAP</div>
+    <h2>실무 한계 → 학습 동기 → 부트캠프 적용</h2>
+    <div class="section-rule"></div>
+    <p class="lede">
+      실무에서 시행착오로 풀어낸 문제들이 그대로 <strong>"왜 그게 효과 있었는지 알고 싶다"</strong>는 공부로 이어졌습니다.
+      이론으로 채운 뒤 다시 프로젝트에서 검증하는 사이클이 두 번 완결.
+    </p>
+
+    <div class="cycle-card">
+      <div class="cycle-header">
+        <div class="cycle-num">🔄 GROWTH CYCLE #1 — SQL · 벤더 종속성 · DB 깊이</div>
+        <div class="cycle-title">PG → MSSQL 슬로우 쿼리 시행착오 → ORM 학습 + 실행 계획 공부 → 부트캠프 프로젝트 적용</div>
+      </div>
+      <div class="cycle-body">
+        <p><strong>실무</strong> · 100% MyBatis 환경에서 슬로우 쿼리를 <strong>경험적 시행착오로 풀었지만</strong>, "왜 효과 있는지" 설명할 수 없는 부분이 마음에 남음.</p>
+        <p><strong>학습</strong> · 영속성 컨텍스트·JPQL·벤더 독립 데이터 접근 계층 설계를 학습. 옵티마이저·실행 계획·카디널리티 추정 개념도 함께 정리. <strong>"왜 ORM이 필요한지"를 실무 경험으로 설명 가능</strong>.</p>
+        <p><strong>적용</strong> · 부트캠프 프로젝트에서 <strong>JPA + QueryDSL</strong>로 데이터 액세스 계층 직접 설계. PostGIS 같은 벤더 특수 기능은 Native Query로, 일반 도메인은 JPA로 — 이 분기 기준도 실무에서 체감한 한계로부터 나온 판단.</p>
+      </div>
+    </div>
+
+    <div class="cycle-card">
+      <div class="cycle-header">
+        <div class="cycle-num">🔄 GROWTH CYCLE #2 — 동시성 제어</div>
+        <div class="cycle-title">비동기 다운로드 race 직감으로 해결 → 락 트레이드오프 발표 → 다2조부 비관적 락 의식적 선택</div>
+      </div>
+      <div class="cycle-body">
+        <p><strong>실무</strong> · "긴 로직 이전에 임계구역을 둔다"는 방식으로 race를 풀었지만, <strong>어떤 락이 어떤 상황에 맞는지 체계적으로 모름</strong>.</p>
+        <p><strong>학습</strong> · 부트캠프 스터디에서 <strong>낙관적/비관적/분산 락 트레이드오프</strong>를 자청 발표. 각 락의 동작 원리·임계구역 크기·충돌 빈도에 따른 선택 기준을 코드 레벨로 검증.</p>
+        <p><strong>적용</strong> · 다2조부 프로젝트의 <strong>seq 채번 race condition</strong>에 비관적 락(<code style="background:var(--code-bg);padding:1px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:12px;">PESSIMISTIC_WRITE</code>) 적용. 분산 락도 검토 후 "단일 인스턴스 토폴로지엔 오버엔지니어링"이라는 판단으로 배제 — <strong>여러 옵션을 알고 의도적으로 선택</strong>한 사례.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    김단비 · 풀스택 개발자 — Portfolio v2026.05 · 실무 경력
+  </footer>
+</div>
+
+<script>
+  // 웹폰트 swap(FOUT)으로 콘텐츠가 reflow되면 초기 #해시 스크롤 위치가
+  // 어긋나 최상단으로 튀는 현상 보정 — 폰트/레이아웃 안정 후 재정렬
+  function reanchor() {
+    if (!location.hash) return;
+    var el = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    if (el) el.scrollIntoView({ behavior: 'auto' });  // CSS smooth 무시하고 즉시 정렬
+  }
+  window.addEventListener('load', reanchor);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(reanchor);
+</script>
+</body>
+</html>

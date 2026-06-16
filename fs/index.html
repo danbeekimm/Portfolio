@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>김단비 · 풀스택 개발자 Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --accent: #0d8754;
+      --accent-soft: #e8f5ee;
+      --accent-faded: #f4faf7;
+      --ink: #0e1410;
+      --ink-soft: #2a3530;
+      --muted: #5a6b63;
+      --rule: #d6dfd9;
+      --rule-soft: #ebf0ec;
+      --bg: #fbfbf8;
+      --card: #ffffff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter Tight', -apple-system, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.65;
+      font-size: 15px;
+      letter-spacing: -0.005em;
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap { max-width: 960px; margin: 0 auto; padding: 100px 56px 120px; }
+
+    /* HERO */
+    .hero-main { margin-bottom: 100px; }
+    .name-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      margin-bottom: 24px;
+      text-transform: uppercase;
+    }
+    .main-title {
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-size: 60px;
+      line-height: 1.05;
+      letter-spacing: -0.025em;
+      color: var(--ink);
+      margin-bottom: 28px;
+    }
+    .main-title .marker {
+      background: linear-gradient(transparent 60%, var(--accent-soft) 60%);
+      padding: 0 4px;
+    }
+    .main-title .accent { color: var(--accent); }
+    .main-sub {
+      font-size: 17px;
+      color: var(--ink-soft);
+      line-height: 1.75;
+      max-width: 720px;
+      margin-bottom: 36px;
+    }
+    .main-sub strong { color: var(--ink); font-weight: 600; }
+
+    .contact-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 28px;
+      padding: 20px 0;
+      border-top: 1px solid var(--rule);
+      border-bottom: 1px solid var(--rule);
+      font-size: 13px;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .contact-strip a {
+      color: var(--ink-soft);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .contact-strip a:hover { color: var(--accent); }
+    .contact-strip .icon { color: var(--accent); margin-right: 6px; }
+
+    /* SECTION */
+    .section { margin-bottom: 90px; }
+    .section-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      color: var(--accent);
+      margin-bottom: 14px;
+      text-transform: uppercase;
+    }
+    h2 {
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-size: 32px;
+      line-height: 1.2;
+      letter-spacing: -0.015em;
+      color: var(--ink);
+      margin-bottom: 16px;
+    }
+    .section-rule {
+      height: 2px;
+      background: var(--accent);
+      width: 100%;
+      margin: 0 0 36px;
+    }
+    .lede {
+      font-size: 16px;
+      color: var(--ink-soft);
+      line-height: 1.75;
+      margin-bottom: 36px;
+      max-width: 780px;
+    }
+    .lede strong { color: var(--ink); font-weight: 600; }
+
+    /* Project cards */
+    .project-card {
+      background: var(--card);
+      border: 1px solid var(--rule);
+      border-radius: 12px;
+      padding: 32px 36px;
+      margin-bottom: 18px;
+      transition: all 0.25s;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      position: relative;
+      overflow: hidden;
+    }
+    .project-card::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--accent);
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+    .project-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 8px 24px rgba(13, 135, 84, 0.08);
+      transform: translateY(-2px);
+    }
+    .project-card:hover::before { opacity: 1; }
+
+    .project-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 14px;
+      gap: 16px;
+    }
+    .project-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+    }
+    .project-period {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+    }
+    .project-title {
+      font-family: 'Fraunces', serif;
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.25;
+      letter-spacing: -0.015em;
+      margin-bottom: 8px;
+    }
+    .project-subtitle {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 18px;
+      font-style: italic;
+    }
+    .project-tagline {
+      font-size: 15px;
+      color: var(--ink-soft);
+      line-height: 1.65;
+      margin-bottom: 18px;
+    }
+    .project-tagline strong { color: var(--ink); font-weight: 600; }
+
+    .project-highlights {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      padding: 14px 0;
+      border-top: 1px dashed var(--rule);
+      margin-bottom: 18px;
+    }
+    .project-highlights.cols-4 { grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .highlight { text-align: center; }
+    .highlight-num {
+      font-family: 'Fraunces', serif;
+      font-weight: 600;
+      font-size: 22px;
+      color: var(--accent);
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+      margin-bottom: 4px;
+    }
+    .highlight-num .small { font-size: 14px; color: var(--ink-soft); }
+    .highlight-label {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .project-stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 18px;
+    }
+    .stack-pill {
+      background: var(--accent-faded);
+      color: var(--accent);
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 500;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .project-cta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 16px;
+      border-top: 1px solid var(--rule-soft);
+    }
+    .project-role { font-size: 13px; color: var(--muted); word-break: keep-all; line-height: 1.5; }
+    .project-role strong { color: var(--ink-soft); }
+    .read-more {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      white-space: nowrap; flex: none;
+    }
+    .read-more::after {
+      content: " →";
+      transition: margin-left 0.2s;
+      display: inline-block;
+    }
+    .project-card:hover .read-more::after { margin-left: 4px; }
+
+    /* 카드 전체 클릭 영역(스트레치드 링크) + GitHub 레포 칩 */
+    .card-link { position: absolute; inset: 0; z-index: 1; border-radius: 12px; }
+    .cta-actions { display: flex; align-items: center; gap: 14px; }
+    .repo-chip {
+      position: relative; z-index: 2;
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
+      color: var(--ink-soft); text-decoration: none;
+      padding: 4px 12px; border: 1px solid var(--rule); border-radius: 14px;
+      background: var(--card); transition: all 0.2s;
+      white-space: nowrap; flex: none;
+    }
+    .repo-chip:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-faded); }
+    .repo-chip svg { width: 13px; height: 13px; flex: none; }
+    .demo-chip { color: #fff; background: var(--accent); border-color: var(--accent); }
+    .demo-chip:hover { color: #fff; background: #0a6e44; border-color: #0a6e44; }
+
+    /* Career card — darker */
+    .project-card.career {
+      background: var(--ink);
+      color: #fff;
+      border-color: var(--ink);
+    }
+    .project-card.career::before { background: var(--accent-soft); }
+    .project-card.career:hover {
+      border-color: var(--accent);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+    .project-card.career .project-num { color: var(--accent-soft); }
+    .project-card.career .project-period { color: #9aaaa0; }
+    .project-card.career .project-title { color: #fff; }
+    .project-card.career .project-subtitle { color: #9aaaa0; }
+    .project-card.career .project-tagline { color: #c5d0ca; }
+    .project-card.career .project-tagline strong { color: #fff; }
+    .project-card.career .project-highlights { border-top-color: rgba(255, 255, 255, 0.1); }
+    .project-card.career .highlight-num { color: var(--accent-soft); }
+    .project-card.career .highlight-num .small { color: #c5d0ca; }
+    .project-card.career .highlight-label { color: #9aaaa0; }
+    .project-card.career .stack-pill {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--accent-soft);
+    }
+    .project-card.career .project-cta { border-top-color: rgba(255, 255, 255, 0.1); }
+    .project-card.career .project-role { color: #9aaaa0; }
+    .project-card.career .project-role strong { color: #c5d0ca; }
+    .project-card.career .read-more { color: var(--accent-soft); }
+
+    /* Skills */
+    .skills-block {
+      background: var(--card);
+      border: 1px solid var(--rule);
+      border-radius: 12px;
+      padding: 24px 28px;
+    }
+    .skills-legend {
+      display: grid;
+      grid-template-columns: 130px 1fr 1fr;
+      gap: 16px;
+      padding-bottom: 14px;
+      margin-bottom: 8px;
+      border-bottom: 1px solid var(--rule);
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+    }
+    .skills-legend .legend-spacer {
+      /* 첫 컬럼 자리비움 — skill-area 컬럼과 정렬 */
+    }
+    .skills-legend .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .skills-legend .legend-icon { font-size: 13px; }
+    .skill-row {
+      display: grid;
+      grid-template-columns: 130px 1fr 1fr;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--rule-soft);
+      gap: 16px;
+      align-items: baseline;
+    }
+    .skill-row:last-child { border-bottom: none; }
+    .skill-area {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .skill-list {
+      font-size: 13px;
+      color: var(--ink-soft);
+      line-height: 1.65;
+    }
+    .skill-list strong { color: var(--ink); font-weight: 600; }
+    .skill-list.exp { /* 실무 컬럼 별도 마커 필요 시 */ }
+    .skill-list.learn { /* 학습 컬럼 */ }
+    .skill-list .empty {
+      color: var(--muted);
+      font-style: italic;
+      opacity: 0.6;
+    }
+
+    /* AI workflow mini-section */
+    .ai-flow {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+    .ai-stage {
+      background: var(--card);
+      border: 1px solid var(--rule);
+      border-radius: 12px;
+      padding: 22px 24px;
+      border-top: 3px solid var(--accent);
+    }
+    .ai-stage-phase {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .ai-stage-tool {
+      font-family: 'Fraunces', serif;
+      font-size: 19px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 12px;
+      letter-spacing: -0.01em;
+    }
+    .ai-stage-body {
+      font-size: 13px;
+      color: var(--ink-soft);
+      line-height: 1.65;
+    }
+    .ai-closing {
+      background: var(--ink);
+      color: #fff;
+      border-radius: 10px;
+      padding: 20px 24px;
+      font-family: 'Fraunces', serif;
+      font-size: 19px;
+      font-weight: 600;
+      text-align: center;
+      letter-spacing: -0.01em;
+    }
+    @media (max-width: 720px) {
+      .ai-flow { grid-template-columns: 1fr; }
+      .ai-closing { font-size: 16px; }
+    }
+
+    footer {
+      margin-top: 80px;
+      padding-top: 28px;
+      border-top: 1px solid var(--rule);
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    @media (max-width: 720px) {
+      .wrap { padding: 56px 24px 80px; }
+      .main-title { font-size: 40px; }
+      .project-highlights, .project-highlights.cols-4 { grid-template-columns: 1fr; }
+      .project-card { padding: 24px 22px; }
+      .project-title { font-size: 22px; }
+      .skill-row {
+        grid-template-columns: 1fr;
+        gap: 6px;
+        padding: 14px 0;
+      }
+      .skill-list.exp::before { content: "💼 실무 — "; color: var(--muted); font-size: 11px; }
+      .skill-list.learn::before { content: "🎓 학습·프로젝트 — "; color: var(--muted); font-size: 11px; }
+      .skills-legend { display: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HERO -->
+  <header class="hero-main">
+    <div class="name-tag">PORTFOLIO · 김단비 · FULLSTACK</div>
+    <h1 class="main-title">
+      <span class="marker">서버에서 시작해 화면까지 잇는</span><br>
+      기능의 시작부터 끝까지 책임지는 <span class="accent">풀스택</span>.
+    </h1>
+    <p class="main-sub">
+      회원제 SaaS 운영팀에서 <strong>뷰어 UX·동시성 제어·RDBMS 마이그레이션</strong>을 화면과 서버 양쪽에서 직접 풀었고,<br>
+      최근 프로젝트에서는 <strong>RAG 백엔드부터 React 운영 콘솔까지</strong> 한 기능을 끝까지 구현했습니다.<br>
+      사용자가 체감하는 문제를 시스템 구조로 해결하고, "왜 이 기술을 쓰는가"를 끝까지 묻습니다.
+    </p>
+    <div class="contact-strip">
+      <a href="https://github.com/danbeekimm" target="_blank"><span class="icon">●</span> github.com/danbeekimm</a>
+      <a href="https://velog.io/@danbeekimm" target="_blank"><span class="icon">●</span> velog.io/@danbeekimm</a>
+      <a href="https://app.antscamp.site/guest/login" target="_blank"><span class="icon">▶</span> ants-camp 라이브 데모</a>
+    </div>
+  </header>
+
+  <!-- WORKS -->
+  <section class="section">
+    <div class="section-tag">WORKS</div>
+    <h2>프로젝트 · 경력</h2>
+    <div class="section-rule"></div>
+    <p class="lede">
+      세 작업을 시간순으로. <strong>화면과 서버 양쪽에서 사용자 문제를 풀어 온 궤적</strong> — 뷰어 UX·동시성을 실무에서 풀고, 부트캠프에서 RAG 백엔드부터 React 운영 콘솔까지 한 기능을 끝까지 구현했습니다.
+    </p>
+
+    <!-- 경력 -->
+    <a class="project-card career" href="career.html">
+      <div class="project-meta-row">
+        <div class="project-num">💼 EXPERIENCE · 실무 경력</div>
+        <div class="project-period">2022.11 ~ 2025.03</div>
+      </div>
+      <div class="project-title">뷰어 UX와 서버 동시성을 양쪽에서 풀어낸 2년</div>
+      <div class="project-subtitle">풀스택 개발자 — 회원제 특허 SaaS의 고도화·운영</div>
+      <div class="project-tagline">
+        대량 문서 뷰어의 <strong>도면-텍스트 실시간 동기화</strong>를 부분 렌더링 → 비동기 갱신으로 재설계해 깜빡임·포커스 강탈을 제거하고,<br>
+        서버에서는 분할 비동기 다운로드의 <strong>이용량 우회 race condition</strong>을 "임계구역 위치 재배치"로,
+        <strong>PostgreSQL → MSSQL 전면 마이그레이션</strong>의 슬로우 쿼리를 옵티마이저 단위로 풀었습니다.<br>
+        화면에서 느낀 한계가 서버 설계로, 다시 부트캠프 학습으로 이어졌습니다.
+      </div>
+
+      <div class="project-highlights">
+        <div class="highlight">
+          <div class="highlight-num">만족도 2위</div>
+          <div class="highlight-label">뷰어 동기화 UX 개선 · 연간 조사</div>
+        </div>
+        <div class="highlight">
+          <div class="highlight-num">원천 차단</div>
+          <div class="highlight-label">다중 창 동시 요청 한도 우회</div>
+        </div>
+        <div class="highlight">
+          <div class="highlight-num">동일 수준</div>
+          <div class="highlight-label">벤더 변경 후 응답 성능 유지</div>
+        </div>
+      </div>
+
+      <div class="project-stack">
+        <span class="stack-pill">JSP · AngularJS · jQuery</span>
+        <span class="stack-pill">비동기 렌더링 · 스크롤 동기화</span>
+        <span class="stack-pill">Spring</span>
+        <span class="stack-pill">MyBatis</span>
+        <span class="stack-pill">MSSQL · T-SQL UDF</span>
+        <span class="stack-pill">비동기 동시성</span>
+      </div>
+
+      <div class="project-cta">
+        <div class="project-role">담당: <strong>6개 검색 사이트 유지보수·개선 — 대량 문서 뷰어 · 다운로드 · 비교보기</strong></div>
+        <div class="read-more">상세 보기</div>
+      </div>
+    </a>
+
+    <!-- 다2조부 -->
+    <div class="project-card">
+      <a class="card-link" href="da2joburureung.html" aria-label="다2조부르릉 상세 보기"></a>
+      <div class="project-meta-row">
+        <div class="project-num">🚚 PROJECT #1 · 다2조부르릉</div>
+        <div class="project-period">6인</div>
+      </div>
+      <div class="project-title">정합성 보장과 장애 격리를 설계한 B2B 물류 MSA</div>
+      <div class="project-subtitle">12개 마이크로서비스 · DDD 4계층 헥사고날 · "검증=동기, 통지=비동기" 통신 분리</div>
+      <div class="project-tagline">
+        직전 모놀리식의 한계(한 도메인 결함이 전체 멈춤)를 계기로 <strong>MSA + DDD</strong>로 확장.<br> 분산 트랜잭션 없이
+        <strong>Outbox 패턴</strong>으로 이벤트 정합성을 보장하고, <strong>OR-Tools VRPTW</strong>로 B2B 시간창 SLA를
+        제약 조건으로 모델링했습니다.<br> 비관적 락은 스터디에서 학습한 트레이드오프를 실제 적용한 사례.
+      </div>
+
+      <div class="project-highlights">
+        <div class="highlight">
+          <div class="highlight-num">at-least-once</div>
+          <div class="highlight-label">Outbox · 결과적 일관성</div>
+        </div>
+        <div class="highlight">
+          <div class="highlight-num">5<span class="small">분</span> → 3<span class="small">초</span></div>
+          <div class="highlight-label">VRPTW 자동 배정 (100건 · 데모)</div>
+        </div>
+        <div class="highlight">
+          <div class="highlight-num">DB-level</div>
+          <div class="highlight-label">비관적 락으로 race 차단</div>
+        </div>
+      </div>
+
+      <div class="project-stack">
+        <span class="stack-pill">Spring Cloud 2025</span>
+        <span class="stack-pill">Kafka · Outbox</span>
+        <span class="stack-pill">OpenFeign</span>
+        <span class="stack-pill">Resilience4j CB</span>
+        <span class="stack-pill">OR-Tools VRPTW</span>
+        <span class="stack-pill">QueryDSL</span>
+        <span class="stack-pill">PESSIMISTIC_WRITE</span>
+      </div>
+
+      <div class="project-cta">
+        <div class="project-role">담당: <strong>company-service 전담 + DeliveryManager 도메인</strong></div>
+        <div class="cta-actions">
+          <a class="repo-chip" href="https://github.com/danbeekimm/da2joburureung" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>da2joburureung</a>
+          <div class="read-more">상세 보기</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ants-camp -->
+    <div class="project-card">
+      <a class="card-link" href="ants-camp.html" aria-label="ants-camp 상세 보기"></a>
+      <div class="project-meta-row">
+        <div class="project-num">🤖 PROJECT #2 · ants-camp</div>
+        <div class="project-period">5인</div>
+      </div>
+      <div class="project-title">RAG 백엔드부터 React 운영 콘솔까지 끝까지 구현</div>
+      <div class="project-subtitle">모의투자 MSA · LLM 정량 평가 · AIOps · 프론트엔드 전체 구축</div>
+      <div class="project-tagline">
+        <strong>LLM-as-a-Judge + Pairwise</strong>로 모델 교체를 데이터로 결정하고, Prometheus·Loki·Claude를 묶어 AIOps를 구성했습니다.<br>
+        나아가 <strong>그 평가·운영 결과를 다루는 관리자 콘솔을 React·TS로 직접 구현</strong> — 백엔드 API를 화면이 필요로 하는 형태로 설계하고,
+        사용자 화면(시세·매매·챗봇)까지 프론트엔드 전체를 맡았습니다.
+      </div>
+
+      <div class="project-highlights cols-4">
+        <div class="highlight">
+          <div class="highlight-num">2.38 → 4.04</div>
+          <div class="highlight-label">faithfulness 향상 · 모델 교체</div>
+        </div>
+        <div class="highlight">
+          <div class="highlight-num">64.3<span class="small">%</span> → 8.3<span class="small">%</span></div>
+          <div class="highlight-label">환각률 감소</div>
+        </div>
+        <div class="highlight">
+          <div class="highlight-num">프론트엔드</div>
+          <div class="highlight-label">사용자 + 관리자 화면 구축 주도</div>
+        </div>
+        <div class="highlight">
+          <div class="highlight-num">74<span class="small">%</span> ↓</div>
+          <div class="highlight-label">캐시 히트 응답 단축 · LLM 호출 스킵</div>
+        </div>
+      </div>
+
+      <div class="project-stack">
+        <span class="stack-pill">Spring AI 1.0</span>
+        <span class="stack-pill">pgvector</span>
+        <span class="stack-pill">LLM-as-a-Judge</span>
+        <span class="stack-pill"><strong>React · TypeScript</strong></span>
+        <span class="stack-pill"><strong>Tailwind · Zustand</strong></span>
+        <span class="stack-pill">Prometheus · Loki</span>
+        <span class="stack-pill">Kafka · Redis</span>
+      </div>
+
+      <div class="project-cta">
+        <div class="project-role">담당: <strong>assistant · notification · monitoring + 프론트엔드(React·TS) 구축&nbsp;주도</strong></div>
+        <div class="cta-actions">
+          <a class="repo-chip demo-chip" href="https://app.antscamp.site/guest/login" target="_blank" rel="noopener">▶ 라이브 데모</a>
+          <a class="repo-chip" href="https://github.com/danbeekimm/ants-camp-frontend" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>frontend</a>
+          <a class="repo-chip" href="https://github.com/danbeekimm/ants-camp" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>backend</a>
+          <div class="read-more">상세 보기</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section class="section">
+    <div class="section-tag">SKILLS</div>
+    <h2>기술 스택</h2>
+    <div class="section-rule"></div>
+    <div class="skills-block">
+      <div class="skills-legend">
+        <div class="legend-spacer"></div>
+        <div class="legend-item"><span class="legend-icon">💼</span> 실무 경험 (2년)</div>
+        <div class="legend-item"><span class="legend-icon">🎓</span> 학습·프로젝트</div>
+      </div>
+
+      <div class="skill-row">
+        <div class="skill-area">Language</div>
+        <div class="skill-list exp">Java 8 · JavaScript</div>
+        <div class="skill-list learn">Java 17 · TypeScript</div>
+      </div>
+
+      <div class="skill-row">
+        <div class="skill-area">Backend FW</div>
+        <div class="skill-list exp">Spring 4.x (Legacy)</div>
+        <div class="skill-list learn"><strong>Spring Boot 3.5</strong> · <strong>Spring Cloud</strong> (Gateway · Eureka · Config · OpenFeign) · <strong>Spring AI 1.0</strong> · Spring Security</div>
+      </div>
+
+      <div class="skill-row">
+        <div class="skill-area">Frontend</div>
+        <div class="skill-list exp">JSP · AngularJS · jQuery — 비동기 렌더링 · 스크롤·이미지 동기화</div>
+        <div class="skill-list learn"><strong>React</strong> · <strong>TypeScript</strong> · <strong>Tailwind CSS</strong> · Zustand · Recharts (ants-camp 화면 전체 구축)</div>
+      </div>
+
+      <div class="skill-row">
+        <div class="skill-area">Data Access</div>
+        <div class="skill-list exp">MyBatis · Stored Procedure (T-SQL)</div>
+        <div class="skill-list learn">Spring Data JPA · QueryDSL</div>
+      </div>
+
+      <div class="skill-row">
+        <div class="skill-area">Database</div>
+        <div class="skill-list exp">MSSQL · MySQL · PostgreSQL</div>
+        <div class="skill-list learn">PostgreSQL (+<strong>PostGIS · pgvector</strong>) · Redis</div>
+      </div>
+
+      <div class="skill-row">
+        <div class="skill-area">Architecture</div>
+        <div class="skill-list exp">모놀리식 (대규모 운영)</div>
+        <div class="skill-list learn"><strong>MSA · DDD · Hexagonal · Event-Driven</strong></div>
+      </div>
+
+      <div class="skill-row">
+        <div class="skill-area">Messaging<br>/ Resilience</div>
+        <div class="skill-list exp"><span class="empty">—</span></div>
+        <div class="skill-list learn">Apache Kafka · <strong>Outbox Pattern</strong> · Resilience4j (Circuit Breaker · Retry)</div>
+      </div>
+
+      <div class="skill-row">
+        <div class="skill-area">Observability</div>
+        <div class="skill-list exp">운영 로그 분석 · CS 패턴 추적</div>
+        <div class="skill-list learn">Prometheus · Grafana · Loki · Promtail · Alertmanager · Zipkin</div>
+      </div>
+
+      <div class="skill-row">
+        <div class="skill-area">AI / LLM</div>
+        <div class="skill-list exp"><span class="empty">—</span></div>
+        <div class="skill-list learn">Spring AI · RAG · pgvector · <strong>LLM-as-a-Judge</strong> (Eval · Pairwise) · <strong>LLM 기반 AIOps</strong> · Human-in-the-Loop</div>
+      </div>
+
+      <div class="skill-row">
+        <div class="skill-area">Optimization<br>/ Parsing</div>
+        <div class="skill-list exp">Apache POI (대용량 문서 파싱 · DRM 시그널 식별)</div>
+        <div class="skill-list learn">Google OR-Tools (VRPTW)</div>
+      </div>
+
+      <div class="skill-row">
+        <div class="skill-area">Test</div>
+        <div class="skill-list exp">JUnit · Mockito (팀 도입 주도)</div>
+        <div class="skill-list learn">JUnit · Mockito</div>
+      </div>
+
+      <div class="skill-row">
+        <div class="skill-area">Refactoring<br>/ Code Quality</div>
+        <div class="skill-list exp"><strong>SonarQube</strong> (월간 코드리뷰·리팩토링 운영)</div>
+        <div class="skill-list learn"><span class="empty">—</span></div>
+      </div>
+
+      <div class="skill-row">
+        <div class="skill-area">DevOps</div>
+        <div class="skill-list exp"><span class="empty">—</span></div>
+        <div class="skill-list learn">Docker · Docker Compose · GitHub Actions</div>
+      </div>
+
+      <div class="skill-row">
+        <div class="skill-area">Cloud / Deploy</div>
+        <div class="skill-list exp"><span class="empty">—</span></div>
+        <div class="skill-list learn"><strong>GCP</strong> (Compute Engine · Cloud SQL · Container Registry) · <strong>AWS</strong></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AI WORKFLOW -->
+  <section class="section">
+    <div class="section-tag">HOW I WORK WITH AI</div>
+    <h2>AI와 일하는 방식</h2>
+    <div class="section-rule"></div>
+    <p class="lede">개발 사이클 단계마다 도구를 나눠 쓰고, <strong>마지막 판단은 항상 직접</strong> 합니다.</p>
+
+    <div class="ai-flow">
+      <div class="ai-stage">
+        <div class="ai-stage-phase">분석 · 설계</div>
+        <div class="ai-stage-tool">Claude Code</div>
+        <div class="ai-stage-body">규칙 문서(CLAUDE.md)를 기준으로 레거시 호출 경로·변경 이력을 정리하고 설계 대안을 교차 검증. DB 스키마는 문서 대신 <strong>MCP로 실시간 조회</strong>해 추측 없이 설계하고, 핵심 분기는 디버거로 재현해 확인.</div>
+      </div>
+      <div class="ai-stage">
+        <div class="ai-stage-phase">구현 · 테스트</div>
+        <div class="ai-stage-tool">Claude Code · 서브에이전트</div>
+        <div class="ai-stage-body">쿼리 작성·구조 개선 같은 작업은 <strong>역할별 서브에이전트에 위임</strong>하고 메인 흐름만 직접 운전. 테스트 초안 생성은 맡기되, 경계 조건과 검증 기준은 직접 설계.</div>
+      </div>
+      <div class="ai-stage">
+        <div class="ai-stage-phase">리뷰</div>
+        <div class="ai-stage-tool">커스텀 skill · CodeRabbit</div>
+        <div class="ai-stage-body">커밋 전 <strong>직접 만든 리뷰 skill</strong>이 리팩토링·코드리뷰·언어별 점검 에이전트를 순차 호출(신규 파일·대규모 수정 시 자동 트리거). PR 단계는 CodeRabbit이 한 번 더. <strong>반복 지적은 규칙 문서로 흡수</strong>해 같은 지적이 안 나오게.</div>
+      </div>
+    </div>
+
+    <p class="lede" style="margin-top:30px">도구를 쓰는 데서 멈추지 않고, <strong>AI 워크플로우 자체를 엔지니어링</strong>합니다.</p>
+    <div class="ai-flow">
+      <div class="ai-stage">
+        <div class="ai-stage-phase">규칙 주입</div>
+        <div class="ai-stage-tool">컨벤션 문서</div>
+        <div class="ai-stage-body">코딩 규칙·아키텍처 패턴을 규칙 문서로 명문화해 AI가 팀 스타일로 코딩하게 만듦. <strong>"이 코드베이스엔 안 맞는 일반론" 목록을 검증 일자와 함께 관리</strong>해 AI 리뷰의 false positive를 줄임.</div>
+      </div>
+      <div class="ai-stage">
+        <div class="ai-stage-phase">가드레일</div>
+        <div class="ai-stage-tool">권한 · MCP 정책</div>
+        <div class="ai-stage-body">실행 가능한 명령을 <strong>화이트리스트로 통제</strong>하고, DB MCP는 조회는 열되 <strong>DROP·DELETE는 차단</strong>. 생성 속도와 운영 안전을 동시에 확보.</div>
+      </div>
+      <div class="ai-stage">
+        <div class="ai-stage-phase">컨텍스트 주입</div>
+        <div class="ai-stage-tool">조건부 참조 규칙</div>
+        <div class="ai-stage-body">작업 유형을 인식하면 <strong>관련 가이드 문서를 먼저 읽고 착수</strong>하도록 규칙화. 휘발성 큰 정보는 문서에 박제하지 않고 그때그때 실측 — AI에게 "무엇을, 언제 참조할지"를 설계.</div>
+      </div>
+    </div>
+
+    <div class="ai-closing">생성은 맡겨도, 검증은 맡기지 않는다.</div>
+  </section>
+
+  <footer>
+    김단비 · 풀스택 개발자 — Portfolio v2026.05
+  </footer>
+</div>
+</body>
+</html>

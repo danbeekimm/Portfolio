@@ -273,6 +273,8 @@
     }
     .repo-chip:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-faded); }
     .repo-chip svg { width: 13px; height: 13px; flex: none; }
+    .demo-chip { color: #fff; background: var(--accent); border-color: var(--accent); }
+    .demo-chip:hover { color: #fff; background: #0a6e44; border-color: #0a6e44; }
 
     /* Career card — darker */
     .project-card.career {
@@ -459,7 +461,8 @@
     </p>
     <div class="contact-strip">
       <a href="https://github.com/danbeekimm" target="_blank"><span class="icon">●</span> github.com/danbeekimm</a>
-      <span><span class="icon">●</span> https://velog.io/@danbeekimm</span>
+      <a href="https://velog.io/@danbeekimm" target="_blank"><span class="icon">●</span> velog.io/@danbeekimm</a>
+      <a href="https://app.antscamp.site/guest/login" target="_blank"><span class="icon">▶</span> ants-camp 라이브 데모</a>
     </div>
   </header>
 
@@ -612,6 +615,7 @@
       <div class="project-cta">
         <div class="project-role">담당: <strong>assistant + notification + monitoring 전담 설계/구현</strong></div>
         <div class="cta-actions">
+          <a class="repo-chip demo-chip" href="https://app.antscamp.site/guest/login" target="_blank" rel="noopener">▶ 라이브 데모</a>
           <a class="repo-chip" href="https://github.com/danbeekimm/ants-camp" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>ants-camp</a>
           <div class="read-more">상세 보기</div>
         </div>
@@ -728,17 +732,36 @@
       <div class="ai-stage">
         <div class="ai-stage-phase">분석 · 설계</div>
         <div class="ai-stage-tool">Claude Code</div>
-        <div class="ai-stage-body">레거시 호출 경로와 변경 이력 정리, 설계 대안 교차 검증에 사용. 핵심 지점은 디버거로 재현해 확인.</div>
+        <div class="ai-stage-body">규칙 문서(CLAUDE.md)를 기준으로 레거시 호출 경로·변경 이력을 정리하고 설계 대안을 교차 검증. DB 스키마는 문서 대신 <strong>MCP로 실시간 조회</strong>해 추측 없이 설계하고, 핵심 분기는 디버거로 재현해 확인.</div>
       </div>
       <div class="ai-stage">
         <div class="ai-stage-phase">구현 · 테스트</div>
-        <div class="ai-stage-tool">Claude Code</div>
-        <div class="ai-stage-body">테스트 초안 생성을 맡기고, 경계 조건과 검증 기준은 직접 설계.</div>
+        <div class="ai-stage-tool">Claude Code · 서브에이전트</div>
+        <div class="ai-stage-body">쿼리 작성·구조 개선 같은 작업은 <strong>역할별 서브에이전트에 위임</strong>하고 메인 흐름만 직접 운전. 테스트 초안 생성은 맡기되, 경계 조건과 검증 기준은 직접 설계.</div>
       </div>
       <div class="ai-stage">
         <div class="ai-stage-phase">리뷰</div>
-        <div class="ai-stage-tool">CodeRabbit</div>
-        <div class="ai-stage-body">매 PR 자동 리뷰. 지적 사항은 수용 여부를 판단해 반영하고, 반복 지적은 컨벤션으로 정리.</div>
+        <div class="ai-stage-tool">커스텀 skill · CodeRabbit</div>
+        <div class="ai-stage-body">커밋 전 <strong>직접 만든 리뷰 skill</strong>이 리팩토링·코드리뷰·언어별 점검 에이전트를 순차 호출(신규 파일·대규모 수정 시 자동 트리거). PR 단계는 CodeRabbit이 한 번 더. <strong>반복 지적은 규칙 문서로 흡수</strong>해 같은 지적이 안 나오게.</div>
+      </div>
+    </div>
+
+    <p class="lede" style="margin-top:30px">도구를 쓰는 데서 멈추지 않고, <strong>AI 워크플로우 자체를 엔지니어링</strong>합니다.</p>
+    <div class="ai-flow">
+      <div class="ai-stage">
+        <div class="ai-stage-phase">규칙 주입</div>
+        <div class="ai-stage-tool">컨벤션 문서</div>
+        <div class="ai-stage-body">코딩 규칙·아키텍처 패턴을 규칙 문서로 명문화해 AI가 팀 스타일로 코딩하게 만듦. <strong>"이 코드베이스엔 안 맞는 일반론" 목록을 검증 일자와 함께 관리</strong>해 AI 리뷰의 false positive를 줄임.</div>
+      </div>
+      <div class="ai-stage">
+        <div class="ai-stage-phase">가드레일</div>
+        <div class="ai-stage-tool">권한 · MCP 정책</div>
+        <div class="ai-stage-body">실행 가능한 명령을 <strong>화이트리스트로 통제</strong>하고, DB MCP는 조회는 열되 <strong>DROP·DELETE는 차단</strong>. 생성 속도와 운영 안전을 동시에 확보.</div>
+      </div>
+      <div class="ai-stage">
+        <div class="ai-stage-phase">컨텍스트 주입</div>
+        <div class="ai-stage-tool">조건부 참조 규칙</div>
+        <div class="ai-stage-body">작업 유형을 인식하면 <strong>관련 가이드 문서를 먼저 읽고 착수</strong>하도록 규칙화. 휘발성 큰 정보는 문서에 박제하지 않고 그때그때 실측 — AI에게 "무엇을, 언제 참조할지"를 설계.</div>
       </div>
     </div>
 

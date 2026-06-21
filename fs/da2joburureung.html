@@ -63,6 +63,9 @@
     }
     .repo-link:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-faded); }
     .repo-link svg { width: 15px; height: 15px; flex: none; }
+    .top-bar-links { display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
+    .demo-link { color: #fff; background: var(--accent); border-color: var(--accent); }
+    .demo-link:hover { color: #fff; background: #0a6e44; border-color: #0a6e44; }
 
     /* 상세 코드 GitHub 링크 칩 */
     .code-links {
@@ -909,7 +912,10 @@
 
   <div class="top-bar">
     <a class="back-link" href="index.html">← 포트폴리오 메인으로</a>
-    <a class="repo-link" href="https://github.com/danbeekimm/da2joburureung" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>danbeekimm/da2joburureung</a>
+    <span class="top-bar-links">
+      <a class="repo-link demo-link" href="https://da2jobu.da2joburureung.site/swagger-ui.html" target="_blank" rel="noopener">▶ 라이브 데모 (평일 09–21시)</a>
+      <a class="repo-link" href="https://github.com/danbeekimm/da2joburureung" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>danbeekimm/da2joburureung</a>
+    </span>
   </div>
 
   <!-- 01 — OVERVIEW -->
@@ -1729,9 +1735,84 @@ Optional&lt;DeliveryManager&gt; findTopByHubIdOrderBySeqDesc(UUID hubId);
     </div>
   </section>
 
-  <!-- 09 — STACK -->
+  <!-- 10 — DEPLOYMENT / INFRA -->
   <section class="section">
-    <div class="section-tag">10 · STACK</div>
+    <div class="section-tag">10 · DEPLOYMENT · INFRA</div>
+    <h2>배포 인프라 — IaC 한 번으로 AWS + Cloudflare 전 구간 프로비저닝</h2>
+    <div class="section-rule"></div>
+    <p class="lede">
+      16개 컨테이너 규모의 MSA를 전시·데모용으로 <strong>월 ~$14</strong>에 운용하기 위해, 인프라 전체를
+      <strong>Terraform 단일 코드베이스(IaC)</strong>로 선언하고 <strong>GitHub Actions + OIDC</strong>로 빌드·배포를 자동화했습니다.
+      "<strong>비용 · 보안 · 운영부담</strong>"을 판단 기준으로, 매니지드 오케스트레이션 대신 단일 EC2 + Cloudflare Tunnel 조합을 의도적으로 선택했습니다.
+    </p>
+
+    <div class="kpi-strip">
+      <div class="kpi">
+        <div class="kpi-num">월 ~$14</div>
+        <div class="kpi-label"><strong>비용 최적화</strong>ALB/EIP 제거 · 평일 09~21시만 자동 가동 (24/7 대비 ~64%↓)</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-num">keyless</div>
+        <div class="kpi-label"><strong>OIDC 기반 CI/CD</strong>장기 액세스키 0개 · 임시 자격증명으로 9개 이미지 push</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-num">1× apply</div>
+        <div class="kpi-label"><strong>IaC 단일 적용</strong>VPC·EC2·RDS·ECR·IAM·Scheduler + Cloudflare까지 선언적 관리</div>
+      </div>
+    </div>
+
+    <div class="contrib-card">
+      <div class="contrib-headline">
+        <div class="contrib-num">🚀 CONTRIBUTION #5</div>
+        <div class="contrib-title">Terraform IaC + OIDC 키리스 CI/CD + Cloudflare Tunnel 무포트 노출</div>
+        <div class="contrib-impact">매니지드 과투자 대신 "전시 목적에 맞는 최소 비용 · 최소 공격면" 아키텍처를 직접 설계·구축</div>
+      </div>
+      <div class="contrib-body">
+        <p><strong>CI · GitHub Actions</strong> — <code>develop</code> push 시 9개 서비스를 <strong>matrix 병렬 빌드</strong> → ECR push(<code>:latest</code>, <code>:sha</code>). <strong>OIDC</strong>로 AWS 임시 자격증명을 발급받아 <strong>장기 액세스키를 저장하지 않음</strong>. <code>type=gha</code> 레이어 캐시로 빌드 시간 단축.</p>
+        <p><strong>IaC · Terraform</strong> — VPC(NAT 없는 퍼블릭 서브넷)·EC2·RDS(프리티어)·ECR·IAM(OIDC role)·EventBridge Scheduler·Lambda를 하나의 코드로 선언. <strong>Cloudflare(Tunnel·DNS·SSL)까지 같은 <code>apply</code></strong>로 생성하고, 터널 토큰을 EC2 user_data에 자동 주입.</p>
+        <p><strong>네트워킹 · Cloudflare</strong> — ALB/EIP 없이 <strong>Tunnel로 오리진을 노출</strong>해 인바운드 포트를 전부 닫고(공격면↓), 무료 Universal SSL로 HTTPS 종단. 운영시간 외/주말엔 <strong>Worker가 점검 페이지로 폴백</strong>.</p>
+        <p><strong>비용 운영 · EventBridge + Lambda</strong> — 평일 <strong>08:40 start / 21:00 stop</strong>으로 EC2·RDS를 자동 전원 제어, 전시 시간대만 가동해 비용을 절반 이하로 절감.</p>
+        <div class="code-links">
+          <span class="code-links-label">CODE</span>
+          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/.github/workflows/build-push-ecr.yml" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>build-push-ecr.yml<span class="hint">· OIDC matrix×9</span></a>
+          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/terraform/iam.tf" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>iam.tf<span class="hint">· OIDC role 신뢰정책</span></a>
+          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/terraform/user_data.sh.tftpl" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>user_data.sh.tftpl<span class="hint">· EC2 부트스트랩</span></a>
+          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/terraform/cloudflare.tf" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>cloudflare.tf<span class="hint">· Tunnel·DNS·SSL</span></a>
+          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/terraform/scheduler.tf" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>scheduler.tf<span class="hint">· 평일 자동 전원</span></a>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:32px; margin-bottom:14px;">비용·보안 의사결정 — 대안별 트레이드오프</h3>
+    <div class="decision-comp">
+      <div class="dec-card rejected">
+        <div class="dec-status">REJECTED · ECS / EKS</div>
+        <div class="dec-name">매니지드 오케스트레이션</div>
+        <div class="dec-reason">전시 규모엔 <strong>과투자</strong>. 기존 <code>docker-compose</code>를 그대로 재사용하는 편이 압도적으로 저렴·단순.</div>
+      </div>
+      <div class="dec-card rejected">
+        <div class="dec-status">REJECTED · ALB + EIP</div>
+        <div class="dec-name">표준 인바운드 노출</div>
+        <div class="dec-reason">ALB 월 ~$22 + EIP 미사용 요금. 인바운드 포트를 열어야 해 <strong>공격면 증가</strong>.</div>
+      </div>
+      <div class="dec-card chosen">
+        <div class="dec-status">CHOSEN · EC2 + CF Tunnel</div>
+        <div class="dec-name">단일 박스 + 터널</div>
+        <div class="dec-reason">인바운드 포트 <strong>0개</strong>로 보안↑, ALB/EIP 비용 0, 무료 SSL. 전시 목적의 비용·보안 균형에 최적.</div>
+      </div>
+    </div>
+
+    <pre><span class="com"># 배포 파이프라인 & 런타임 토폴로지</span>
+push(develop) ─▶ GitHub Actions <span class="com">(OIDC · matrix ×9)</span> ─▶ Amazon ECR
+                                                              │ pull
+사용자 ─https─▶ Cloudflare <span class="com">(Universal SSL + Worker 폴백)</span>      ▼
+        └─Tunnel(무포트)─▶ EC2 t3.medium <span class="com">(앱9 + kafka/redis + cloudflared)</span> ─▶ RDS <span class="com">(DB 8개)</span>
+                          <span class="com">▲ EventBridge + Lambda — 평일 08:40 start / 21:00 stop</span></pre>
+  </section>
+
+  <!-- 11 — STACK -->
+  <section class="section">
+    <div class="section-tag">11 · STACK</div>
     <h2>기술 스택</h2>
     <div class="section-rule"></div>
     <table>
@@ -1744,14 +1825,16 @@ Optional&lt;DeliveryManager&gt; findTopByHubIdOrderBySeqDesc(UUID hubId);
       <tr><td>Resilience</td><td>Resilience4j · <strong>Circuit Breaker · Retry</strong></td></tr>
       <tr><td>Data</td><td>PostgreSQL (database-per-service) · Redis · JPA · QueryDSL</td></tr>
       <tr><td>Optimization</td><td><strong>Google OR-Tools 9.12.4544 (VRPTW)</strong></td></tr>
-      <tr><td>Infra</td><td>Docker Compose</td></tr>
+      <tr><td>Infra (IaC)</td><td><strong>Terraform</strong> · AWS (EC2 · RDS · ECR · IAM/OIDC · EventBridge · Lambda) · Docker Compose</td></tr>
+      <tr><td>CI/CD</td><td><strong>GitHub Actions</strong> (OIDC · matrix build) → Amazon ECR</td></tr>
+      <tr><td>Edge / Network</td><td><strong>Cloudflare</strong> Tunnel · Workers · Universal SSL</td></tr>
       </tbody>
     </table>
   </section>
 
-  <!-- 10 — RETRO -->
+  <!-- 12 — RETRO -->
   <section class="section">
-    <div class="section-tag">11 · RETROSPECTIVE</div>
+    <div class="section-tag">12 · RETROSPECTIVE</div>
     <h2>회고 — 잘한 것과 의도적 선택의 트레이드오프</h2>
     <div class="section-rule"></div>
     <p class="lede">

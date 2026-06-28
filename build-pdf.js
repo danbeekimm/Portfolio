@@ -15,6 +15,7 @@ const PAGES = [
   },
   { file: 'da2joburureung.html', title: '프로젝트 #1 — 다2조부르릉',         tag: '02 · PROJECT' },
   { file: 'ants-camp.html',      title: '프로젝트 #2 — ants-camp',          tag: '03 · PROJECT' },
+  { file: 'harness-engineering.html', title: 'AI 워크플로우 — 하네스 엔지니어링', tag: '04 · CAPABILITY' },
 ];
 
 // 풀스택 버전 번들 — 모두 fs/ 전용 페이지 사용(추후 분화 대비). 커버는 fs/index.html,
@@ -42,7 +43,7 @@ const PRINT_CSS = `
   .retro-block, .routine-box, .role-card, .value-card, .tech-row,
   .trouble, .trouble-cell, .arch, .layer, .kpi, .item, .stack-tool,
   .screenshot-card, .etc-card, .tech-compare, .decision-comp,
-  .role-strip, .kpi-strip, .value-strip,
+  .role-strip, .kpi-strip, .value-strip, .shot,
   figure, table, blockquote, pre, img {
     break-inside: avoid !important;
     page-break-inside: avoid !important;
@@ -153,17 +154,17 @@ function buildTOCHTML(pages, opts = {}) {
   :root { --accent:#0d8754; --accent-soft:#e8f5ee; --ink:#0e1410; --ink-soft:#2a3530; --muted:#5a6b63; --rule:#d6dfd9; --bg:#fbfbf8; }
   * { box-sizing:border-box; margin:0; padding:0; }
   body { font-family:'Inter Tight',-apple-system,sans-serif; color:var(--ink); background:var(--bg); -webkit-font-smoothing:antialiased; }
-  .toc-wrap { max-width: 960px; margin: 0 auto; padding: 72px 56px 60px; }
+  .toc-wrap { max-width: 960px; margin: 0 auto; padding: 56px 56px 40px; }
   .toc-eyebrow { font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:600; letter-spacing:.18em; color:var(--accent); text-transform:uppercase; margin-bottom: 24px; }
   .toc-h { font-family:'Fraunces',serif; font-weight:600; font-size:60px; line-height:1.05; letter-spacing:-.025em; color:var(--ink); margin-bottom: 16px; }
-  .toc-sub { font-size: 15px; color: var(--muted); margin-bottom: 56px; font-family:'JetBrains Mono',monospace; }
+  .toc-sub { font-size: 15px; color: var(--muted); margin-bottom: 36px; font-family:'JetBrains Mono',monospace; }
   .toc-rule { height: 2px; background: var(--accent); width: 100%; margin: 0 0 32px; }
   ol { list-style: none; }
-  .toc-row { display: grid; grid-template-columns: 80px 1fr; gap: 24px; padding: 22px 0; border-bottom: 1px solid var(--rule); align-items: baseline; }
+  .toc-row { display: grid; grid-template-columns: 80px 1fr; gap: 24px; padding: 18px 0; border-bottom: 1px solid var(--rule); align-items: baseline; }
   .toc-num { font-family:'Fraunces',serif; font-weight:600; font-size:36px; color: var(--accent); letter-spacing:-.02em; }
   .toc-tag { font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:600; letter-spacing:.14em; color: var(--accent); text-transform: uppercase; margin-bottom: 6px; }
   .toc-title { font-family:'Fraunces',serif; font-size: 22px; font-weight: 600; color: var(--ink); letter-spacing:-.01em; line-height: 1.3; }
-  .toc-footer { margin-top: 48px; font-family:'JetBrains Mono',monospace; font-size: 12px; color: var(--muted); text-align:center; }
+  .toc-footer { margin-top: 30px; font-family:'JetBrains Mono',monospace; font-size: 12px; color: var(--muted); text-align:center; }
 </style>
 </head>
 <body>
@@ -179,20 +180,56 @@ function buildTOCHTML(pages, opts = {}) {
 </html>`;
 }
 
-// PDF에서 죽은 링크 제거 — 원본 HTML 파일이 있어야만 작동하는 내비게이션 링크는
-// 외부 링크(http(s):, mailto:, tel:)와 같은 페이지의 #앵커는 유지하고, 그 외에는 href를 제거.
-async function stripDeadLinks(page) {
-  await page.evaluate(() => {
-    document.querySelectorAll('a[href]').forEach(a => {
-      const href = a.getAttribute('href') || '';
-      const keep = /^(https?:|mailto:|tel:|#)/i.test(href.trim());
-      if (!keep) {
-        a.removeAttribute('href');
-        a.removeAttribute('target');
-        a.style.cursor = 'default';
+// pdf-lib 문자열 객체(PDFString/PDFHexString)에서 실제 문자열 값을 뽑는다.
+function pdfStringValue(obj) {
+  if (!obj) return null;
+  if (typeof obj.decodeText === 'function') return obj.decodeText();
+  if (typeof obj.asString === 'function') return obj.asString();
+  return String(obj);
+}
+
+// 병합본의 링크 주석을 1패스로 정규화한다(원본 HTML은 렌더 시 링크를 그대로 두고, 여기서 처리).
+//  - 외부 링크(http/https/mailto/tel)는 그대로 유지 → 기존 배포본에서 작동하던 링크를 깨지 않음.
+//  - HTML 페이지 간 상대 이동 링크는 Chrome이 file:// URI 링크로 내보내는데,
+//    이를 병합본의 해당 페이지로 점프하는 내부 GoTo 링크로 재작성(= "pdf 한정 슬라이드 이동").
+//  - 번들에 없는 file:// 링크는 끊어진 로컬 경로가 노출되지 않도록 주석을 제거.
+function rewriteInternalLinks(merged, pageIndexByName) {
+  const pageCount = merged.getPageCount();
+  for (let pi = 0; pi < pageCount; pi++) {
+    const pg = merged.getPage(pi);
+    const annots = pg.node.Annots();
+    if (!annots) continue;
+    const kept = [];
+    for (const item of annots.asArray()) {
+      const annot = merged.context.lookup(item);
+      if (!annot || typeof annot.get !== 'function' || String(annot.get(PDFName.of('Subtype'))) !== '/Link') {
+        kept.push(item); continue;
       }
-    });
-  });
+      const action = merged.context.lookup(annot.get(PDFName.of('A')));
+      const isUri = action && typeof action.get === 'function' && String(action.get(PDFName.of('S'))) === '/URI';
+      const uri = isUri ? pdfStringValue(action.get(PDFName.of('URI'))) : null;
+      if (uri == null) { kept.push(item); continue; }                        // #앵커(GoTo) 등 → 유지
+      if (/^(https?|mailto|tel):/i.test(uri.trim())) { kept.push(item); continue; } // 외부 링크 → 유지
+      const name = (uri.match(/([^/\\]+\.html)(?:[#?].*)?$/i) || [])[1];      // file:// 상대 이동 링크
+      const targetIdx = name ? pageIndexByName[name] : undefined;
+      if (targetIdx == null) continue;                                       // 번들 밖 → 제거
+      const target = merged.getPage(targetIdx);
+      annot.delete(PDFName.of('A'));
+      annot.set(PDFName.of('Dest'), merged.context.obj([
+        target.ref, PDFName.of('XYZ'), 0, target.getHeight(), null,         // 대상 페이지 최상단으로
+      ]));
+      kept.push(item);
+    }
+    pg.node.set(PDFName.of('Annots'), merged.context.obj(kept));
+  }
+}
+
+// pages(번들 순서)와 startIndices로 "파일명 → 병합본 페이지 인덱스" 맵을 만든다.
+// buffers[0]=TOC, buffers[i+1]=pages[i] 이므로 pages[i] ↔ startIndices[i+1].
+function buildPageIndexByName(pages, startIndices) {
+  const map = {};
+  pages.forEach((p, i) => { map[path.basename(p.file)] = startIndices[i + 1]; });
+  return map;
 }
 
 async function renderA4(page, fileUrl, scale = 0.78, extraCss = '') {
@@ -200,7 +237,6 @@ async function renderA4(page, fileUrl, scale = 0.78, extraCss = '') {
   await page.goto(fileUrl, { waitUntil: 'networkidle0' });
   await page.addStyleTag({ content: PRINT_CSS });
   if (extraCss) await page.addStyleTag({ content: extraCss });
-  await stripDeadLinks(page);
   await page.emulateMediaType('print');
   return await page.pdf({
     format: 'A4',
@@ -214,7 +250,6 @@ async function renderA4(page, fileUrl, scale = 0.78, extraCss = '') {
 async function renderLong(page, fileUrl) {
   await page.setViewport({ width: 1024, height: 800, deviceScaleFactor: 2 });
   await page.goto(fileUrl, { waitUntil: 'networkidle0' });
-  await stripDeadLinks(page);
   const dims = await page.evaluate(() => {
     const h = Math.max(
       document.body.scrollHeight,
@@ -298,7 +333,6 @@ async function buildLongVersion(browser, pages, tocOpts, outName) {
     const tocPage = await browser.newPage();
     await tocPage.setViewport({ width: 1024, height: 800, deviceScaleFactor: 2 });
     await tocPage.goto(`file://${tocPath}`, { waitUntil: 'networkidle0' });
-    await stripDeadLinks(tocPage);
     const tocH = await tocPage.evaluate(() => Math.max(document.body.scrollHeight, document.documentElement.scrollHeight));
     const tocBoxes = await getTocBoxes(tocPage);
     longBuffers.push(await tocPage.pdf({
@@ -318,6 +352,7 @@ async function buildLongVersion(browser, pages, tocOpts, outName) {
 
     const long = await mergePdfs(longBuffers);
     addTocLinks(long.merged, tocBoxes, long.startIndices);
+    rewriteInternalLinks(long.merged, buildPageIndexByName(pages, long.startIndices));
     fs.writeFileSync(path.join(ROOT, outName), await long.merged.save());
     console.log(`✓ ${outName}`);
   } finally {
@@ -335,7 +370,6 @@ async function buildA4Version(browser, tocPath) {
   await tocPage.emulateMediaType('print');
   await tocPage.setViewport({ width: 794, height: 1123, deviceScaleFactor: 2 });
   await tocPage.goto(`file://${tocPath}`, { waitUntil: 'networkidle0' });
-  await stripDeadLinks(tocPage);
   const a4TocBoxes = await getTocBoxes(tocPage);
   a4Buffers.push(await tocPage.pdf({
     format: 'A4',
@@ -353,6 +387,7 @@ async function buildA4Version(browser, tocPath) {
 
   const a4 = await mergePdfs(a4Buffers);
   addTocLinks(a4.merged, a4TocBoxes, a4.startIndices);
+  rewriteInternalLinks(a4.merged, buildPageIndexByName(PAGES, a4.startIndices));
   fs.writeFileSync(path.join(ROOT, 'portfolio-a4.pdf'), await a4.merged.save());
   console.log('✓ portfolio-a4.pdf');
 }

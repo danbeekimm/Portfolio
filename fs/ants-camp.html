@@ -2164,11 +2164,10 @@
                     </ul>
                 </div>
                 <div class="trouble-cell">
-                    <h4>원인 분석 — 대안 검토</h4>
+                    <h4>원인 분석 — 락 선택</h4>
                     <ul>
-                        <li>낙관적 락: 어차피 매번 충돌하는 채번엔 <strong>재시도 비용만 누적</strong></li>
-                        <li>분산 락(Redis): 단일 인스턴스 배포 토폴로지엔 과함</li>
-                        <li>채번은 <strong>충돌 잦고 임계구역 짧음</strong> → 비관적 락이 최적</li>
+                        <li><strong>짧고 잦은 임계구역</strong>이라 비관적 락 채택</li>
+                        <li>낙관적·분산 락은 채번 특성상 부적합(재시도 비용 누적·단일 인스턴스엔 과함)</li>
                     </ul>
                 </div>
                 <div class="trouble-cell">
@@ -2176,7 +2175,7 @@
                     <ul>
                         <li><code>findMaxSeqForUpdate</code>에 <code>@Lock(PESSIMISTIC_WRITE)</code>로 채번 구간 보호</li>
                         <li>재시도 로직 없이 <strong>DB 레벨에서 차단</strong></li>
-                        <li>경력 race condition → 스터디 락 발표 → 본 프로젝트 적용. <strong>3단계 학습 곡선의 매듭</strong></li>
+                        <li>이미 검증한 락 선택 판단(seq 채번)을 <strong>채팅 세션 seq에 동일 적용</strong> — 같은 근거, 다른 도메인</li>
                     </ul>
                 </div>
             </div>

@@ -249,16 +249,22 @@
     .read-more {
       font-family: 'JetBrains Mono', monospace;
       font-size: 12px;
-      color: var(--accent);
+      color: #fff;
+      background: var(--accent);
       font-weight: 600;
       letter-spacing: 0.05em;
+      padding: 7px 16px;
+      border: 1px solid var(--accent);
+      border-radius: 16px;
       white-space: nowrap; flex: none;
+      transition: background 0.2s, border-color 0.2s;
     }
     .read-more::after {
       content: " →";
       transition: margin-left 0.2s;
       display: inline-block;
     }
+    .project-card:hover .read-more { background: #0a6e44; border-color: #0a6e44; }
     .project-card:hover .read-more::after { margin-left: 4px; }
 
     /* 카드 전체 클릭 영역(스트레치드 링크) + GitHub 레포 칩 */
@@ -275,8 +281,8 @@
     }
     .repo-chip:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-faded); }
     .repo-chip svg { width: 13px; height: 13px; flex: none; }
-    .demo-chip { color: #fff; background: var(--accent); border-color: var(--accent); }
-    .demo-chip:hover { color: #fff; background: #0a6e44; border-color: #0a6e44; }
+    .demo-chip { color: var(--accent); background: var(--accent-faded); border-color: var(--rule); }
+    .demo-chip:hover { color: var(--accent); background: var(--accent-soft); border-color: var(--accent); }
 
     /* Career card — darker */
     .project-card.career {
@@ -306,7 +312,8 @@
     .project-card.career .project-cta { border-top-color: rgba(255, 255, 255, 0.1); }
     .project-card.career .project-role { color: #9aaaa0; }
     .project-card.career .project-role strong { color: #c5d0ca; }
-    .project-card.career .read-more { color: var(--accent-soft); }
+    .project-card.career .read-more { color: var(--ink); background: var(--accent-soft); border-color: var(--accent-soft); }
+    .project-card.career:hover .read-more { background: #fff; border-color: #fff; }
 
     /* Skills */
     .skills-block {
@@ -367,57 +374,8 @@
       opacity: 0.6;
     }
 
-    /* AI workflow mini-section */
-    .ai-flow {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-      margin-bottom: 18px;
-    }
-    .ai-stage {
-      background: var(--card);
-      border: 1px solid var(--rule);
-      border-radius: 12px;
-      padding: 22px 24px;
-      border-top: 3px solid var(--accent);
-    }
-    .ai-stage-phase {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      color: var(--muted);
-      text-transform: uppercase;
-      margin-bottom: 10px;
-    }
-    .ai-stage-tool {
-      font-family: 'Fraunces', serif;
-      font-size: 19px;
-      font-weight: 600;
-      color: var(--accent);
-      margin-bottom: 12px;
-      letter-spacing: -0.01em;
-    }
-    .ai-stage-body {
-      font-size: 13px;
-      color: var(--ink-soft);
-      line-height: 1.65;
-    }
-    .ai-closing {
-      background: var(--ink);
-      color: #fff;
-      border-radius: 10px;
-      padding: 20px 24px;
-      font-family: 'Fraunces', serif;
-      font-size: 19px;
-      font-weight: 600;
-      text-align: center;
-      letter-spacing: -0.01em;
-    }
-    @media (max-width: 720px) {
-      .ai-flow { grid-template-columns: 1fr; }
-      .ai-closing { font-size: 16px; }
-    }
+    /* AI workflow mini-section — moved to harness-engineering.html */
+
 
     footer {
       margin-top: 80px;
@@ -627,6 +585,53 @@
         </div>
       </div>
     </div>
+    <!-- AI 워크플로우 (capability) -->
+    <div class="project-card">
+      <a class="card-link" href="harness-engineering.html" aria-label="AI 워크플로우 · 하네스 엔지니어링 상세 보기"></a>
+      <div class="project-meta-row">
+        <div class="project-num">🧠 CAPABILITY · AI 워크플로우</div>
+        <div class="project-period">상시</div>
+      </div>
+      <div class="project-title">AI를 도구가 아니라 시스템으로 — 하네스 엔지니어링</div>
+      <div class="project-subtitle">harness engineering · 규칙 주입 · 가드레일 · 컨텍스트 설계</div>
+      <div class="project-tagline">
+        개발 사이클 단계마다 도구를 나눠 쓰고 <strong>마지막 판단은 항상 직접</strong> 합니다.<br>
+        코딩 규칙·아키텍처 패턴을 <strong>SSOT 문서(CLAUDE.md·컨벤션)로 명문화</strong>해 AI가 팀 스타일로 코딩하게 하고,
+        작업이 끝나면 <strong>/revref·/apitest 스킬이 자동으로 검토·검증</strong>합니다.
+        도구를 쓰는 데서 멈추지 않고 <strong>워크플로우 자체를 엔지니어링</strong>합니다.
+      </div>
+
+      <div class="project-highlights">
+        <div class="highlight">
+          <div class="highlight-num">단계별 분리</div>
+          <div class="highlight-label">분석 · 구현 · 리뷰 도구 분리</div>
+        </div>
+        <div class="highlight">
+          <div class="highlight-num">자동 검토</div>
+          <div class="highlight-label">/revref · CodeRabbit 컨벤션 점검</div>
+        </div>
+        <div class="highlight">
+          <div class="highlight-num">규칙 흡수</div>
+          <div class="highlight-label">반복 지적 → 규칙 문서 → 재발 차단</div>
+        </div>
+      </div>
+
+      <div class="project-stack">
+        <span class="stack-pill">Claude Code</span>
+        <span class="stack-pill">서브에이전트</span>
+        <span class="stack-pill">CLAUDE.md · 컨벤션</span>
+        <span class="stack-pill">/revref</span>
+        <span class="stack-pill">/apitest</span>
+        <span class="stack-pill">CodeRabbit</span>
+      </div>
+
+      <div class="project-cta">
+        <div class="project-role">원칙: <strong>생성은 맡겨도, 검증은 맡기지 않는다</strong></div>
+        <div class="cta-actions">
+          <div class="read-more">상세 보기</div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- SKILLS -->
@@ -725,53 +730,6 @@
         <div class="skill-list learn"><strong>GCP</strong> (Compute Engine · Cloud SQL · Container Registry) · <strong>AWS</strong></div>
       </div>
     </div>
-  </section>
-
-  <!-- AI WORKFLOW -->
-  <section class="section">
-    <div class="section-tag">HOW I WORK WITH AI</div>
-    <h2>AI와 일하는 방식</h2>
-    <div class="section-rule"></div>
-    <p class="lede">개발 사이클 단계마다 도구를 나눠 쓰고, <strong>마지막 판단은 항상 직접</strong> 합니다.</p>
-
-    <div class="ai-flow">
-      <div class="ai-stage">
-        <div class="ai-stage-phase">분석 · 설계</div>
-        <div class="ai-stage-tool">Claude Code</div>
-        <div class="ai-stage-body">규칙 문서(CLAUDE.md)를 기준으로 레거시 호출 경로·변경 이력을 정리하고 설계 대안을 교차 검증. DB 스키마는 문서 대신 <strong>MCP로 실시간 조회</strong>해 추측 없이 설계하고, 핵심 분기는 디버거로 재현해 확인.</div>
-      </div>
-      <div class="ai-stage">
-        <div class="ai-stage-phase">구현 · 테스트</div>
-        <div class="ai-stage-tool">Claude Code · 서브에이전트</div>
-        <div class="ai-stage-body">쿼리 작성·구조 개선 같은 작업은 <strong>역할별 서브에이전트에 위임</strong>하고 메인 흐름만 직접 운전. 테스트 초안 생성은 맡기되, 경계 조건과 검증 기준은 직접 설계.</div>
-      </div>
-      <div class="ai-stage">
-        <div class="ai-stage-phase">리뷰</div>
-        <div class="ai-stage-tool">커스텀 skill · CodeRabbit</div>
-        <div class="ai-stage-body">커밋 전 <strong>직접 만든 리뷰 skill</strong>이 리팩토링·코드리뷰·언어별 점검 에이전트를 순차 호출(신규 파일·대규모 수정 시 자동 트리거). PR 단계는 CodeRabbit이 한 번 더. <strong>반복 지적은 규칙 문서로 흡수</strong>해 같은 지적이 안 나오게.</div>
-      </div>
-    </div>
-
-    <p class="lede" style="margin-top:30px">도구를 쓰는 데서 멈추지 않고, <strong>AI 워크플로우 자체를 엔지니어링</strong>합니다.</p>
-    <div class="ai-flow">
-      <div class="ai-stage">
-        <div class="ai-stage-phase">규칙 주입</div>
-        <div class="ai-stage-tool">컨벤션 문서</div>
-        <div class="ai-stage-body">코딩 규칙·아키텍처 패턴을 규칙 문서로 명문화해 AI가 팀 스타일로 코딩하게 만듦. <strong>"이 코드베이스엔 안 맞는 일반론" 목록을 검증 일자와 함께 관리</strong>해 AI 리뷰의 false positive를 줄임.</div>
-      </div>
-      <div class="ai-stage">
-        <div class="ai-stage-phase">가드레일</div>
-        <div class="ai-stage-tool">권한 · MCP 정책</div>
-        <div class="ai-stage-body">실행 가능한 명령을 <strong>화이트리스트로 통제</strong>하고, DB MCP는 조회는 열되 <strong>DROP·DELETE는 차단</strong>. 생성 속도와 운영 안전을 동시에 확보.</div>
-      </div>
-      <div class="ai-stage">
-        <div class="ai-stage-phase">컨텍스트 주입</div>
-        <div class="ai-stage-tool">조건부 참조 규칙</div>
-        <div class="ai-stage-body">작업 유형을 인식하면 <strong>관련 가이드 문서를 먼저 읽고 착수</strong>하도록 규칙화. 휘발성 큰 정보는 문서에 박제하지 않고 그때그때 실측 — AI에게 "무엇을, 언제 참조할지"를 설계.</div>
-      </div>
-    </div>
-
-    <div class="ai-closing">생성은 맡겨도, 검증은 맡기지 않는다.</div>
   </section>
 
   <footer>

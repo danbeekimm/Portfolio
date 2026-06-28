@@ -1406,6 +1406,17 @@
       </div>
     </div>
 
+    <h3 style="margin-top:28px; margin-bottom:14px;">연쇄 전파가 어떻게 번지나 (Why → Why)</h3>
+    <div class="box muted">
+      <div class="box-title">실제 장애 시나리오 — hub-service 일시 장애</div>
+      <ul>
+        <li>외부 호출이 <strong>타임아웃까지 스레드를 점유</strong></li>
+        <li>풀에서 스레드가 빠르게 소진 → 새 요청이 대기 큐에 적체</li>
+        <li>대기 요청도 결국 타임아웃 → company-service 자체 응답 지연</li>
+        <li>fail-fast가 없으면 장애가 <strong>양방향으로 전파</strong> → CB OPEN 시 즉시 fallback해 점유 시간을 타임아웃에서 수 ms로 끊어냄</li>
+      </ul>
+    </div>
+
     <pre><span class="ann">@Retry</span>(name = <span class="str">"hubService"</span>)
 <span class="ann">@CircuitBreaker</span>(name = <span class="str">"hubService"</span>, fallbackMethod = <span class="str">"hubServiceFallback"</span>)
 <span class="kw">public boolean</span> validateHubExists(UUID hubId) {
@@ -1533,6 +1544,10 @@ RoutingSearchParameters params = main.defaultRoutingSearchParameters()
       <strong>왜 일괄(batch)인가</strong> — 실시간 배정 = 들어오는 순서대로 그리디 → <strong>국소 최적</strong>(지금 가까운 사람에게 줬더니 나중 배송이 꼬임). VRPTW는 <strong>당일 전체를 한 번에 모아야 전역 최적</strong>. B2B는 "즉시"보다 "당일 정시 배송"이 중요 → 일괄이 비즈니스에 더 맞음.
     </p>
 
+    <p style="font-size:13px; color:var(--ink-soft); margin-top:14px;">
+      <strong>해가 없을 때(infeasible) — 시간창만 단계적 완화</strong> · 특정 일자에 시간창이 좁고 물량이 몰리면 솔버가 <strong>infeasible</strong>을 반환한다. 단순 예외 throw는 가용성을 해치므로, 다른 제약은 두고 <strong>시간창만 ±30 → ±60 → ±90분</strong>으로 단계적으로 풀어 재시도한다. <em>차량 추가 투입은 인력 자원 문제라 시스템 제어 밖, 모든 제약 무시 후 재계산은 SLA 약속 자체가 깨지므로 배제</em> — SLA 영향이 가장 작은 시간창부터 양보했다. 모두 실패하면 <code>ROUTE_OPTIMIZATION_FAILED</code>로 운영자에게 알리고, 스케줄러 레벨에서 10초 간격 3회 재시도한다.
+    </p>
+
     <!-- 실제 OR-Tools 경로 시각화 -->
     <div class="screenshot-card">
       <div class="screenshot-header">
@@ -1566,7 +1581,7 @@ RoutingSearchParameters params = main.defaultRoutingSearchParameters()
       <div class="contrib-body">
         <p><strong>P</strong> · 배송담당자 등록 시 "최대 seq 조회 → +1 저장" 사이 동시 요청이 끼면 <strong>Read-Modify-Write race</strong> → 같은 seq가 두 번 발급.</p>
         <p><strong>A</strong> · <code>@Lock(LockModeType.PESSIMISTIC_WRITE)</code>로 최대 seq row를 select for update. <em>대안 검토: 낙관적 락은 어차피 매번 충돌하는 채번엔 재시도 비용만 누적, 분산 락은 단일 인스턴스 토폴로지엔 과함 →</em> <strong>"충돌 잦고 짧은 임계구역"엔 비관적 락이 최적</strong>이라 판단.</p>
-        <p><strong>R</strong> · 동시 등록 요청에서도 seq 유일성 보장. 재시도 로직 없이 <strong>DB 레벨에서 차단</strong>. 추가로 <strong>락 타임아웃 3초</strong>를 명시해 장기 트랜잭션·데드락 시 <code>LockTimeoutException</code>으로 빠른 실패 처리 — 무한 대기로 인한 스레드 점유 차단.</p>
+        <p><strong>R</strong> · 동시 등록 요청에서도 seq 유일성 보장. 재시도 로직 없이 <strong>DB 레벨에서 차단</strong>. 추가로 <strong>락 타임아웃 3초</strong>를 명시해 장기 트랜잭션·데드락 시 <code>LockTimeoutException</code>으로 빠른 실패 처리 — 무한 대기로 인한 스레드 점유 차단. <strong>동시 등록 시나리오 단위 테스트</strong>로 seq 유일성을 검증했다.</p>
         <div class="code-links">
           <span class="code-links-label">CODE</span>
           <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/delivery-service/src/main/java/com/da2jobu/deliveryservice/infrastructure/persistence/JpaDeliveryManagerRepository.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>JpaDeliveryManagerRepository.java<span class="hint">· @Lock+timeout 3000</span></a>
@@ -1610,134 +1625,9 @@ Optional&lt;DeliveryManager&gt; findTopByHubIdOrderBySeqDesc(UUID hubId);
     </p>
   </section>
 
-  <!-- 08 — TROUBLESHOOTING -->
-  <section class="section">
-    <div class="section-tag">09 · TROUBLESHOOTING</div>
-    <h2>트러블슈팅 — 가설을 세우고 대안을 비교한 사례</h2>
-    <div class="section-rule"></div>
-
-    <div class="trouble">
-      <div class="trouble-header">
-        <div class="trouble-num">#01 · VRPTW infeasible — 시간창이 빡빡해 해 없음</div>
-        <div class="trouble-tag">제약 완화 재시도</div>
-      </div>
-      <div class="trouble-body">
-        <div class="trouble-cell">
-          <h4>현상 · 가설</h4>
-          <ul>
-            <li>특정 일자에 업체 시간창 좁고 배송 물량 집중</li>
-            <li>OR-Tools가 <strong>infeasible</strong> 반환 → 자동 배정 실패</li>
-            <li>단순 예외 throw는 가용성 저하 → <strong>제약 완화 전략 필요</strong></li>
-          </ul>
-        </div>
-        <div class="trouble-cell">
-          <h4>원인 분석 — 대안 검토</h4>
-          <ul>
-            <li>차량 추가 투입: 인력 자원 문제 — 시스템 제어 밖</li>
-            <li>모든 제약 무시 후 재계산: SLA 약속이 깨짐</li>
-            <li><strong>시간창만 단계적 완화</strong>: SLA 영향 최소화 + 가용성 확보</li>
-          </ul>
-        </div>
-        <div class="trouble-cell">
-          <h4>해결 & 검증</h4>
-          <ul>
-            <li>시간창 <strong>±30분 → ±60분 → ±90분</strong> 단계적 완화 재시도</li>
-            <li>모두 실패 시 <code>ROUTE_OPTIMIZATION_FAILED</code> 예외로 운영자 알림</li>
-            <li>스케줄러 레벨 <strong>3회 수동 재시도</strong>(10초 간격)</li>
-          </ul>
-        </div>
-      </div>
-      <div class="trouble-footer">
-        <div class="code-links">
-          <span class="code-links-label">CODE</span>
-          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/delivery-service/src/main/java/com/da2jobu/deliveryservice/application/deliveryManager/service/CompanyDeliveryAssignmentService.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>CompanyDeliveryAssignmentService.java</a>
-          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/delivery-service/src/main/java/com/da2jobu/deliveryservice/application/deliveryManager/scheduler/CompanyDeliveryAssignmentScheduler.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>CompanyDeliveryAssignmentScheduler.java</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="trouble">
-      <div class="trouble-header">
-        <div class="trouble-num">#02 · 외부 서비스 장애가 연쇄 전파 — Circuit Breaker로 격리</div>
-        <div class="trouble-tag">cascading failure</div>
-      </div>
-      <div class="trouble-body">
-        <div class="trouble-cell">
-          <h4>현상 · 가설</h4>
-          <ul>
-            <li>hub-service 일시 장애 시 company-service의 검증 호출이 타임아웃까지 블로킹</li>
-            <li><strong>대기 스레드 누적</strong> → company-service 자체 응답 지연</li>
-          </ul>
-        </div>
-        <div class="trouble-cell">
-          <h4>원인 분석 (Why → Why)</h4>
-          <ul>
-            <li>외부 호출 타임아웃까지 스레드 점유</li>
-            <li>풀에서 스레드가 빨리 소진</li>
-            <li>새 요청이 대기 큐로 쌓이고 결국 자기도 타임아웃</li>
-            <li>fail-fast가 없어 장애가 양방향 전파</li>
-          </ul>
-        </div>
-        <div class="trouble-cell">
-          <h4>해결 & 검증</h4>
-          <ul>
-            <li>Resilience4j CB로 감싸 <strong>OPEN 시 fallback 즉시 반환</strong></li>
-            <li>스레드 점유 시간 = 타임아웃 → 수 ms로 단축</li>
-            <li><code>onStateTransition</code> · <code>onCallNotPermitted</code> · <code>onSlowCallRateExceeded</code> 로깅 검증</li>
-          </ul>
-        </div>
-      </div>
-      <div class="trouble-footer">
-        <div class="code-links">
-          <span class="code-links-label">CODE</span>
-          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/company-service/src/main/java/com/da2jobu/infrastructure/client/HubClientImpl.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>HubClientImpl.java</a>
-          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/company-service/src/main/java/com/da2jobu/infrastructure/config/ResilienceConfig.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>ResilienceConfig.java</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="trouble">
-      <div class="trouble-header">
-        <div class="trouble-num">#03 · seq 채번 동시성 — 비관적 락으로 차단</div>
-        <div class="trouble-tag">race condition</div>
-      </div>
-      <div class="trouble-body">
-        <div class="trouble-cell">
-          <h4>현상 · 가설</h4>
-          <ul>
-            <li>배송담당자 동시 등록 시 <strong>Read-Modify-Write race</strong></li>
-            <li>같은 seq가 두 번 발급될 수 있음</li>
-          </ul>
-        </div>
-        <div class="trouble-cell">
-          <h4>원인 분석 — 대안 비교</h4>
-          <ul>
-            <li>낙관적 락: 매번 충돌하는 채번엔 재시도 비용만 누적</li>
-            <li>분산 락: 단일 인스턴스 토폴로지엔 과함</li>
-            <li><strong>비관적 락</strong>: 짧고 잦은 임계구역에 최적</li>
-          </ul>
-        </div>
-        <div class="trouble-cell">
-          <h4>해결 & 검증</h4>
-          <ul>
-            <li><code>@Lock(PESSIMISTIC_WRITE)</code>로 최대 seq row를 <code>SELECT FOR UPDATE</code></li>
-            <li>재시도 로직 없이 DB 레벨에서 차단</li>
-            <li>동시 등록 시나리오 단위 테스트로 유일성 검증</li>
-          </ul>
-        </div>
-      </div>
-      <div class="trouble-footer">
-        <div class="code-links">
-          <span class="code-links-label">CODE</span>
-          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/delivery-service/src/main/java/com/da2jobu/deliveryservice/infrastructure/persistence/JpaDeliveryManagerRepository.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>JpaDeliveryManagerRepository.java</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- 10 — DEPLOYMENT / INFRA -->
   <section class="section">
-    <div class="section-tag">10 · DEPLOYMENT · INFRA</div>
+    <div class="section-tag">09 · DEPLOYMENT · INFRA</div>
     <h2>배포 인프라 — IaC 한 번으로 AWS + Cloudflare 전 구간 프로비저닝</h2>
     <div class="section-rule"></div>
     <p class="lede">
@@ -1812,7 +1702,7 @@ push(develop) ─▶ GitHub Actions <span class="com">(OIDC · matrix ×9)</span
 
   <!-- 11 — STACK -->
   <section class="section">
-    <div class="section-tag">11 · STACK</div>
+    <div class="section-tag">10 · STACK</div>
     <h2>기술 스택</h2>
     <div class="section-rule"></div>
     <table>
@@ -1834,7 +1724,7 @@ push(develop) ─▶ GitHub Actions <span class="com">(OIDC · matrix ×9)</span
 
   <!-- 12 — RETRO -->
   <section class="section">
-    <div class="section-tag">12 · RETROSPECTIVE</div>
+    <div class="section-tag">11 · RETROSPECTIVE</div>
     <h2>회고 — 잘한 것과 의도적 선택의 트레이드오프</h2>
     <div class="section-rule"></div>
     <p class="lede">

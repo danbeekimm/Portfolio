@@ -1149,136 +1149,9 @@
         </div>
     </section>
 
-    <!-- SECTION 03 — TECH SELECTION (모니터링 스택 선택 근거) -->
+    <!-- SECTION 03 — DESIGN GOALS (이전 02 — 핵심 도전 + 핵심 기여) -->
     <section class="section">
-        <div class="section-tag">03 · TECH SELECTION</div>
-        <h2>왜 PGAL Stack인가 — 모니터링 도구 선택 근거</h2>
-        <div class="section-rule"></div>
-        <p class="lede">
-            MSA 환경의 주요 비기능 요구는 <strong>장애 추적·실시간 메트릭·중앙 집중 로그·자동 알림</strong>입니다.
-            ELK · CloudWatch · Datadog 등 후보를 <strong>운영 비용 · 의존성 · 우리 규모 적합성</strong> 세 축으로 비교한 결과,
-            <strong>Prometheus + Grafana + Alertmanager + Loki + Promtail</strong>(이하 PGAL)이 적절하다고 판단했습니다.
-        </p>
-
-        <div class="tech-compare">
-            <div class="tech-row rejected">
-                <div class="tech-name">
-                    ELK Stack
-                    <span class="tech-sub">Elasticsearch + Logstash + Kibana</span>
-                </div>
-                <div class="tech-reasoning">
-                    <span class="pros">✓ 강력한 Full-text 검색 · 대규모 로그 분석 · Kibana 시각화 우수</span><br>
-                    <span class="cons">✗ Elasticsearch 메모리 사용량이 매우 큼 · Logstash 리소스 무거움 · 운영 복잡도 높음</span><br>
-                    <strong>판단</strong>: 우리는 Kubernetes 규모의 초대형 시스템이 아니고, 로그 분석보다 <strong>장애 추적이 더 큰 목적</strong>. Docker 기반 경량 MSA엔 과한 구성.
-                </div>
-                <div class="tech-verdict">REJECTED<br>(over-spec)</div>
-            </div>
-
-            <div class="tech-row rejected">
-                <div class="tech-name">
-                    CloudWatch
-                    <span class="tech-sub">AWS managed</span>
-                </div>
-                <div class="tech-reasoning">
-                    <span class="pros">✓ AWS 서비스와 높은 통합성 · 별도 서버 운영 불필요 · 자동 스케일링</span><br>
-                    <span class="cons">✗ AWS 의존성 증가 · 로그 저장 비용 누적 · 멀티 클라우드 대응 어려움</span><br>
-                    <strong>판단</strong>: 본 프로젝트는 <strong>GCP + 로컬 Docker 기반</strong>으로 운영 — 특정 클라우드 종속 회피.
-                </div>
-                <div class="tech-verdict">REJECTED<br>(vendor lock-in)</div>
-            </div>
-
-            <div class="tech-row rejected">
-                <div class="tech-name">
-                    Datadog
-                    <span class="tech-sub">SaaS APM</span>
-                </div>
-                <div class="tech-reasoning">
-                    <span class="pros">✓ SaaS 구축 쉬움 · UI/UX 우수 · 로그+메트릭+트레이싱 통합 APM</span><br>
-                    <span class="cons">✗ 비용이 높음 · 데이터량 증가 시 과금 부담 · SaaS 의존성</span><br>
-                    <strong>판단</strong>: 학습/포트폴리오 환경에서는 <strong>운영 비용 최소화가 중요</strong>해 부적합.
-                </div>
-                <div class="tech-verdict">REJECTED<br>(cost-prohibitive)</div>
-            </div>
-
-            <div class="tech-row chosen">
-                <div class="tech-name">
-                    PGAL Stack
-                    <span class="tech-sub">Prometheus + Grafana + Alertmanager + Loki + Promtail</span>
-                </div>
-                <div class="tech-reasoning">
-                    <span class="pros">✓ MSA 사실상 표준(Prometheus) · Spring Boot Actuator 연동 용이 · ELK 대비 경량(Loki) · Grafana 단일 대시보드로 메트릭+로그 통합 · Docker SD로 컨테이너 자동 발견 · 전부 오픈소스로 비용 0</span><br>
-                    <strong>판단</strong>: 우리 규모(Docker 기반 MSA · 5인 팀 · 학습/데모 환경)에 정확히 맞는 균형. <strong>운영 가시성을 확보하면서도 운영 부담을 최소화</strong>.
-                </div>
-                <div class="tech-verdict">CHOSEN<br>★</div>
-            </div>
-        </div>
-
-        <h3 style="margin-top:28px; margin-bottom:14px;">5개 도구 각각의 역할</h3>
-        <div class="stack-detail">
-            <div class="stack-tool">
-                <div class="stack-tool-icon">📊</div>
-                <div class="stack-tool-name">Prometheus</div>
-                <div class="stack-tool-role">시계열 메트릭<br>scrape 15s</div>
-            </div>
-            <div class="stack-tool">
-                <div class="stack-tool-icon">📈</div>
-                <div class="stack-tool-name">Grafana</div>
-                <div class="stack-tool-role">통합 대시보드<br>IaC provisioning</div>
-            </div>
-            <div class="stack-tool">
-                <div class="stack-tool-icon">🚨</div>
-                <div class="stack-tool-name">Alertmanager</div>
-                <div class="stack-tool-role">조건 기반 알림<br>Slack 라우팅</div>
-            </div>
-            <div class="stack-tool">
-                <div class="stack-tool-icon">📜</div>
-                <div class="stack-tool-name">Loki</div>
-                <div class="stack-tool-role">경량 로그 저장<br>라벨 인덱싱</div>
-            </div>
-            <div class="stack-tool">
-                <div class="stack-tool-icon">🚚</div>
-                <div class="stack-tool-name">Promtail</div>
-                <div class="stack-tool-role">컨테이너 로그<br>Docker SD</div>
-            </div>
-        </div>
-
-        <table style="margin-top:24px;">
-            <thead>
-            <tr><th>도구</th><th>선택 이유 (한 줄)</th><th>활용 목적</th></tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>Prometheus</td>
-                <td>MSA 사실상 표준 · Spring Boot Actuator 연동 용이 · 시계열 저장 최적화 · PromQL</td>
-                <td>CPU/Memory/API 응답시간/에러율/요청수 추적</td>
-            </tr>
-            <tr>
-                <td>Grafana</td>
-                <td>다양한 데이터 소스 + Loki/Prometheus와 높은 호환 + 대시보드 자유도</td>
-                <td>서비스별 메트릭 시각화 · 운영 대시보드 · 장애 실시간 확인</td>
-            </tr>
-            <tr>
-                <td>Alertmanager</td>
-                <td>Prometheus 자연스러운 통합 · 조건 기반 · Slack 연동 용이</td>
-                <td>임계치 초과 → Slack 알림 · API Error Rate 증가 감지</td>
-            </tr>
-            <tr>
-                <td>Loki</td>
-                <td>Elasticsearch 없이 로그 저장 · 라벨 인덱싱으로 비용 절감 · Docker 궁합</td>
-                <td>서비스별 중앙 로그 · 장애 로그 분석 · Trace ID 요청 추적</td>
-            </tr>
-            <tr>
-                <td>Promtail</td>
-                <td>Docker 로그 수집 단순 · Loki 공식 연동 · 설정 단순</td>
-                <td>컨테이너 로그 수집 · 서비스 라벨링 · Loki로 전달</td>
-            </tr>
-            </tbody>
-        </table>
-    </section>
-
-    <!-- SECTION 04 — DESIGN GOALS (이전 02 — 핵심 도전 + 핵심 기여) -->
-    <section class="section">
-        <div class="section-tag">04 · DESIGN GOALS</div>
+        <div class="section-tag">03 · DESIGN GOALS</div>
         <h2>설계 도전 과제와 핵심 기여</h2>
         <div class="section-rule"></div>
 
@@ -1307,9 +1180,9 @@
         </div>
     </section>
 
-    <!-- SECTION 05 — ARCHITECTURE -->
+    <!-- SECTION 04 — ARCHITECTURE -->
     <section class="section">
-        <div class="section-tag">05 · ARCHITECTURE</div>
+        <div class="section-tag">04 · ARCHITECTURE</div>
         <h2>TO-BE 아키텍처 — GCP 5-VM 분리 토폴로지</h2>
         <div class="section-rule"></div>
         <p class="lede">
@@ -1632,9 +1505,9 @@
         </table>
     </section>
 
-    <!-- SECTION 06 — KEY CONTRIBUTION ① — LLM-as-a-Judge -->
+    <!-- SECTION 05 — KEY CONTRIBUTION ① — LLM-as-a-Judge -->
     <section class="section">
-        <div class="section-tag">06 · KEY CONTRIBUTION ①</div>
+        <div class="section-tag">05 · KEY CONTRIBUTION ①</div>
         <div class="contrib-card">
             <div class="contrib-headline">
                 <div class="contrib-num">🎯 CONTRIBUTION #1</div>
@@ -1732,115 +1605,12 @@
         </div>
     </section>
 
-    <!-- SECTION 07 — KEY CONTRIBUTION ② — AIOps -->
+    <!-- SECTION 06 — KEY CONTRIBUTION ② — Observability stack -->
     <section class="section">
-        <div class="section-tag">07 · KEY CONTRIBUTION ②</div>
+        <div class="section-tag">06 · KEY CONTRIBUTION ②</div>
         <div class="contrib-card">
             <div class="contrib-headline">
-                <div class="contrib-num">🤖 CONTRIBUTION #2</div>
-                <div class="contrib-title">단순 알림을 넘어 원인 분석을 전달 — LLM 기반 AIOps (Human-in-the-Loop)</div>
-                <div class="contrib-impact">MTTR 단축 + AI 자동화의 안전성을 사람 클릭으로 통제. 운영자의 컨텍스트 수집 단계 제거</div>
-            </div>
-            <div class="contrib-body">
-                <p><strong>P</strong> · Prometheus → Slack 단순 알림은 "임계값 초과" 사실만 전달 → 운영자가 Grafana·터미널을 왕복하며 원인 추적에 시간 소요(MTTR의 대부분). 동시에 LLM 자동 실행은 운영 컨테이너를 건드리므로 위험.</p>
-                <p><strong>A</strong> · Alertmanager webhook부터 Slack 메시지까지의 파이프라인을 <strong>dedup → 컨텍스트 수집 → LLM 분석 → HITL 액션</strong> 4단계로 구성. <strong>AI는 추천까지, 실행은 사람 클릭</strong>이라는 안전선 확보.</p>
-                <ul class="approach-points">
-                    <li><strong>dedup</strong> — Redis fingerprint(<code>SET NX</code>, TTL 1h)로 중복 알림 차단</li>
-                    <li><strong>컨텍스트 수집</strong> — Prometheus(CPU/Heap/에러수/응답시간) + Loki(최근 10분 에러 로그) 자동 fetch</li>
-                    <li><strong>LLM 분석</strong> — Claude(haiku)가 메트릭·로그 기반 RCA(원인 분석 + 권장 조치) 생성</li>
-                    <li><strong>HITL 액션</strong> — Slack Block Kit으로 분석 + <strong>복구 버튼 4종</strong>(restart / rollback / cache-clear / false-alarm) 동시 노출</li>
-                </ul>
-                <p><strong>R</strong> · 알림 수신 후 수 초 내 "근거 메트릭/로그 + 권장 조치" 자동 게시. <strong>AI를 운영 모니터링 시스템의 일부로 통합.</strong></p>
-                <pre style="margin-top:14px;"><span class="com">// Slack 3초 응답 제약 → @Async ACK 후 메시지 갱신</span>
-<span class="kw">@Async</span>(<span class="str">"slackActionExecutor"</span>)
-<span class="kw">public void</span> executeAndNotifyAsync(SlackActionCommand command) {
-    trySlack(<span class="str">"처리 중"</span>, () -> alertPort.markAsProcessing(...));
-    ActionResult result = executeAction(...);
-    trySlack(<span class="str">"완료/실패 갱신"</span>, () -> alertPort.markAsHandled(...));
-}</pre>
-                <div class="code-links">
-                    <span class="code-links-label">CODE</span>
-                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/notification-service/src/main/java/io/antcamp/notificationservice/application/service/NotificationApplicationService.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>NotificationApplicationService.java<span class="hint">· dedup→RCA→HITL</span></a>
-                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/notification-service/src/main/java/io/antcamp/notificationservice/infrastructure/client/slack/SlackBlockBuilder.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>SlackBlockBuilder.java<span class="hint">· 복구 버튼 4종</span></a>
-                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/notification-service/src/main/java/io/antcamp/notificationservice/infrastructure/client/llm/ClaudeApiClient.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>ClaudeApiClient.java<span class="hint">· LLM RCA</span></a>
-                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/notification-service/src/main/java/io/antcamp/notificationservice/infrastructure/client/redis/RedisDeduplicationAdapter.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>RedisDeduplicationAdapter.java<span class="hint">· SET NX dedup</span></a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Slack HITL 실제 동작 -->
-        <div class="screenshot-card">
-            <div class="screenshot-header">
-                <div class="screenshot-title">📸 실제 Slack 알림 + Human-in-the-Loop 액션 화면</div>
-                <div class="screenshot-tag">HITL · 실제 운영</div>
-            </div>
-            <div class="screenshot-img-wrap">
-                <img src="images/slack-hitl-composed.png" alt="Slack #grafana 채널의 알림 — AI 장애 분석(400/401 시나리오), 복구 버튼 4종, 스레드 처리중→완료 갱신" data-zoomable data-no-lightbox-zoom>
-                <span class="screenshot-zoom-hint">CLICK TO ZOOM</span>
-            </div>
-            <div class="screenshot-caption">
-                <strong>실제 Slack 채널에 자동 게시된 LLM 기반 장애 분석 메시지</strong>와 복구 버튼 클릭 후 스레드 갱신까지의 동작 흐름.
-                <ul class="screenshot-points">
-                    <li><strong>AI 장애 분석 리포트</strong> — antcamp-user HTTP 400 에러 발생 시점, 심각도(warning), 에러율(7건/5분)을 자동 포착</li>
-                    <li><strong>원인 분석</strong> — 1순위 클라이언트 입력값 검증, 2순위 일시적 클라이언트 트래픽, 3순위 서버 상태 등 <strong>우선순위가 매겨진 분석</strong> 제공</li>
-                    <li><strong>복구 버튼 4종</strong>(빨강 박스 영역): 코드 롤백 · 캐시 비우기 · 서비스 재시작 · 정상 처리(false alarm) — 운영자가 상황에 맞게 선택</li>
-                    <li><strong>스레드 자동 갱신</strong>(우측) — 버튼 클릭 시 <code>@Async</code> ACK 후 "처리중 → 완료/실패"로 메시지 갱신. Slack 3초 응답 제약 해소</li>
-                    <li><strong>Grafana 대시보드 / 로그 보기</strong> 바로가기 버튼으로 운영자의 컨텍스트 전환 비용 최소화</li>
-                </ul>
-            </div>
-        </div>
-    </section>
-
-    <!-- SECTION 08 — KEY CONTRIBUTION ③ — Defense-in-depth -->
-    <section class="section">
-        <div class="section-tag">08 · KEY CONTRIBUTION ③</div>
-        <div class="contrib-card">
-            <div class="contrib-headline">
-                <div class="contrib-num">🛡️ CONTRIBUTION #3</div>
-                <div class="contrib-title">LLM이 운영 시스템을 만지는 위험을 다층으로 차단 — Defense-in-depth</div>
-                <div class="contrib-impact">장애 시나리오 3종에서 fallback 동작 검증 완료</div>
-            </div>
-            <div class="contrib-body">
-                <p><strong>P</strong> · LLM 제안 시스템은 ① 인프라 서비스 오작동(LLM이 gateway/kafka에 destructive action 권유), ② 외부 위변조 요청(공개 endpoint 노출), ③ LLM 입력으로의 PII/시크릿 유출 등 다층 위험을 동시에 가짐.</p>
-                <p><strong>A</strong> · 세 위험에 각각 독립적 방어선을 둠 (아래 3겹).</p>
-                <p><strong>R</strong> · 세 시나리오 모두 fallback 동작 검증 완료 — ① notification-service 자기 장애 시 Alertmanager <code>match_re</code> fallback으로 Slack 직통, ② LLM API 장애 시 단순 텍스트 fallback, ③ 비동기 ingest 실패 시 Reconciler 자가복구.</p>
-                <div class="code-links">
-                    <span class="code-links-label">CODE</span>
-                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/notification-service/src/main/java/io/antcamp/notificationservice/infrastructure/security/filter/SlackSignatureVerificationFilter.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>SlackSignatureVerificationFilter.java<span class="hint">· HMAC·replay·timing</span></a>
-                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/notification-service/src/main/java/io/antcamp/notificationservice/infrastructure/client/llm/PromptUtil.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>PromptUtil.java<span class="hint">· PII 마스킹</span></a>
-                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/notification-service/src/main/java/io/antcamp/notificationservice/infrastructure/config/NotificationProperties.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>NotificationProperties.java<span class="hint">· 인프라 화이트리스트</span></a>
-                </div>
-            </div>
-        </div>
-
-        <div class="three-col">
-            <div class="layer">
-                <div class="layer-num">① INFRA PROTECTION</div>
-                <div class="layer-title">인프라 서비스 2중 차단</div>
-                <p>gateway·kafka 등 <code>infrastructureJobs</code>는 SlackBlockBuilder에서 <strong>버튼 자체 미노출</strong> + executeAction 진입 시 <strong>화이트리스트 차단</strong>. API/payload 조작 우회까지 방어.</p>
-                <div class="conclusion">→ 두 겹 중 한 겹이 뚫려도 다음 겹이 막음</div>
-            </div>
-            <div class="layer">
-                <div class="layer-num">② SLACK FORGERY</div>
-                <div class="layer-title">위변조 · Replay · Timing 공격 방어</div>
-                <p>공개 endpoint에 전용 필터: <strong>HMAC-SHA256 서명 검증</strong> + timestamp 5분 초과 거부(replay) + <code>MessageDigest.isEqual</code> constant-time 비교(timing attack). body는 <code>CachedBodyRequest</code> 래핑.</p>
-                <div class="conclusion">→ 외부 위변조 요청 원천 차단</div>
-            </div>
-            <div class="layer">
-                <div class="layer-num">③ PII MASKING</div>
-                <div class="layer-title">LLM 입력 민감정보 마스킹</div>
-                <p>token · password · secret · bearer → <code>[REDACTED]</code>, 이메일 → <code>[EMAIL]</code>, 로그 4000자 제한. 외부 LLM 호출 직전 최종 검증.</p>
-                <div class="conclusion">→ 시크릿/PII 외부 API 유출 방지</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- SECTION 09 — KEY CONTRIBUTION ④ — Observability stack -->
-    <section class="section">
-        <div class="section-tag">09 · KEY CONTRIBUTION ④</div>
-        <div class="contrib-card">
-            <div class="contrib-headline">
-                <div class="contrib-num">📊 CONTRIBUTION #4</div>
+                <div class="contrib-num">📊 CONTRIBUTION #2</div>
                 <div class="contrib-title">측정 불가능한 운영을 측정 가능한 운영으로 — 관측 스택 주도 구축</div>
                 <div class="contrib-impact">MTTD &lt; 1분 · alert 룰 7종 차등 설계 · 반복 알림 LLM 비용 0</div>
             </div>
@@ -1900,61 +1670,236 @@
                 </ul>
             </div>
         </div>
+        <div class="section-rule" style="margin-top:48px; margin-bottom:24px;"></div>
+        <h3 style="font-family:'Fraunces',serif; font-size:22px; font-weight:600; margin-bottom:14px;">왜 PGAL Stack인가 — 모니터링 도구 선택 근거</h3>
+        <p class="lede">
+            MSA 환경의 주요 비기능 요구는 <strong>장애 추적·실시간 메트릭·중앙 집중 로그·자동 알림</strong>입니다.
+            ELK · CloudWatch · Datadog 등 후보를 <strong>운영 비용 · 의존성 · 우리 규모 적합성</strong> 세 축으로 비교한 결과,
+            <strong>Prometheus + Grafana + Alertmanager + Loki + Promtail</strong>(이하 PGAL)이 적절하다고 판단했습니다.
+        </p>
+
+        <div class="tech-compare">
+            <div class="tech-row rejected">
+                <div class="tech-name">
+                    ELK Stack
+                    <span class="tech-sub">Elasticsearch + Logstash + Kibana</span>
+                </div>
+                <div class="tech-reasoning">
+                    <span class="pros">✓ 강력한 Full-text 검색 · 대규모 로그 분석 · Kibana 시각화 우수</span><br>
+                    <span class="cons">✗ Elasticsearch 메모리 사용량이 매우 큼 · Logstash 리소스 무거움 · 운영 복잡도 높음</span><br>
+                    <strong>판단</strong>: 우리는 Kubernetes 규모의 초대형 시스템이 아니고, 로그 분석보다 <strong>장애 추적이 더 큰 목적</strong>. Docker 기반 경량 MSA엔 과한 구성.
+                </div>
+                <div class="tech-verdict">REJECTED<br>(over-spec)</div>
+            </div>
+
+            <div class="tech-row rejected">
+                <div class="tech-name">
+                    CloudWatch
+                    <span class="tech-sub">AWS managed</span>
+                </div>
+                <div class="tech-reasoning">
+                    <span class="pros">✓ AWS 서비스와 높은 통합성 · 별도 서버 운영 불필요 · 자동 스케일링</span><br>
+                    <span class="cons">✗ AWS 의존성 증가 · 로그 저장 비용 누적 · 멀티 클라우드 대응 어려움</span><br>
+                    <strong>판단</strong>: 본 프로젝트는 <strong>GCP + 로컬 Docker 기반</strong>으로 운영 — 특정 클라우드 종속 회피.
+                </div>
+                <div class="tech-verdict">REJECTED<br>(vendor lock-in)</div>
+            </div>
+
+            <div class="tech-row rejected">
+                <div class="tech-name">
+                    Datadog
+                    <span class="tech-sub">SaaS APM</span>
+                </div>
+                <div class="tech-reasoning">
+                    <span class="pros">✓ SaaS 구축 쉬움 · UI/UX 우수 · 로그+메트릭+트레이싱 통합 APM</span><br>
+                    <span class="cons">✗ 비용이 높음 · 데이터량 증가 시 과금 부담 · SaaS 의존성</span><br>
+                    <strong>판단</strong>: 학습/포트폴리오 환경에서는 <strong>운영 비용 최소화가 중요</strong>해 부적합.
+                </div>
+                <div class="tech-verdict">REJECTED<br>(cost-prohibitive)</div>
+            </div>
+
+            <div class="tech-row chosen">
+                <div class="tech-name">
+                    PGAL Stack
+                    <span class="tech-sub">Prometheus + Grafana + Alertmanager + Loki + Promtail</span>
+                </div>
+                <div class="tech-reasoning">
+                    <span class="pros">✓ MSA 사실상 표준(Prometheus) · Spring Boot Actuator 연동 용이 · ELK 대비 경량(Loki) · Grafana 단일 대시보드로 메트릭+로그 통합 · Docker SD로 컨테이너 자동 발견 · 전부 오픈소스로 비용 0</span><br>
+                    <strong>판단</strong>: 우리 규모(Docker 기반 MSA · 5인 팀 · 학습/데모 환경)에 정확히 맞는 균형. <strong>운영 가시성을 확보하면서도 운영 부담을 최소화</strong>.
+                </div>
+                <div class="tech-verdict">CHOSEN<br>★</div>
+            </div>
+        </div>
+
+        <h3 style="margin-top:28px; margin-bottom:14px;">5개 도구 각각의 역할</h3>
+        <div class="stack-detail">
+            <div class="stack-tool">
+                <div class="stack-tool-icon">📊</div>
+                <div class="stack-tool-name">Prometheus</div>
+                <div class="stack-tool-role">시계열 메트릭<br>scrape 15s</div>
+            </div>
+            <div class="stack-tool">
+                <div class="stack-tool-icon">📈</div>
+                <div class="stack-tool-name">Grafana</div>
+                <div class="stack-tool-role">통합 대시보드<br>IaC provisioning</div>
+            </div>
+            <div class="stack-tool">
+                <div class="stack-tool-icon">🚨</div>
+                <div class="stack-tool-name">Alertmanager</div>
+                <div class="stack-tool-role">조건 기반 알림<br>Slack 라우팅</div>
+            </div>
+            <div class="stack-tool">
+                <div class="stack-tool-icon">📜</div>
+                <div class="stack-tool-name">Loki</div>
+                <div class="stack-tool-role">경량 로그 저장<br>라벨 인덱싱</div>
+            </div>
+            <div class="stack-tool">
+                <div class="stack-tool-icon">🚚</div>
+                <div class="stack-tool-name">Promtail</div>
+                <div class="stack-tool-role">컨테이너 로그<br>Docker SD</div>
+            </div>
+        </div>
+
+        <table style="margin-top:24px;">
+            <thead>
+            <tr><th>도구</th><th>선택 이유 (한 줄)</th><th>활용 목적</th></tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Prometheus</td>
+                <td>MSA 사실상 표준 · Spring Boot Actuator 연동 용이 · 시계열 저장 최적화 · PromQL</td>
+                <td>CPU/Memory/API 응답시간/에러율/요청수 추적</td>
+            </tr>
+            <tr>
+                <td>Grafana</td>
+                <td>다양한 데이터 소스 + Loki/Prometheus와 높은 호환 + 대시보드 자유도</td>
+                <td>서비스별 메트릭 시각화 · 운영 대시보드 · 장애 실시간 확인</td>
+            </tr>
+            <tr>
+                <td>Alertmanager</td>
+                <td>Prometheus 자연스러운 통합 · 조건 기반 · Slack 연동 용이</td>
+                <td>임계치 초과 → Slack 알림 · API Error Rate 증가 감지</td>
+            </tr>
+            <tr>
+                <td>Loki</td>
+                <td>Elasticsearch 없이 로그 저장 · 라벨 인덱싱으로 비용 절감 · Docker 궁합</td>
+                <td>서비스별 중앙 로그 · 장애 로그 분석 · Trace ID 요청 추적</td>
+            </tr>
+            <tr>
+                <td>Promtail</td>
+                <td>Docker 로그 수집 단순 · Loki 공식 연동 · 설정 단순</td>
+                <td>컨테이너 로그 수집 · 서비스 라벨링 · Loki로 전달</td>
+            </tr>
+            </tbody>
+        </table>
     </section>
 
-    <!-- SECTION 10 — KEY CONTRIBUTION ⑤ — RAG 응답 의미 캐시 -->
+    <!-- SECTION 07 — KEY CONTRIBUTION ③ — AIOps -->
     <section class="section">
-        <div class="section-tag">10 · KEY CONTRIBUTION ⑤</div>
+        <div class="section-tag">07 · KEY CONTRIBUTION ③</div>
         <div class="contrib-card">
             <div class="contrib-headline">
-                <div class="contrib-num">⚡ CONTRIBUTION #5</div>
-                <div class="contrib-title">반복 질문엔 LLM을 다시 부르지 않는다 — pgvector 의미 캐시로 응답 latency 단축</div>
-                <div class="contrib-impact">캐시 히트 시 응답 0.95s — 미스(긴 답변) 대비 74%↓ · 3.9배 · LLM 호출 자체 스킵으로 지연·비용 동시 절감</div>
+                <div class="contrib-num">🤖 CONTRIBUTION #3</div>
+                <div class="contrib-title">단순 알림을 넘어 원인 분석을 전달 — LLM 기반 AIOps (Human-in-the-Loop)</div>
+                <div class="contrib-impact">MTTR 단축 + AI 자동화의 안전성을 사람 클릭으로 통제. 운영자의 컨텍스트 수집 단계 제거</div>
             </div>
             <div class="contrib-body">
-                <p><strong>P</strong> · RAG 답변은 LLM 생성에 수 초가 걸리고, FAQ·약관·매매규칙처럼 <strong>동일·유사 질문이 반복</strong>되는 도메인에선 매번 풀 RAG를 도는 게 지연·비용 낭비.</p>
-                <p><strong>A</strong> · 첫 턴 질문을 임베딩해 <strong>pgvector 의미 캐시</strong>(<code>p_response_cache</code>)에서 <code>1 - cosine ≥ threshold</code> &amp; 미만료면 저장된 답변을 즉시 반환, 미스 시 풀 RAG 후 캐시에 적재(TTL은 config 값).</p>
+                <p><strong>P</strong> · Prometheus → Slack 단순 알림은 "임계값 초과" 사실만 전달 → 운영자가 Grafana·터미널을 왕복하며 원인 추적에 시간 소요(MTTR의 대부분). 동시에 LLM 자동 실행은 운영 컨테이너를 건드리므로 위험.</p>
+                <p><strong>A</strong> · Alertmanager webhook부터 Slack 메시지까지의 파이프라인을 <strong>dedup → 컨텍스트 수집 → LLM 분석 → HITL 액션</strong> 4단계로 구성. <strong>AI는 추천까지, 실행은 사람 클릭</strong>이라는 안전선 확보.</p>
                 <ul class="approach-points">
-                    <li><strong>의미 캐시</strong> — 질문 임베딩 → 코사인 유사도 임계값 이상이면 히트 → <strong>LLM 호출·벡터검색 생략</strong></li>
-                    <li><strong>적용 범위</strong> — 첫 턴(히스토리 빈 상태)에서만 조회/저장 → 단발성 질문 트래픽에 최적</li>
-                    <li><strong>측정으로 검증</strong> — hit율 · 클라이언트 wall-time · 서버 LLM <code>latencyMs</code>를 워크로드별로 분리 측정</li>
+                    <li><strong>dedup</strong> — Redis fingerprint(<code>SET NX</code>, TTL 1h)로 중복 알림 차단</li>
+                    <li><strong>컨텍스트 수집</strong> — Prometheus(CPU/Heap/에러수/응답시간) + Loki(최근 10분 에러 로그) 자동 fetch</li>
+                    <li><strong>LLM 분석</strong> — Claude(haiku)가 메트릭·로그 기반 RCA(원인 분석 + 권장 조치) 생성</li>
+                    <li><strong>HITL 액션</strong> — Slack Block Kit으로 분석 + <strong>복구 버튼 4종</strong>(restart / rollback / cache-clear / false-alarm) 동시 노출</li>
                 </ul>
-                <p><strong>R</strong> · 캐시 히트 시 <strong>0.95s</strong>로 미스(긴 답변 3.68s) 대비 <strong>2.73s↓ (74%, 3.9배)</strong>, LLM 생성(2.41s) 자체를 제거.</p>
+                <p><strong>R</strong> · 알림 수신 후 수 초 내 "근거 메트릭/로그 + 권장 조치" 자동 게시. <strong>AI를 운영 모니터링 시스템의 일부로 통합.</strong></p>
+                <pre style="margin-top:14px;"><span class="com">// Slack 3초 응답 제약 → @Async ACK 후 메시지 갱신</span>
+<span class="kw">@Async</span>(<span class="str">"slackActionExecutor"</span>)
+<span class="kw">public void</span> executeAndNotifyAsync(SlackActionCommand command) {
+    trySlack(<span class="str">"처리 중"</span>, () -> alertPort.markAsProcessing(...));
+    ActionResult result = executeAction(...);
+    trySlack(<span class="str">"완료/실패 갱신"</span>, () -> alertPort.markAsHandled(...));
+}</pre>
                 <div class="code-links">
                     <span class="code-links-label">CODE</span>
-                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/assistant-service/src/main/java/io/antcamp/assistantservice/infrastructure/persistence/adapter/ResponseCacheAdapter.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>ResponseCacheAdapter.java<span class="hint">· 의미 캐시 조회/적재</span></a>
-                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/assistant-service/src/main/java/io/antcamp/assistantservice/application/service/RagApplicationService.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>RagApplicationService.java<span class="hint">· 첫 턴 캐시 흐름</span></a>
+                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/notification-service/src/main/java/io/antcamp/notificationservice/application/service/NotificationApplicationService.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>NotificationApplicationService.java<span class="hint">· dedup→RCA→HITL</span></a>
+                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/notification-service/src/main/java/io/antcamp/notificationservice/infrastructure/client/slack/SlackBlockBuilder.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>SlackBlockBuilder.java<span class="hint">· 복구 버튼 4종</span></a>
+                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/notification-service/src/main/java/io/antcamp/notificationservice/infrastructure/client/llm/ClaudeApiClient.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>ClaudeApiClient.java<span class="hint">· LLM RCA</span></a>
+                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/notification-service/src/main/java/io/antcamp/notificationservice/infrastructure/client/redis/RedisDeduplicationAdapter.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>RedisDeduplicationAdapter.java<span class="hint">· SET NX dedup</span></a>
                 </div>
             </div>
         </div>
 
-        <div class="eval-section">
-            <h3>측정 결과 — hit율 · latency</h3>
-            <table>
-                <thead>
-                <tr><th>구분</th><th class="num">클라이언트 wall-time (중앙값)</th><th class="num">서버 LLM latencyMs</th></tr>
-                </thead>
-                <tbody>
-                <tr><td>미스 — 긴 답변(100–185자)</td><td class="num">3.68s</td><td class="num">2.41s</td></tr>
-                <tr><td>미스 — 짧은 거절(82자)</td><td class="num">2.82s</td><td class="num">1.34s</td></tr>
-                <tr><td><strong>캐시 히트</strong></td><td class="win">0.95s</td><td class="win">LLM 호출 스킵</td></tr>
-                </tbody>
-            </table>
-            <table style="margin-top:14px;">
-                <thead>
-                <tr><th>워크로드</th><th class="num">hits/n</th><th class="num">hit율</th></tr>
-                </thead>
-                <tbody>
-                <tr><td>exact-repeat (동일 질문 재요청)</td><td class="num">10/10</td><td class="win">100%</td></tr>
-                <tr><td>paraphrase (동일 의도, 다른 표현)</td><td class="num">0/10</td><td class="lose">0%</td></tr>
-                </tbody>
-            </table>
+        <!-- Slack HITL 실제 동작 -->
+        <div class="screenshot-card">
+            <div class="screenshot-header">
+                <div class="screenshot-title">📸 실제 Slack 알림 + Human-in-the-Loop 액션 화면</div>
+                <div class="screenshot-tag">HITL · 실제 운영</div>
+            </div>
+            <div class="screenshot-img-wrap">
+                <img src="images/slack-hitl-composed.png" alt="Slack #grafana 채널의 알림 — AI 장애 분석(400/401 시나리오), 복구 버튼 4종, 스레드 처리중→완료 갱신" data-zoomable data-no-lightbox-zoom>
+                <span class="screenshot-zoom-hint">CLICK TO ZOOM</span>
+            </div>
+            <div class="screenshot-caption">
+                <strong>실제 Slack 채널에 자동 게시된 LLM 기반 장애 분석 메시지</strong>와 복구 버튼 클릭 후 스레드 갱신까지의 동작 흐름.
+                <ul class="screenshot-points">
+                    <li><strong>AI 장애 분석 리포트</strong> — antcamp-user HTTP 400 에러 발생 시점, 심각도(warning), 에러율(7건/5분)을 자동 포착</li>
+                    <li><strong>원인 분석</strong> — 1순위 클라이언트 입력값 검증, 2순위 일시적 클라이언트 트래픽, 3순위 서버 상태 등 <strong>우선순위가 매겨진 분석</strong> 제공</li>
+                    <li><strong>복구 버튼 4종</strong>(빨강 박스 영역): 코드 롤백 · 캐시 비우기 · 서비스 재시작 · 정상 처리(false alarm) — 운영자가 상황에 맞게 선택</li>
+                    <li><strong>스레드 자동 갱신</strong>(우측) — 버튼 클릭 시 <code>@Async</code> ACK 후 "처리중 → 완료/실패"로 메시지 갱신. Slack 3초 응답 제약 해소</li>
+                    <li><strong>Grafana 대시보드 / 로그 보기</strong> 바로가기 버튼으로 운영자의 컨텍스트 전환 비용 최소화</li>
+                </ul>
+            </div>
         </div>
     </section>
 
-    <!-- SECTION 11 — TROUBLESHOOTING -->
+    <!-- SECTION 08 — KEY CONTRIBUTION ④ — Defense-in-depth -->
     <section class="section">
-        <div class="section-tag">11 · TROUBLESHOOTING</div>
+        <div class="section-tag">08 · KEY CONTRIBUTION ④</div>
+        <div class="contrib-card">
+            <div class="contrib-headline">
+                <div class="contrib-num">🛡️ CONTRIBUTION #4</div>
+                <div class="contrib-title">LLM이 운영 시스템을 만지는 위험을 다층으로 차단 — Defense-in-depth</div>
+                <div class="contrib-impact">장애 시나리오 3종에서 fallback 동작 검증 완료</div>
+            </div>
+            <div class="contrib-body">
+                <p><strong>P</strong> · LLM 제안 시스템은 ① 인프라 서비스 오작동(LLM이 gateway/kafka에 destructive action 권유), ② 외부 위변조 요청(공개 endpoint 노출), ③ LLM 입력으로의 PII/시크릿 유출 등 다층 위험을 동시에 가짐.</p>
+                <p><strong>A</strong> · 세 위험에 각각 독립적 방어선을 둠 (아래 3겹).</p>
+                <p><strong>R</strong> · 세 시나리오 모두 fallback 동작 검증 완료 — ① notification-service 자기 장애 시 Alertmanager <code>match_re</code> fallback으로 Slack 직통, ② LLM API 장애 시 단순 텍스트 fallback, ③ 비동기 ingest 실패 시 Reconciler 자가복구.</p>
+                <div class="code-links">
+                    <span class="code-links-label">CODE</span>
+                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/notification-service/src/main/java/io/antcamp/notificationservice/infrastructure/security/filter/SlackSignatureVerificationFilter.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>SlackSignatureVerificationFilter.java<span class="hint">· HMAC·replay·timing</span></a>
+                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/notification-service/src/main/java/io/antcamp/notificationservice/infrastructure/client/llm/PromptUtil.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>PromptUtil.java<span class="hint">· PII 마스킹</span></a>
+                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/notification-service/src/main/java/io/antcamp/notificationservice/infrastructure/config/NotificationProperties.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>NotificationProperties.java<span class="hint">· 인프라 화이트리스트</span></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="three-col">
+            <div class="layer">
+                <div class="layer-num">① INFRA PROTECTION</div>
+                <div class="layer-title">인프라 서비스 2중 차단</div>
+                <p>gateway·kafka 등 <code>infrastructureJobs</code>는 SlackBlockBuilder에서 <strong>버튼 자체 미노출</strong> + executeAction 진입 시 <strong>화이트리스트 차단</strong>. API/payload 조작 우회까지 방어.</p>
+                <div class="conclusion">→ 두 겹 중 한 겹이 뚫려도 다음 겹이 막음</div>
+            </div>
+            <div class="layer">
+                <div class="layer-num">② SLACK FORGERY</div>
+                <div class="layer-title">위변조 · Replay · Timing 공격 방어</div>
+                <p>공개 endpoint에 전용 필터: <strong>HMAC-SHA256 서명 검증</strong> + timestamp 5분 초과 거부(replay) + <code>MessageDigest.isEqual</code> constant-time 비교(timing attack). body는 <code>CachedBodyRequest</code> 래핑.</p>
+                <div class="conclusion">→ 외부 위변조 요청 원천 차단</div>
+            </div>
+            <div class="layer">
+                <div class="layer-num">③ PII MASKING</div>
+                <div class="layer-title">LLM 입력 민감정보 마스킹</div>
+                <p>token · password · secret · bearer → <code>[REDACTED]</code>, 이메일 → <code>[EMAIL]</code>, 로그 4000자 제한. 외부 LLM 호출 직전 최종 검증.</p>
+                <div class="conclusion">→ 시크릿/PII 외부 API 유출 방지</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 09 — TROUBLESHOOTING -->
+    <section class="section">
+        <div class="section-tag">09 · TROUBLESHOOTING</div>
         <h2>트러블슈팅 — 원인을 윗단까지 파고든 사례</h2>
         <div class="section-rule"></div>
         <p class="lede">
@@ -2040,48 +1985,65 @@
             </div>
         </div>
 
+
         <div class="trouble">
             <div class="trouble-header">
-                <div class="trouble-num">#03 · 동일 세션 동시 메시지 → seq 채번 race condition</div>
-                <div class="trouble-tag">비관적 락</div>
+                <div class="trouble-num">#03 · 반복·유사 질문에도 매번 풀 RAG → 불필요한 LLM 지연·비용</div>
+                <div class="trouble-tag">pgvector 의미 캐시</div>
             </div>
             <div class="trouble-body">
                 <div class="trouble-cell">
                     <h4>현상 · 가설</h4>
                     <ul>
-                        <li>한 채팅 세션에서 빠르게 두 번 전송</li>
-                        <li>"최대 seq 조회 → +1 저장" 사이 <strong>Read-Modify-Write race</strong></li>
-                        <li>동일 seq 중복 발급 가능</li>
+                        <li>RAG 답변은 LLM 생성에 평균 수 초 소요</li>
+                        <li>FAQ·약관·매매규칙처럼 <strong>동일·유사 질문이 반복</strong>되는 도메인</li>
+                        <li>매번 풀 RAG = 지연·비용 낭비</li>
                     </ul>
                 </div>
                 <div class="trouble-cell">
-                    <h4>원인 분석 — 락 선택</h4>
+                    <h4>접근 — 의미 캐시</h4>
                     <ul>
-                        <li><strong>짧고 잦은 임계구역</strong>이라 비관적 락 채택</li>
-                        <li>낙관적·분산 락은 채번 특성상 부적합(재시도 비용 누적·단일 인스턴스엔 과함)</li>
+                        <li>첫 턴 질문을 임베딩해 <strong>pgvector 의미 캐시</strong>(<code>p_response_cache</code>) 조회</li>
+                        <li><code>1 - cosine ≥ threshold</code> &amp; 미만료면 저장 답변 즉시 반환 → <strong>LLM·벡터검색 생략</strong></li>
+                        <li>미스 시 풀 RAG 후 적재(TTL config) · 첫 턴(히스토리 빈 상태)에서만 → 단발성 트래픽 최적</li>
                     </ul>
                 </div>
                 <div class="trouble-cell">
-                    <h4>해결 & 검증</h4>
+                    <h4>해결 &amp; 검증</h4>
                     <ul>
-                        <li><code>findMaxSeqForUpdate</code>에 <code>@Lock(PESSIMISTIC_WRITE)</code>로 채번 구간 보호</li>
-                        <li>재시도 로직 없이 <strong>DB 레벨에서 차단</strong></li>
-                        <li>이미 검증한 락 선택 판단(seq 채번)을 <strong>채팅 세션 seq에 동일 적용</strong> — 같은 근거, 다른 도메인</li>
+                        <li>캐시 히트 <strong>0.95s</strong> — 미스(긴 답변 3.68s) 대비 <strong>74%↓ (3.9배)</strong></li>
+                        <li>LLM 생성(2.41s) 자체를 제거</li>
+                        <li>워크로드별 wall-time·LLM <code>latencyMs</code> 분리 측정(아래 표)</li>
                     </ul>
                 </div>
             </div>
             <div class="trouble-footer">
-                <div class="code-links">
+<div class="code-links">
                     <span class="code-links-label">CODE</span>
-                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/assistant-service/src/main/java/io/antcamp/assistantservice/infrastructure/persistence/jpa/JpaChatMessageRepository.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>JpaChatMessageRepository.java<span class="hint">· findMaxSeqForUpdate</span></a>
+                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/assistant-service/src/main/java/io/antcamp/assistantservice/infrastructure/persistence/adapter/ResponseCacheAdapter.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>ResponseCacheAdapter.java<span class="hint">· 의미 캐시 조회/적재</span></a>
+                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/assistant-service/src/main/java/io/antcamp/assistantservice/application/service/RagApplicationService.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>RagApplicationService.java<span class="hint">· 첫 턴 캐시 흐름</span></a>
                 </div>
             </div>
         </div>
+
+        <div class="eval-section">
+<table>
+                <thead>
+                <tr><th>구분</th><th class="num">클라이언트 wall-time (중앙값)</th><th class="num">서버 LLM latencyMs</th></tr>
+                </thead>
+                <tbody>
+                <tr><td>미스 — 긴 답변(100–185자)</td><td class="num">3.68s</td><td class="num">2.41s</td></tr>
+                <tr><td>미스 — 짧은 거절(82자)</td><td class="num">2.82s</td><td class="num">1.34s</td></tr>
+                <tr><td><strong>캐시 히트</strong></td><td class="win">0.95s</td><td class="win">LLM 호출 스킵</td></tr>
+                </tbody>
+            </table>
+            <p style="font-size:13px; color:var(--ink-soft); margin-top:14px;"><strong>동시성</strong> · 같은 응답 경로에서 동일 세션 동시 전송 시 seq 채번 race는 <code>findMaxSeqForUpdate</code> + <code>@Lock(PESSIMISTIC_WRITE)</code>로 차단 — 락 선택 트레이드오프는 배송 담당자 seq 채번에서 상세히 다룬 동일 판단의 재적용.</p>
+        </div>
     </section>
 
-    <!-- SECTION 12 — STACK -->
+    <!-- SECTION 10 — STACK -->
     <section class="section">
-        <div class="section-tag">12 · STACK</div>
+        <div class="section-tag">10 · STACK</div>
         <h2>기술 스택</h2>
         <div class="section-rule"></div>
         <table>
@@ -2098,9 +2060,9 @@
         </table>
     </section>
 
-    <!-- SECTION 13 — RETRO — 3분할 구조 -->
+    <!-- SECTION 11 — RETRO — 3분할 구조 -->
     <section class="section">
-        <div class="section-tag">13 · RETROSPECTIVE</div>
+        <div class="section-tag">11 · RETROSPECTIVE</div>
         <h2>회고 — 의도적 선택과 진짜 아쉬운 점을 구분하다</h2>
         <div class="section-rule"></div>
         <p class="lede">

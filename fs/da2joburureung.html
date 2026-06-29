@@ -924,7 +924,7 @@
     <h1><span class="marker">정합성 보장과 장애 격리를 설계한 B2B 물류 MSA</span></h1>
     <div class="section-rule"></div>
     <p class="lede">
-      직전 모놀리식(omin)에서 한 도메인 결함이 전체를 멈추고, 특정 도메인 전용 기술(PostGIS)을 전 팀원이 설치해야 했던 비효율을 직접 겪고
+      직전 모놀리식(omin)에서 한 도메인에 결함이 나면 전체가 멈추고, 특정 도메인 전용 기술(PostGIS)을 전 팀원이 설치해야 했던 비효율을 직접 겪고
       <strong>도메인별 독립 배포·기술 선택이 가능한 MSA</strong>로 확장. B2B 도메인을 코드에 녹이기 위해 <strong>DDD 4계층(헥사고날)</strong>을 적용하고,
       서비스 간 통신은 "<strong>검증=동기(Feign), 통지=비동기(Kafka)</strong>"로 의도적으로 분리했습니다.
     </p>
@@ -1289,7 +1289,7 @@
       <tr>
         <td>MSA + DDD 헥사고날</td>
         <td>모놀리식 (omin)</td>
-        <td>직전 omin에서 한 도메인 결함이 전체를 멈추고 도메인 전용 기술(PostGIS)을 전 팀원이 설치해야 했던 비효율 직접 경험 → <strong>도메인별 독립 배포·기술 선택</strong>이 가능한 MSA로.</td>
+        <td>직전 omin에서 한 도메인에 결함이 나면 전체가 멈추고 도메인 전용 기술(PostGIS)을 전 팀원이 설치해야 했던 비효율 직접 경험 → <strong>도메인별 독립 배포·기술 선택</strong>이 가능한 MSA로.</td>
       </tr>
       <tr>
         <td>database-per-service</td>
@@ -1608,7 +1608,7 @@ RoutingSearchParameters params = main.defaultRoutingSearchParameters()
         <div class="dec-status">CHOSEN · 비관적 락</div>
         <div class="dec-name">SELECT ... FOR UPDATE</div>
         <div class="dec-reason">
-          임계구역이 <strong>짧고 충돌이 잦음</strong> → 락 대기 단점 최소화, 충돌 차단 장점 극대화. 재시도 로직 없이 DB 레벨에서 차단.
+          임계구역이 <strong>짧고 충돌이 잦음</strong> → 락 대기 부담은 작고 충돌 차단 효과는 큼. 재시도 로직 없이 DB 레벨에서 차단.
         </div>
       </div>
     </div>
@@ -1678,7 +1678,7 @@ Optional&lt;DeliveryManager&gt; findTopByHubIdOrderBySeqDesc(UUID hubId);
       <div class="dec-card rejected">
         <div class="dec-status">REJECTED · ECS / EKS</div>
         <div class="dec-name">매니지드 오케스트레이션</div>
-        <div class="dec-reason">전시 규모엔 <strong>과투자</strong>. 기존 <code>docker-compose</code>를 그대로 재사용하는 편이 압도적으로 저렴·단순.</div>
+        <div class="dec-reason">전시 규모엔 <strong>과투자</strong>. 기존 <code>docker-compose</code>를 그대로 재사용하는 편이 훨씬 저렴하고 단순.</div>
       </div>
       <div class="dec-card rejected">
         <div class="dec-status">REJECTED · ALB + EIP</div>

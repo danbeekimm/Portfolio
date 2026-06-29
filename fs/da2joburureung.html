@@ -905,6 +905,41 @@
       .trouble-cell { border-right: none; border-bottom: 1px solid var(--rule-soft); }
       .trouble-cell:last-child { border-bottom: none; }
     }
+
+        /* 접기 블록 — 웹은 클릭 펼침, PDF는 build-pdf.js가 전부 강제 펼침 */
+        details.fold {
+            margin: 18px 0;
+            border: 1px solid var(--rule);
+            border-radius: 10px;
+            background: var(--card);
+            overflow: hidden;
+        }
+        details.fold > summary {
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 12px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--ink-soft);
+            user-select: none;
+            transition: background 0.15s, color 0.15s;
+        }
+        details.fold > summary::-webkit-details-marker { display: none; }
+        details.fold > summary::before {
+            content: "▸";
+            color: var(--accent);
+            font-size: 11px;
+            transition: transform 0.15s;
+        }
+        details.fold[open] > summary::before { transform: rotate(90deg); }
+        details.fold > summary:hover { background: var(--accent-faded); color: var(--accent); }
+        details.fold[open] > summary { border-bottom: 1px solid var(--rule-soft); }
+        details.fold > summary .fold-hint { margin-left: auto; font-weight: 500; color: var(--muted); font-size: 11.5px; }
+        details.fold > :not(summary) { margin: 14px 18px; }
+        details.fold > pre:not(summary) { margin: 0; border-radius: 0; }
   </style>
 </head>
 <body>
@@ -1338,7 +1373,7 @@
       </div>
     </div>
 
-    <h3 style="margin-top:28px; margin-bottom:14px;">대안 검토 — 옵션별 트레이드오프</h3>
+    <details class="fold"><summary>대안 검토 — 옵션별 트레이드오프 · 트랜잭셔널 Outbox 채택<span class="fold-hint">클릭해 펼치기</span></summary>
     <div class="decision-comp">
       <div class="dec-card rejected">
         <div class="dec-status">REJECTED · 2PC</div>
@@ -1362,7 +1397,9 @@
         </div>
       </div>
     </div>
+    </details>
 
+    <details class="fold"><summary>구현 코드 — Outbox 원자 저장 (Java)<span class="fold-hint">클릭해 펼치기</span></summary>
     <pre><span class="com">// 업체 삭제 트랜잭션 내 Outbox 원자 저장</span>
 <span class="ann">@Transactional</span>
 <span class="kw">public void</span> deleteCompany(UUID companyId) {
@@ -1382,6 +1419,7 @@
         );
     });
 }</pre>
+    </details>
   </section>
 
   <!-- 05 — CONTRIBUTION ② — Circuit Breaker -->
@@ -1417,6 +1455,7 @@
       </ul>
     </div>
 
+    <details class="fold"><summary>구현 코드 — Circuit Breaker / Retry (Java)<span class="fold-hint">클릭해 펼치기</span></summary>
     <pre><span class="ann">@Retry</span>(name = <span class="str">"hubService"</span>)
 <span class="ann">@CircuitBreaker</span>(name = <span class="str">"hubService"</span>, fallbackMethod = <span class="str">"hubServiceFallback"</span>)
 <span class="kw">public boolean</span> validateHubExists(UUID hubId) {
@@ -1427,6 +1466,7 @@
     log.warn(<span class="str">"Hub validation fallback — CB OPEN. hubId={}"</span>, hubId);
     <span class="kw">return false</span>;  <span class="com">// 즉시 반환 → 스레드 점유 X</span>
 }</pre>
+    </details>
 
     <table>
       <thead>
@@ -1475,7 +1515,7 @@
       </div>
     </div>
 
-    <h3 style="margin-top:28px; margin-bottom:14px;">대안 검토 — 왜 OR-Tools인가</h3>
+    <details class="fold"><summary>대안 검토 — 왜 OR-Tools인가 · 제약 만족 솔버라 채택<span class="fold-hint">클릭해 펼치기</span></summary>
     <div class="decision-comp">
       <div class="dec-card rejected">
         <div class="dec-status">REJECTED · K-means</div>
@@ -1499,8 +1539,9 @@
         </div>
       </div>
     </div>
+    </details>
 
-    <h3 style="margin-top:28px; margin-bottom:14px;">OR-Tools VRPTW 구성요소 한눈에</h3>
+    <details class="fold"><summary>OR-Tools VRPTW 구성요소 상세 (Depot · Dimension · Time Window · 솔버 파라미터)<span class="fold-hint">클릭해 펼치기</span></summary>
     <table>
       <thead>
         <tr><th>개념</th><th>코드 표현</th><th>의미</th></tr>
@@ -1514,7 +1555,9 @@
         <tr><td>Time Limit</td><td><code>setTimeLimit</code></td><td>솔버 탐색 시간 상한 — 충분히 좋은 해에서 stop</td></tr>
       </tbody>
     </table>
+    </details>
 
+    <details class="fold"><summary>구현 코드 — VRPTW 핵심 구성 (Java)<span class="fold-hint">클릭해 펼치기</span></summary>
     <pre><span class="com">// VRPTW 핵심 구성</span>
 <span class="com">// nodes: 방문 지점 수(허브+업체) / vehicles: 담당자 수 / depot: 출발·복귀 지점(허브) 인덱스</span>
 RoutingIndexManager manager = <span class="kw">new</span> RoutingIndexManager(
@@ -1539,6 +1582,7 @@ RoutingSearchParameters params = main.defaultRoutingSearchParameters()
     .setLocalSearchMetaheuristic(LocalSearchMetaheuristic.GUIDED_LOCAL_SEARCH) <span class="com">// 초기해를 개선하며 국소최적 탈출</span>
     .setTimeLimit(Duration.ofSeconds(<span class="str">5</span>))
     .build();</pre>
+    </details>
 
     <p style="font-size:13px; color:var(--ink-soft); margin-top:14px;">
       <strong>왜 일괄(batch)인가</strong> — 실시간 배정 = 들어오는 순서대로 그리디 → <strong>국소 최적</strong>(지금 가까운 사람에게 줬더니 나중 배송이 꼬임). VRPTW는 <strong>당일 전체를 한 번에 모아야 전역 최적</strong>. B2B는 "즉시"보다 "당일 정시 배송"이 중요 → 일괄이 비즈니스에 더 맞음.
@@ -1589,6 +1633,7 @@ RoutingSearchParameters params = main.defaultRoutingSearchParameters()
       </div>
     </div>
 
+    <details class="fold"><summary>대안 검토 — 비관적 락 · 짧고 잦은 임계구역에 채택<span class="fold-hint">클릭해 펼치기</span></summary>
     <div class="decision-comp">
       <div class="dec-card rejected">
         <div class="dec-status">REJECTED · 낙관적 락</div>
@@ -1612,13 +1657,16 @@ RoutingSearchParameters params = main.defaultRoutingSearchParameters()
         </div>
       </div>
     </div>
+    </details>
 
+    <details class="fold"><summary>구현 코드 — 비관적 락 seq 채번 (Java)<span class="fold-hint">클릭해 펼치기</span></summary>
     <pre><span class="ann">@Lock</span>(LockModeType.PESSIMISTIC_WRITE)
 <span class="ann">@QueryHints</span>({<span class="ann">@QueryHint</span>(name = <span class="str">"jakarta.persistence.lock.timeout"</span>, value = <span class="str">"3000"</span>)})
 <span class="ann">@Query</span>(<span class="str">"select dm from DeliveryManager dm "</span>
      + <span class="str">"where dm.hubId = :hubId order by dm.seq desc"</span>)
 Optional&lt;DeliveryManager&gt; findTopByHubIdOrderBySeqDesc(UUID hubId);
 <span class="com">// → SELECT ... FOR UPDATE — 동시 요청은 대기 후 순차 처리, 3초 초과 시 LockTimeoutException</span></pre>
+    </details>
 
     <p style="font-size:13px; color:var(--ink-soft); margin-top:14px;">
       <strong>3단계 학습 곡선 연결</strong> — 전 회사의 <strong>비동기 다운로드 race condition</strong>을 해결하면서 "정확히 어떤 락이 어느 상황에 맞는지" 몰랐던 게 학습 동기. 부트캠프 스터디에서 <strong>낙관적/비관적/분산 락 트레이드오프</strong>를 자청 발표. 본 프로젝트에서 <strong>"충돌 잦고 짧은 임계구역엔 비관적 락"</strong>을 실제로 적용 — 한 사이클 완결.
@@ -1673,7 +1721,7 @@ Optional&lt;DeliveryManager&gt; findTopByHubIdOrderBySeqDesc(UUID hubId);
       </div>
     </div>
 
-    <h3 style="margin-top:32px; margin-bottom:14px;">비용·보안 의사결정 — 대안별 트레이드오프</h3>
+    <details class="fold"><summary>비용·보안 의사결정 — 대안별 트레이드오프 · EC2 + CF Tunnel 채택<span class="fold-hint">클릭해 펼치기</span></summary>
     <div class="decision-comp">
       <div class="dec-card rejected">
         <div class="dec-status">REJECTED · ECS / EKS</div>
@@ -1691,13 +1739,16 @@ Optional&lt;DeliveryManager&gt; findTopByHubIdOrderBySeqDesc(UUID hubId);
         <div class="dec-reason">인바운드 포트 <strong>0개</strong>로 보안↑, ALB/EIP 비용 0, 무료 SSL. 전시 목적의 비용·보안 균형에 최적.</div>
       </div>
     </div>
+    </details>
 
+    <details class="fold"><summary>배포 파이프라인 · 런타임 토폴로지 (다이어그램)<span class="fold-hint">클릭해 펼치기</span></summary>
     <pre><span class="com"># 배포 파이프라인 & 런타임 토폴로지</span>
 push(develop) ─▶ GitHub Actions <span class="com">(OIDC · matrix ×9)</span> ─▶ Amazon ECR
                                                               │ pull
 사용자 ─https─▶ Cloudflare <span class="com">(Universal SSL + Worker 폴백)</span>      ▼
         └─Tunnel(무포트)─▶ EC2 t3.medium <span class="com">(앱9 + kafka/redis + cloudflared)</span> ─▶ RDS <span class="com">(DB 8개)</span>
                           <span class="com">▲ EventBridge + Lambda — 평일 08:40 start / 21:00 stop</span></pre>
+    </details>
   </section>
 
   <!-- 11 — STACK -->

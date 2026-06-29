@@ -1066,6 +1066,41 @@
         .fe-decision strong { color: var(--ink); font-weight: 600; }
         .screenshot-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 28px 0; }
         .screenshot-grid .screenshot-card { margin: 0; }
+
+        /* 접기 블록 — 웹은 클릭 펼침, PDF는 build-pdf.js가 전부 강제 펼침 */
+        details.fold {
+            margin: 18px 0;
+            border: 1px solid var(--rule);
+            border-radius: 10px;
+            background: var(--card);
+            overflow: hidden;
+        }
+        details.fold > summary {
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 12px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--ink-soft);
+            user-select: none;
+            transition: background 0.15s, color 0.15s;
+        }
+        details.fold > summary::-webkit-details-marker { display: none; }
+        details.fold > summary::before {
+            content: "▸";
+            color: var(--accent);
+            font-size: 11px;
+            transition: transform 0.15s;
+        }
+        details.fold[open] > summary::before { transform: rotate(90deg); }
+        details.fold > summary:hover { background: var(--accent-faded); color: var(--accent); }
+        details.fold[open] > summary { border-bottom: 1px solid var(--rule-soft); }
+        details.fold > summary .fold-hint { margin-left: auto; font-weight: 500; color: var(--muted); font-size: 11.5px; }
+        details.fold > :not(summary) { margin: 14px 18px; }
+        details.fold > pre:not(summary) { margin: 0; border-radius: 0; }
     </style>
 </head>
 <body>
@@ -1580,11 +1615,13 @@
                 </div>
             </div>
 
+            <details class="fold"><summary>핵심 코드 — Self-preference 차단 (Java)<span class="fold-hint">클릭해 펼치기</span></summary>
             <pre><span class="com">// EvalProcessor.judgeAndSave()</span>
 <span class="kw">if</span> (judgeModel.equalsIgnoreCase(ragQuery.getLlmModel())) {
     log.warn(<span class="str">"Self-preference bias 방지: skip. model={}"</span>, judgeModel);
     <span class="kw">return</span>;
 }</pre>
+            </details>
 
             <h3 style="margin-top:24px;">결과 — 데이터 기반 의사결정</h3>
             <table>
@@ -1622,12 +1659,14 @@
             <div class="screenshot-caption">
                 <strong>위 정량 평가 시스템(LLM-as-a-Judge · Pairwise)의 평가 대상</strong>이 된 사용자 챗봇 화면.
                 응답에 더해 <strong>참조 문서의 출처를 함께 표시</strong>해 사용자가 근거를 직접 확인할 수 있도록 설계했습니다.
+                <details class="fold"><summary>이 화면에서 보이는 것<span class="fold-hint">클릭해 펼치기</span></summary>
                 <ul class="screenshot-points">
                     <li><strong>질문 → 응답 → 출처 가이드</strong> 3단계 표시 — "전용 계좌는 언제 발급받을 수 있죠?" 질문에 RAG로 검색한 가이드 문서 기반 답변 생성</li>
                     <li><strong>출처 칩 클릭</strong> → 우측 패널에서 참조한 가이드 문서의 주요 내용 미리보기</li>
                     <li><strong>"가이드 상세 페이지로 더 보기"</strong> 버튼 → 전체 문서 페이지로 이동, 답변의 근거를 원문까지 추적 가능</li>
                     <li>세션 기반 대화 이력 관리 — 좌측 "문의 목록"에서 이전 대화 재조회 (세션 제목은 마지막 메시지로 자동 설정)</li>
                 </ul>
+                </details>
             </div>
         </div>
     </section>
@@ -1690,11 +1729,13 @@
             <div class="screenshot-caption">
                 <strong>"측정 가능한 시스템을 만들었다"의 직접적 증거</strong>. 좌측은 <strong>서비스 대시보드</strong>(Prometheus 메트릭), 우측은 <strong>로그 대시보드</strong>(Loki 집계)로
                 <strong>메트릭과 로그를 Grafana 단일 UI에서 통합</strong>해 운영자가 화면을 오가는 수고를 덜었습니다.
+                <details class="fold"><summary>이 화면에서 보이는 것<span class="fold-hint">클릭해 펼치기</span></summary>
                 <ul class="screenshot-points">
                     <li><strong>핵심 게이지</strong>(좌상단): CPU 사용률 0.0838% · JVM Heap 9.54% — 실시간 상태를 게이지로 즉시 가독</li>
                     <li><strong>시계열 패널 다수</strong>: CPU/메모리/HTTP 응답 시간/요청 수/스레드/GC/JVM CPU 사용률 등 <strong>서비스 헬스의 다축 추적</strong></li>
                     <li><strong>로그 통합 뷰</strong>(우측): notification-service의 INFO/WARN 로그 실시간 스트림. <strong>로그 라벨링</strong>으로 컨테이너별·서비스별 필터링 가능</li>
                 </ul>
+                </details>
             </div>
         </div>
         <div class="section-rule" style="margin-top:48px; margin-bottom:24px;"></div>
@@ -1705,6 +1746,7 @@
             <strong>Prometheus + Grafana + Alertmanager + Loki + Promtail</strong>(이하 PGAL)이 적절하다고 판단했습니다.
         </p>
 
+        <details class="fold"><summary>도구 선택 근거 상세 — 왜 PGAL Stack인가<span class="fold-hint">클릭해 펼치기</span></summary>
         <div class="tech-compare">
             <div class="tech-row rejected">
                 <div class="tech-name">
@@ -1757,8 +1799,9 @@
                 <div class="tech-verdict">CHOSEN<br>★</div>
             </div>
         </div>
+        </details>
 
-        <h3 style="margin-top:28px; margin-bottom:14px;">5개 도구 각각의 역할</h3>
+        <details class="fold"><summary>5개 도구 각각의 역할 (Prometheus · Grafana · Alertmanager · Loki · Promtail)<span class="fold-hint">클릭해 펼치기</span></summary>
         <div class="stack-detail">
             <div class="stack-tool">
                 <div class="stack-tool-icon">📊</div>
@@ -1786,6 +1829,7 @@
                 <div class="stack-tool-role">컨테이너 로그<br>Docker SD</div>
             </div>
         </div>
+        </details>
 
         <table style="margin-top:24px;">
             <thead>
@@ -1840,6 +1884,7 @@
                     <li><strong>HITL 액션</strong> — Slack Block Kit으로 분석 + <strong>복구 버튼 4종</strong>(restart / rollback / cache-clear / false-alarm) 동시 노출</li>
                 </ul>
                 <p><strong>R</strong> · 알림 수신 후 수 초 내 "근거 메트릭/로그 + 권장 조치" 자동 게시. <strong>AI를 운영 모니터링 시스템의 일부로 통합.</strong></p>
+                <details class="fold"><summary>핵심 코드 — @Async 비동기 ACK (Java)<span class="fold-hint">클릭해 펼치기</span></summary>
                 <pre style="margin-top:14px;"><span class="com">// Slack 3초 응답 제약 → @Async ACK 후 메시지 갱신</span>
 <span class="kw">@Async</span>(<span class="str">"slackActionExecutor"</span>)
 <span class="kw">public void</span> executeAndNotifyAsync(SlackActionCommand command) {
@@ -1847,6 +1892,7 @@
     ActionResult result = executeAction(...);
     trySlack(<span class="str">"완료/실패 갱신"</span>, () -> alertPort.markAsHandled(...));
 }</pre>
+                </details>
                 <div class="code-links">
                     <span class="code-links-label">CODE</span>
                     <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/notification-service/src/main/java/io/antcamp/notificationservice/application/service/NotificationApplicationService.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>NotificationApplicationService.java<span class="hint">· dedup→RCA→HITL</span></a>
@@ -1869,6 +1915,7 @@
             </div>
             <div class="screenshot-caption">
                 <strong>실제 Slack 채널에 자동 게시된 LLM 기반 장애 분석 메시지</strong>와 복구 버튼 클릭 후 스레드 갱신까지의 동작 흐름.
+                <details class="fold"><summary>이 화면에서 보이는 것<span class="fold-hint">클릭해 펼치기</span></summary>
                 <ul class="screenshot-points">
                     <li><strong>AI 장애 분석 리포트</strong> — antcamp-user HTTP 400 에러 발생 시점, 심각도(warning), 에러율(7건/5분)을 자동 포착</li>
                     <li><strong>원인 분석</strong> — 1순위 클라이언트 입력값 검증, 2순위 일시적 클라이언트 트래픽, 3순위 서버 상태 등 <strong>우선순위가 매겨진 분석</strong> 제공</li>
@@ -1876,6 +1923,7 @@
                     <li><strong>스레드 자동 갱신</strong>(우측) — 버튼 클릭 시 <code>@Async</code> ACK 후 "처리중 → 완료/실패"로 메시지 갱신. Slack 3초 응답 제약 해소</li>
                     <li><strong>Grafana 대시보드 / 로그 보기</strong> 바로가기 버튼으로 운영자의 컨텍스트 전환 비용 최소화</li>
                 </ul>
+                </details>
             </div>
         </div>
     </section>

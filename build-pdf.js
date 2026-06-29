@@ -106,6 +106,13 @@ const PRINT_CSS = `
 
   /* === 링크 모양 표준화 === */
   a { color: inherit !important; text-decoration: none !important; cursor: default !important; }
+
+  /* === 접기 블록: PDF는 전부 펼친 상태 → 클릭 힌트·마커 숨기고 summary를 소제목처럼 === */
+  details.fold { break-inside: auto !important; border-color: var(--rule) !important; }
+  details.fold > summary { cursor: default !important; }
+  details.fold > summary::before { display: none !important; }
+  details.fold > summary .fold-hint { display: none !important; }
+  details.fold > pre { break-inside: auto !important; }
 `;
 
 // 실행 OS에 맞는 Chrome 실행 파일 경로를 찾는다.
@@ -235,6 +242,7 @@ function buildPageIndexByName(pages, startIndices) {
 async function renderA4(page, fileUrl, scale = 0.78, extraCss = '') {
   await page.setViewport({ width: 1024, height: 800, deviceScaleFactor: 2 });
   await page.goto(fileUrl, { waitUntil: 'networkidle0' });
+  await page.evaluate(() => document.querySelectorAll('details').forEach(d => { d.open = true; })); // PDF는 접힘 무시하고 전부 펼쳐 출력
   await page.addStyleTag({ content: PRINT_CSS });
   if (extraCss) await page.addStyleTag({ content: extraCss });
   await page.emulateMediaType('print');
@@ -250,6 +258,7 @@ async function renderA4(page, fileUrl, scale = 0.78, extraCss = '') {
 async function renderLong(page, fileUrl) {
   await page.setViewport({ width: 1024, height: 800, deviceScaleFactor: 2 });
   await page.goto(fileUrl, { waitUntil: 'networkidle0' });
+  await page.evaluate(() => document.querySelectorAll('details').forEach(d => { d.open = true; })); // PDF는 접힘 무시하고 전부 펼쳐 출력
   const dims = await page.evaluate(() => {
     const h = Math.max(
       document.body.scrollHeight,

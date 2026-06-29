@@ -1024,6 +1024,41 @@
       .work-header { flex-direction: column; gap: 8px; }
       .case-row { grid-template-columns: 1fr; gap: 6px; }
     }
+
+        /* 접기 블록 — 웹은 클릭 펼침, PDF는 build-pdf.js가 전부 강제 펼침 */
+        details.fold {
+            margin: 18px 0;
+            border: 1px solid var(--rule);
+            border-radius: 10px;
+            background: var(--card);
+            overflow: hidden;
+        }
+        details.fold > summary {
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            padding: 12px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--ink-soft);
+            user-select: none;
+            transition: background 0.15s, color 0.15s;
+        }
+        details.fold > summary::-webkit-details-marker { display: none; }
+        details.fold > summary::before {
+            content: "▸";
+            color: var(--accent);
+            font-size: 11px;
+            transition: transform 0.15s;
+        }
+        details.fold[open] > summary::before { transform: rotate(90deg); }
+        details.fold > summary:hover { background: var(--accent-faded); color: var(--accent); }
+        details.fold[open] > summary { border-bottom: 1px solid var(--rule-soft); }
+        details.fold > summary .fold-hint { margin-left: auto; font-weight: 500; color: var(--muted); font-size: 11.5px; }
+        details.fold > :not(summary) { margin: 14px 18px; }
+        details.fold > pre:not(summary) { margin: 0; border-radius: 0; }
   </style>
 </head>
 <body>
@@ -1038,7 +1073,6 @@
     <div class="section-rule"></div>
     <p class="lede">
       회원제 특허 SaaS의 <strong>6개 검색 사이트 유지보수·개선 담당</strong>으로, <strong>대량 문서 뷰어·엑셀 다운로드·비교보기</strong>를 메인으로 담당했습니다.
-      운영하면서 마주친 <strong>코드·기획·데이터의 불일치</strong>를 그냥 넘어가지 않고 원인까지 추적해 해결하는 방식으로 일했습니다.
       담당 기능에 머무르지 않고 <strong>서비스의 상태 자체를 책임진다는 태도</strong>로 운영을 대했습니다.
     </p>
 
@@ -1338,6 +1372,7 @@
 
         <p><strong>A</strong> · 같은 결과를 내는 여러 SQL 형태를 시도하며 단계적으로 접근:</p>
 
+        <details class="fold"><summary>SQL 형태별 비교 시도 ①~④ — 시행착오 과정<span class="fold-hint">클릭해 펼치기</span></summary>
         <ul class="action-list">
           <li class="action-item">
             <div class="action-title">① 호출 경로 식별 — 영향 범위 먼저 파악</div>
@@ -1368,6 +1403,7 @@
             </div>
           </li>
         </ul>
+        </details>
 
         <p><strong>R</strong> · 벤더가 바뀌어도 <strong>기존 환경 대비 동일 수준의 응답 성능 유지</strong>하며 슬로우 쿼리 개선 완료.</p>
 
@@ -1429,6 +1465,7 @@
       </div>
     </div>
 
+    <details class="fold"><summary>BEFORE / AFTER 구조 비교 보기<span class="fold-hint">클릭해 펼치기</span></summary>
     <div class="seq-flow">
       <svg viewBox="0 0 800 320" xmlns="http://www.w3.org/2000/svg">
         <defs>
@@ -1494,6 +1531,7 @@
         </text>
       </svg>
     </div>
+    </details>
 
     <div class="contrib-card">
       <div class="contrib-body" style="padding-top:18px;">

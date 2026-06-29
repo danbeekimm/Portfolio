@@ -1090,12 +1090,12 @@
     <!-- SECTION 01 — OVERVIEW (Positioning) -->
     <section class="section">
         <div class="section-tag">01 · OVERVIEW</div>
-        <h1><span class="marker">LLM을 정량 평가하고, 안전하게 운영하는 백엔드</span></h1>
+        <h1><span class="marker">LLM을 정량 평가하고 안전하게 운영하는 백엔드</span></h1>
         <div class="section-rule"></div>
         <p class="lede">
-            모놀리식 → MSA → LLMOps로 이어진 설계 성장의 마지막 매듭. <strong>RAG 답변 품질을 LLM-as-a-Judge로 정량 평가</strong>하고,
+            모놀리식 → MSA → LLMOps로 이어진 설계 성장의 마지막 매듭. <strong>RAG 답변 품질을 LLM-as-a-Judge로 정량 평가</strong>하고
             <strong>Prometheus·Loki·Claude를 묶어 알림에 원인 분석과 복구 액션까지 자동 부착</strong>하는 시스템을 설계·구현했습니다.
-            AI를 외부 API로 덧붙이는 대신 <strong>운영 모니터링 시스템의 일부로 통합한</strong> 점이 차별점입니다.
+            AI를 외부 API로 덧붙이는 대신 <strong>운영 모니터링 시스템의 일부로 통합</strong>했습니다.
         </p>
 
         <div class="hero">
@@ -1143,8 +1143,8 @@
                 실제 주식 데이터를 기반으로, <strong>가상 자산으로 투자 대회에 참여</strong>하고 <strong>수익률 경쟁으로 순위를 겨루는</strong> 모의 투자 플랫폼.
             </div>
             <div class="service-desc">
-                사용자는 한국투자증권 API로 가져온 <strong>실시간 시세</strong>를 보며 모의 매매를 진행하고, 매니저가 만든 대회 규칙(거래 시간·종목 제한·시드머니 등)에 따라 전략 경쟁을 합니다.
-                대회 종료 시점의 평가 자산 기반 <strong>수익률로 순위·티어를 산정</strong>하며, 단순 모의 투자를 넘어 <strong>실시간 랭킹 · AI 챗봇 · LLM 기반 운영 알림 · MSA 확장 구조</strong>까지
+                사용자는 한국투자증권 API로 가져온 <strong>실시간 시세</strong>를 보며 모의 매매를 진행하고 매니저가 만든 대회 규칙(거래 시간·종목 제한·시드머니 등)에 따라 전략 경쟁을 합니다.
+                대회 종료 시점의 평가 자산 기반 <strong>수익률로 순위·티어를 산정</strong>하며 <strong>실시간 랭킹 · AI 챗봇 · LLM 기반 운영 알림 · MSA 확장 구조</strong>까지
                 실제 서비스 수준의 경험을 목표로 설계했습니다.
             </div>
         </div>
@@ -1196,7 +1196,7 @@
                 <ul>
                     <li>RAG 답변의 <strong>사실성(faithfulness)</strong> 정량 측정 — 정량 <strong>점수·승률</strong>로 모델 결정</li>
                     <li>LLM 평가의 2대 편향 차단 — <strong>self-preference bias</strong>(Judge가 자기 출력에 후한 경향) + <strong>position bias</strong>(Pairwise A/B 위치에 따른 편향)를 코드 레벨에서 모두 차단</li>
-                    <li>단순 알림을 <strong>"원인 + 권장 조치"</strong>로 격상 — 운영자 컨텍스트 수집 단계 제거</li>
+                    <li>알림에 <strong>"원인 + 권장 조치"</strong>를 더함 — 운영자 컨텍스트 수집 단계 제거</li>
                     <li>LLM 자동 실행의 위험 — 인프라/PII/위변조의 <strong>다층 안전장치</strong> 필요</li>
                     <li>토이 프로젝트의 한계 — <strong>측정 가능한 관측 시스템</strong> 자체를 차별점으로</li>
                 </ul>
@@ -1650,11 +1650,11 @@
         <div class="contrib-card">
             <div class="contrib-headline">
                 <div class="contrib-num">📊 CONTRIBUTION #2</div>
-                <div class="contrib-title">측정 불가능한 운영을 측정 가능한 운영으로 — 관측 스택 주도 구축</div>
+                <div class="contrib-title">측정 불가능한 운영을 측정 가능하게 — 관측 스택 주도 구축</div>
                 <div class="contrib-impact">MTTD &lt; 1분 · alert 룰 7종 차등 설계 · 반복 알림 LLM 비용 0</div>
             </div>
             <div class="contrib-body">
-                <p><strong>P</strong> · 토이/부트캠프 프로젝트는 <strong>측정 시스템 부재로 정량 수치를 못 남기는</strong> 경우가 많음. <em>"측정 가능한 시스템을 처음부터 만들었다"</em>는 것 자체가 차별점이며, alert 룰 설계 역시 노이즈와 심각도를 함께 고려해야 함.</p>
+                <p><strong>P</strong> · 토이/부트캠프 프로젝트는 <strong>측정 시스템 부재로 정량 수치를 못 남기는</strong> 경우가 많음. <em>"측정 가능한 시스템을 처음부터 만들었다"</em>는 것 자체가 차별점이며 alert 룰 설계 역시 노이즈와 심각도를 함께 고려해야 함.</p>
                 <p><strong>A</strong> · 관측 스택을 주도 구축하고 <strong>alert 룰 7종을 `for:` 지속조건으로 차등 설계</strong> — "터지면 큰가(심각도) × 자주 출렁이나(노이즈)"를 함께 반영.</p>
                 <ul class="approach-points">
                     <li><strong>수집</strong> — Prometheus(15s scrape · 10 job) + Promtail(<code>docker_sd_configs</code> 컨테이너 자동 발견)</li>
@@ -1727,7 +1727,7 @@
                     <span class="tech-sub">Elasticsearch + Logstash + Kibana</span>
                 </div>
                 <div class="tech-reasoning">
-                    <span class="pros">✓ 강력한 Full-text 검색 · 대규모 로그 분석 · Kibana 시각화 우수</span><br>
+                    <span class="pros">✓ Full-text 검색 · 대규모 로그 분석 · Kibana 시각화 우수</span><br>
                     <span class="cons">✗ Elasticsearch 메모리 사용량이 매우 큼 · Logstash 리소스 무거움 · 운영 복잡도 높음</span><br>
                     <strong>판단</strong>: 우리는 Kubernetes 규모의 초대형 시스템이 아니고, 로그 분석보다 <strong>장애 추적이 더 큰 목적</strong>. Docker 기반 경량 MSA엔 과한 구성.
                 </div>
@@ -1844,7 +1844,7 @@
         <div class="contrib-card">
             <div class="contrib-headline">
                 <div class="contrib-num">🤖 CONTRIBUTION #3</div>
-                <div class="contrib-title">단순 알림을 넘어 원인 분석을 전달 — LLM 기반 AIOps (Human-in-the-Loop)</div>
+                <div class="contrib-title">알림에 원인 분석까지 전달 — LLM 기반 AIOps (Human-in-the-Loop)</div>
                 <div class="contrib-impact">MTTR 단축 + AI 자동화의 안전성을 사람 클릭으로 통제. 운영자의 컨텍스트 수집 단계 제거</div>
             </div>
             <div class="contrib-body">
@@ -1907,7 +1907,7 @@
         <div class="contrib-card">
             <div class="contrib-headline">
                 <div class="contrib-num">🛡️ CONTRIBUTION #4</div>
-                <div class="contrib-title">LLM이 운영 시스템을 만지는 위험을 다층으로 차단 — Defense-in-depth</div>
+                <div class="contrib-title">Defense-in-depth — LLM이 운영 시스템을 만지는 위험을 다층으로 차단</div>
                 <div class="contrib-impact">장애 시나리오 3종에서 fallback 동작 검증 완료</div>
             </div>
             <div class="contrib-body">
@@ -1934,7 +1934,7 @@
                 <div class="layer-num">② SLACK FORGERY</div>
                 <div class="layer-title">위변조 · Replay · Timing 공격 방어</div>
                 <p>공개 endpoint에 전용 필터: <strong>HMAC-SHA256 서명 검증</strong> + timestamp 5분 초과 거부(replay) + <code>MessageDigest.isEqual</code> constant-time 비교(timing attack). body는 <code>CachedBodyRequest</code> 래핑.</p>
-                <div class="conclusion">→ 외부 위변조 요청 원천 차단</div>
+                <div class="conclusion">→ 외부 위변조 요청 차단</div>
             </div>
             <div class="layer">
                 <div class="layer-num">③ PII MASKING</div>
@@ -2114,7 +2114,7 @@
         <h2>회고 — 의도적 선택과 진짜 아쉬운 점을 구분하다</h2>
         <div class="section-rule"></div>
         <p class="lede">
-            프로젝트를 마치며 세 갈래로 정리. <strong>무엇을 잘했고</strong>, <strong>어떤 부분이 의도적 선택이었으며</strong>, <strong>어디가 진짜 아쉬웠는지</strong>.
+            프로젝트를 마치며 세 갈래로 정리. <strong>무엇을 잘했고</strong> <strong>어떤 부분이 의도적 선택이었으며</strong> <strong>어디가 진짜 아쉬웠는지</strong>.
         </p>
 
         <!-- ✅ 잘한 것 -->
@@ -2126,7 +2126,7 @@
             <div class="retro-good">
                 LLM을 붙이고 끝내는 대신 <strong>검증 가능한 시스템</strong>(Eval/Pairwise · bias 차단)으로,
                 운영을 <strong>안전하게</strong>(Human-in-the-Loop · 다층 방어 · 자가복구) 만든 것.
-                그리고 토이 프로젝트의 한계인 "측정 수치 부재"를 <strong>관측 스택 주도 구축</strong>으로 정면 돌파.
+                그리고 토이 프로젝트의 한계인 "측정 수치 부재"를 <strong>관측 스택 주도 구축</strong>으로 해결.
             </div>
         </div>
 

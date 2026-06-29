@@ -959,8 +959,8 @@
     <h1><span class="marker">정합성 보장과 장애 격리를 설계한 B2B 물류 MSA</span></h1>
     <div class="section-rule"></div>
     <p class="lede">
-      직전 모놀리식(omin)에서 한 도메인에 결함이 나면 전체가 멈추고, 특정 도메인 전용 기술(PostGIS)을 전 팀원이 설치해야 했던 비효율을 직접 겪고
-      <strong>도메인별 독립 배포·기술 선택이 가능한 MSA</strong>로 확장. B2B 도메인을 코드에 녹이기 위해 <strong>DDD 4계층(헥사고날)</strong>을 적용하고,
+      직전 모놀리식(omin)에서 한 도메인에 결함이 나면 전체가 멈추고 특정 도메인 전용 기술(PostGIS)을 전 팀원이 설치해야 했습니다. 이 비효율을 직접 겪고
+      <strong>도메인별 독립 배포·기술 선택이 가능한 MSA</strong>로 확장. B2B 도메인을 코드에 녹이기 위해 <strong>DDD 4계층(헥사고날)</strong>을 적용하고
       서비스 간 통신은 "<strong>검증=동기(Feign), 통지=비동기(Kafka)</strong>"로 의도적으로 분리했습니다.
     </p>
 
@@ -991,7 +991,7 @@
       </div>
       <div class="kpi">
         <div class="kpi-num">DB-level</div>
-        <div class="kpi-label"><strong>race 원천 차단</strong>비관적 락 · 재시도 로직 없이</div>
+        <div class="kpi-label"><strong>race 막음</strong>비관적 락 · 재시도 로직 없이</div>
       </div>
     </div>
   </section>
@@ -1007,11 +1007,11 @@
         전국 <strong>17개 지역 허브 센터</strong>를 거점으로 한, <strong>"공급업체 → 허브 → 허브 → 수령업체"</strong> 전 구간을 자동화한 B2B 물류 관리 플랫폼.
       </div>
       <div class="service-desc">
-        스파르타 물류는 전국 17개 도/광역시에 허브 센터를 보유한 가상의 B2B 물류 회사입니다. 각 허브는 여러 업체의 물건을 보관하며,
+        스파르타 물류는 전국 17개 도/광역시에 허브 센터를 보유한 가상의 B2B 물류 회사입니다. 각 허브는 여러 업체의 물건을 보관하며
         주문이 발생하면 시스템은 <strong>출발 허브 → 목적지 허브 간 화물 이동(허브 배송 담당자)</strong>과 <strong>최종 허브 → 수령 업체 배송(업체 배송 담당자)</strong> 두 트랙을 분리해 처리합니다.
         <br><br>
         <strong>예시 시나리오</strong> — "부산 수산물 도매 업체가 경기도 일산의 건조 식품 가공품 50개를 주문" →
-        시스템이 <strong>경기도 허브 → 부산 허브</strong>로 화물 이동을 계획하고, 도착하면 <strong>부산 허브 소속 업체 배송 담당자</strong>가 최종 업체로 전달.
+        시스템이 <strong>경기도 허브 → 부산 허브</strong>로 화물 이동을 계획하고 도착하면 <strong>부산 허브 소속 업체 배송 담당자</strong>가 최종 업체로 전달.
       </div>
     </div>
 
@@ -1120,8 +1120,8 @@
     <h2>시스템 아키텍처</h2>
     <div class="section-rule"></div>
     <p class="lede">
-      12개의 마이크로서비스를 <strong>Spring Cloud Gateway · Eureka</strong>로 묶고,
-      통신은 <strong>검증=동기(Feign), 통지=비동기(Kafka Outbox)</strong>로 분리합니다.
+      12개의 마이크로서비스를 <strong>Spring Cloud Gateway · Eureka</strong>로 묶고
+      통신은 <strong>검증을 동기(Feign)로, 통지를 비동기(Kafka Outbox)로</strong> 분리합니다.
       바운디드 컨텍스트별 PostgreSQL 분리(database-per-service)로 서비스 독립성·장애 격리를 확보했습니다.
     </p>
 
@@ -1310,8 +1310,8 @@
     </div>
 
     <p style="font-size:13px; color:var(--muted); font-style:italic; margin-top:14px; text-align:center;">
-      <strong>설계 의도</strong>: 12개 서비스를 7개 바운디드 컨텍스트(파선)로 묶고, 각 컨텍스트는 자기 PostgreSQL을 가짐(database-per-service).
-      배송 컨텍스트는 처음엔 <code style="background:var(--code-bg);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11.5px;">delivery / delivery_manager / delivery_route</code> 3개 서비스로 분할 시도했으나,
+      <strong>설계 의도</strong>: 12개 서비스를 7개 바운디드 컨텍스트(파선)로 묶고 각 컨텍스트는 자기 PostgreSQL을 둠(database-per-service).
+      배송 컨텍스트는 처음엔 <code style="background:var(--code-bg);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11.5px;">delivery / delivery_manager / delivery_route</code> 3개 서비스로 분할 시도했으나
       <strong>강한 응집성·동일 트랜잭션 경계 요구</strong> 때문에 <code style="background:var(--code-bg);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11.5px;">delivery-service</code> 한 컨텍스트로 통합하고 내부 도메인으로 분리.
     </p>
 
@@ -1386,7 +1386,7 @@
         <div class="dec-status">REJECTED · Saga</div>
         <div class="dec-name">보상 트랜잭션 체인</div>
         <div class="dec-reason">
-          다중 단계 트랜잭션엔 강력하나, 본 케이스는 <strong>단방향 통지·응답 불필요</strong>라 full Saga는 과함. 보상 로직 작성 비용도 큼.
+          다중 단계 트랜잭션엔 강력하나 본 케이스는 <strong>단방향 통지·응답 불필요</strong>라 full Saga는 과함. 보상 로직 작성 비용도 큼.
         </div>
       </div>
       <div class="dec-card chosen">
@@ -1428,12 +1428,12 @@
     <div class="contrib-card">
       <div class="contrib-headline">
         <div class="contrib-num">🛡 CONTRIBUTION #2</div>
-        <div class="contrib-title">검증=동기, 통지=비동기 — Feign + Circuit Breaker로 통신 의도 분리</div>
+        <div class="contrib-title">검증은 동기, 통지는 비동기 — Feign + Circuit Breaker로 통신 의도 분리</div>
         <div class="contrib-impact">외부 서비스 장애의 연쇄 전파 차단 — CB(window 10·실패율 50%·OPEN 10s·slow-call 3s) + Retry 3회로 fallback 즉시 반환</div>
       </div>
       <div class="contrib-body">
         <p><strong>P</strong> · 외부 서비스 호출이 타임아웃까지 블로킹되면 <strong>대기 스레드 누적 → 내 서비스까지 연쇄로 죽음</strong>(cascading failure). 단순 동기 호출은 한 서비스 장애가 전체로 번지는 구조.</p>
-        <p><strong>A</strong> · 통신 의도를 의도적으로 분리: <strong>"정합성 검증=동기(Feign)", "삭제 통지=비동기(Kafka)"</strong>. user/hub/order 호출은 <code>@CircuitBreaker</code> + <code>@Retry</code>로 감쌈. CB(window 10·실패율 50%·OPEN 10s·slow-call 3s·retry 3회/500ms)로 fallback 즉시 반환.</p>
+        <p><strong>A</strong> · 통신을 의도적으로 분리: <strong>정합성 검증은 동기(Feign)로, 삭제 통지는 비동기(Kafka)로</strong>. user/hub/order 호출은 <code>@CircuitBreaker</code> + <code>@Retry</code>로 감쌈. CB(window 10·실패율 50%·OPEN 10s·slow-call 3s·retry 3회/500ms)로 fallback 즉시 반환.</p>
         <p><strong>R</strong> · CB OPEN 시 즉시 fallback 반환 → 대기 스레드 누적·연쇄 장애 차단. CB 상태전이(OPEN/CLOSED/HALF_OPEN)·호출차단·slow-call 전체 로깅.</p>
         <div class="code-links">
           <span class="code-links-label">CODE</span>
@@ -1482,7 +1482,7 @@
       </tbody>
     </table>
     <p style="font-size:12.5px; color:var(--ink-soft); margin-top:12px;">
-      <strong>값 선정 전제</strong> — 데모 트래픽 기준의 보수적 baseline. Resilience4j 기본값을 출발점으로 위 근거에 따라 조정했고, <strong>운영 전환 시 실제 호출량·지연 분포로 부하 테스트 후 재튜닝</strong>하는 것을 전제로 한 초기값.
+      <strong>값 선정 전제</strong> — 데모 트래픽 기준의 보수적 baseline. Resilience4j 기본값을 출발점으로 위 근거에 따라 조정했고 <strong>운영 전환 시 실제 호출량·지연 분포로 부하 테스트 후 재튜닝</strong>하는 것을 전제로 한 초기값.
     </p>
   </section>
 
@@ -1493,10 +1493,10 @@
       <div class="contrib-headline">
         <div class="contrib-num">🚛 CONTRIBUTION #3</div>
         <div class="contrib-title">시간창을 제약으로 모델링한 일괄 배송 최적화 — OR-Tools VRPTW</div>
-        <div class="contrib-impact">B2B SLA의 관건인 시간창 준수를 사후 정렬이 아니라 솔버의 직접 제약으로 모델링. 수동 5분 → 자동 3초 (100건 기준 · 데모)</div>
+        <div class="contrib-impact">B2B SLA를 좌우하는 시간창 준수를 사후 정렬이 아니라 솔버의 직접 제약으로 모델링. 수동 5분 → 자동 3초 (100건 기준 · 데모)</div>
       </div>
       <div class="contrib-body">
-        <p><strong>P</strong> · B2B 물류는 업체 영업시간(예: "오전 9~11시 입고")이 <strong>SLA의 핵심</strong>. 어기면 계약 위반 → <strong>시간창을 제약(constraint — 솔버가 반드시 지켜야 하는 조건)으로 모델링</strong>해야지, 후처리 정렬로는 보장 불가. 단순 라운드로빈(들어온 순서대로 담당자에게 균등 배분)은 거리·시간창·차량 부하 균등을 못 고려해 비효율.</p>
+        <p><strong>P</strong> · B2B 물류는 업체 영업시간(예: "오전 9~11시 입고")이 <strong>SLA의 핵심</strong>. 어기면 계약 위반 → <strong>시간창을 제약(constraint — 솔버가 반드시 지켜야 하는 조건)으로 모델링</strong>해야지 후처리 정렬로는 보장 불가. 단순 라운드로빈(들어온 순서대로 담당자에게 균등 배분)은 거리·시간창·차량 부하 균등을 못 고려해 비효율.</p>
         <p><strong>A</strong> · 매일 06:00 스케줄러가 허브별 당일 배송을 모아 <strong>VRPTW로 일괄 최적화</strong>. 트랙 분리 — <strong>허브 간 = 라운드로빈, 업체 = OR-Tools VRPTW</strong>. 제약을 모두 만족하는 해가 없으면(infeasible) 시간창을 단계적으로 완화해 재시도.</p>
         <ul class="approach-points">
           <li><strong>입력</strong> — Haversine 공식(위·경도 좌표로 두 지점 간 직선거리 계산)으로 시간·거리 행렬 생성</li>
@@ -1528,7 +1528,7 @@
         <div class="dec-status">REJECTED · pgRouting</div>
         <div class="dec-name">경로 탐색 (A→B 최단)</div>
         <div class="dec-reason">
-          경로 탐색엔 강하지만 <strong>"어떤 묶음을 누구에게 배정"하는 할당(assignment) 문제는 안 풂</strong>. 지리 공간 시각화·근사 계산용에 가깝고, 제약 만족 문제(CSP — 여러 제약을 동시에 만족하는 해를 찾는 문제)에는 부적합.
+          경로 탐색엔 강하지만 <strong>"어떤 묶음을 누구에게 배정"하는 할당(assignment) 문제는 안 풂</strong>. 지리 공간 시각화·근사 계산용에 가깝고 제약 만족 문제(CSP — 여러 제약을 동시에 만족하는 해를 찾는 문제)에는 부적합.
         </div>
       </div>
       <div class="dec-card chosen">
@@ -1589,7 +1589,7 @@ RoutingSearchParameters params = main.defaultRoutingSearchParameters()
     </p>
 
     <p style="font-size:13px; color:var(--ink-soft); margin-top:14px;">
-      <strong>해가 없을 때(infeasible) — 시간창만 단계적 완화</strong> · 특정 일자에 시간창이 좁고 물량이 몰리면 솔버가 <strong>infeasible</strong>을 반환한다. 단순 예외 throw는 가용성을 해치므로, 다른 제약은 두고 <strong>시간창만 ±30 → ±60 → ±90분</strong>으로 단계적으로 풀어 재시도한다. <em>차량 추가 투입은 인력 자원 문제라 시스템 제어 밖, 모든 제약 무시 후 재계산은 SLA 약속 자체가 깨지므로 배제</em> — SLA 영향이 가장 작은 시간창부터 양보했다. 모두 실패하면 <code>ROUTE_OPTIMIZATION_FAILED</code>로 운영자에게 알리고, 스케줄러 레벨에서 10초 간격 3회 재시도한다.
+      <strong>해가 없을 때(infeasible) — 시간창만 단계적 완화</strong> · 특정 일자에 시간창이 좁고 물량이 몰리면 솔버가 <strong>infeasible</strong>을 반환한다. 단순 예외 throw는 가용성을 해치므로 다른 제약은 두고 <strong>시간창만 ±30 → ±60 → ±90분</strong>으로 단계적으로 풀어 재시도한다. <em>차량 추가 투입은 인력 자원 문제라 시스템 제어 밖, 모든 제약 무시 후 재계산은 SLA 약속 자체가 깨지므로 배제</em> — SLA 영향이 가장 작은 시간창부터 양보했다. 모두 실패하면 <code>ROUTE_OPTIMIZATION_FAILED</code>로 운영자에게 알리고 스케줄러 레벨에서 10초 간격 3회 재시도한다.
     </p>
 
     <!-- 실제 OR-Tools 경로 시각화 -->
@@ -1603,7 +1603,7 @@ RoutingSearchParameters params = main.defaultRoutingSearchParameters()
         <span class="screenshot-zoom-hint">CLICK TO ZOOM</span>
       </div>
       <div class="screenshot-caption">
-        <strong>실제 VRPTW 솔버 결과를 지도에 매핑한 경로 시각화</strong>. 각 색상이 한 담당자의 경로이며, 숫자는 방문 순서.
+        <strong>실제 VRPTW 솔버 결과를 지도에 매핑한 경로 시각화</strong>. 각 색상이 한 담당자의 경로이며 숫자는 방문 순서.
         <ul class="screenshot-points">
           <li><strong>5명 담당자별 색상 구분</strong> — 같은 색끼리 묶인 노드가 한 담당자의 하루 동선</li>
           <li><strong>방문 순서 표시</strong>(① ② ③ …) — 솔버가 결정한 실제 순회 경로(sequence)</li>
@@ -1707,7 +1707,7 @@ Optional&lt;DeliveryManager&gt; findTopByHubIdOrderBySeqDesc(UUID hubId);
       </div>
       <div class="contrib-body">
         <p><strong>CI · GitHub Actions</strong> — <code>develop</code> push 시 9개 서비스를 <strong>matrix 병렬 빌드</strong> → ECR push(<code>:latest</code>, <code>:sha</code>). <strong>OIDC</strong>로 AWS 임시 자격증명을 발급받아 <strong>장기 액세스키를 저장하지 않음</strong>. <code>type=gha</code> 레이어 캐시로 빌드 시간 단축.</p>
-        <p><strong>IaC · Terraform</strong> — VPC(NAT 없는 퍼블릭 서브넷)·EC2·RDS(프리티어)·ECR·IAM(OIDC role)·EventBridge Scheduler·Lambda를 하나의 코드로 선언. <strong>Cloudflare(Tunnel·DNS·SSL)까지 같은 <code>apply</code></strong>로 생성하고, 터널 토큰을 EC2 user_data에 자동 주입.</p>
+        <p><strong>IaC · Terraform</strong> — VPC(NAT 없는 퍼블릭 서브넷)·EC2·RDS(프리티어)·ECR·IAM(OIDC role)·EventBridge Scheduler·Lambda를 하나의 코드로 선언. <strong>Cloudflare(Tunnel·DNS·SSL)까지 같은 <code>apply</code></strong>로 생성하고 터널 토큰을 EC2 user_data에 자동 주입.</p>
         <p><strong>네트워킹 · Cloudflare</strong> — ALB/EIP 없이 <strong>Tunnel로 오리진을 노출</strong>해 인바운드 포트를 전부 닫고(공격면↓), 무료 Universal SSL로 HTTPS 종단. 운영시간 외/주말엔 <strong>Worker가 점검 페이지로 폴백</strong>.</p>
         <p><strong>비용 운영 · EventBridge + Lambda</strong> — 평일 <strong>08:40 start / 21:00 stop</strong>으로 EC2·RDS를 자동 전원 제어, 전시 시간대만 가동해 비용을 절반 이하로 절감.</p>
         <div class="code-links">
@@ -1779,7 +1779,7 @@ push(develop) ─▶ GitHub Actions <span class="com">(OIDC · matrix ×9)</span
     <h2>회고 — 잘한 것과 의도적 선택의 트레이드오프</h2>
     <div class="section-rule"></div>
     <p class="lede">
-      프로젝트를 마치며 두 갈래로 정리. <strong>무엇을 잘했고</strong>, <strong>어떤 부분이 트레이드오프를 따진 의도적 선택이었는지</strong>. 각 선택의 한계와 다음 단계는 항목별 <strong>→ 라인</strong>에 함께 적음.
+      프로젝트를 마치며 두 갈래로 정리. <strong>무엇을 잘했고</strong> <strong>어떤 부분이 트레이드오프를 따진 의도적 선택이었는지</strong>. 각 선택의 한계와 다음 단계는 항목별 <strong>→ 라인</strong>에 함께 적음.
     </p>
 
     <div class="retro-block">
@@ -1788,7 +1788,7 @@ push(develop) ─▶ GitHub Actions <span class="com">(OIDC · matrix ×9)</span
         <div class="retro-title">잘한 것</div>
       </div>
       <div class="retro-good">
-        단순 CRUD를 넘어 <strong>이벤트 유실(Outbox) · 최적화(VRPTW) · 동시성(비관적 락)</strong> 등 운영 수준 문제를 <strong>비즈니스 근거에서 출발해</strong> 직접 설계. 스터디에서 학습한 락 트레이드오프를 실제 적용. "검증=동기, 통지=비동기"의 통신 의도 분리가 일관되게 관철됨.
+        단순 CRUD에 그치지 않고 <strong>이벤트 유실(Outbox) · 최적화(VRPTW) · 동시성(비관적 락)</strong> 등 운영 수준 문제를 <strong>비즈니스 근거에서 출발해</strong> 직접 설계. 스터디에서 학습한 락 트레이드오프를 실제 적용. "검증=동기, 통지=비동기"의 통신 의도 분리가 일관되게 관철됨.
       </div>
     </div>
 
@@ -1802,21 +1802,21 @@ push(develop) ─▶ GitHub Actions <span class="com">(OIDC · matrix ×9)</span
         <div class="item">
           <div class="item-title">배송 컨텍스트를 한 서비스로 통합 (delivery + manager + route)</div>
           <div class="item-body">
-            초기 설계엔 <code>delivery / delivery_manager / delivery_route</code> 3개 서비스로 분할했으나, 실제 도메인 분석 결과 <strong>3개 도메인이 동일 트랜잭션 경계에서 함께 변경</strong>되는 강한 응집성을 보임 → 별도 서비스로 분리하면 분산 트랜잭션 비용만 증가한다고 판단해 <strong>delivery-service 한 컨텍스트로 통합 + 내부 도메인으로 분리</strong>.
+            초기 설계엔 <code>delivery / delivery_manager / delivery_route</code> 3개 서비스로 분할했으나 실제 도메인 분석 결과 <strong>3개 도메인이 동일 트랜잭션 경계에서 함께 변경</strong>되는 강한 응집성을 보임 → 별도 서비스로 분리하면 분산 트랜잭션 비용만 증가한다고 판단해 <strong>delivery-service 한 컨텍스트로 통합 + 내부 도메인으로 분리</strong>.
           </div>
           <div class="item-future">"같은 트랜잭션에서 변하는 것은 같은 서비스로" — DDD의 애그리거트 경계 원칙을 실제 적용한 사례</div>
         </div>
         <div class="item">
           <div class="item-title">Outbox 스케줄러가 단일 인스턴스 전제</div>
           <div class="item-body">
-            분산 스케줄러·ShedLock·리더 선출 등 옵션을 검토했으나, <strong>각 마이크로서비스가 단일 인스턴스로 배포되는 현 토폴로지</strong>에선 스케줄러 중복 실행이 발생 X → 분산 락 도입은 오버엔지니어링.
+            분산 스케줄러·ShedLock·리더 선출 등 옵션을 검토했으나 <strong>각 마이크로서비스가 단일 인스턴스로 배포되는 현 토폴로지</strong>에선 스케줄러 중복 실행이 발생 X → 분산 락 도입은 오버엔지니어링.
           </div>
           <div class="item-future">수평 확장 시점엔 ShedLock(DB 락) 또는 컨슈머 측 멱등 처리(이벤트 ID dedup) 추가 예정</div>
         </div>
         <div class="item">
           <div class="item-title">full Saga 대신 Outbox 채택</div>
           <div class="item-body">
-            다중 서비스 트랜잭션엔 Saga(보상 트랜잭션)도 후보였으나, 우리 케이스는 <strong>단방향 통지·응답 불필요</strong>라 full Saga의 복잡도가 과함.
+            다중 서비스 트랜잭션엔 Saga(보상 트랜잭션)도 후보였으나 우리 케이스는 <strong>단방향 통지·응답 불필요</strong>라 full Saga의 복잡도가 과함.
           </div>
           <div class="item-future">다중 단계 트랜잭션이 필요한 도메인에선 Saga가 정답 — 알고 있음</div>
         </div>

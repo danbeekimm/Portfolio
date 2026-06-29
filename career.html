@@ -548,11 +548,6 @@
       line-height: 1.7;
     }
     .connection-body strong { color: var(--ink); }
-    .connection-body .arrow {
-      color: var(--accent);
-      font-weight: 600;
-      margin: 0 4px;
-    }
 
     table {
       width: 100%;
@@ -1189,7 +1184,7 @@
     <h2>이슈를 발견·추적·해결한 방식</h2>
     <div class="section-rule"></div>
     <p class="lede">
-      담당 기능의 경계를 좁게 두지 않았습니다. <strong>운영 중 이상한 점 → 보고 → 원인 추적 → 해결</strong>을 능동적으로 반복했고,
+      담당 기능의 경계를 좁게 두지 않았습니다. <strong>운영 중 이상한 점 → 보고 → 원인 추적 → 해결</strong>을 능동적으로 반복했고
       특히 <strong>기획과 코드의 불일치</strong>를 발견하면 기획팀과 직접 의논해 정정한 경험이 많습니다.
     </p>
 
@@ -1204,7 +1199,7 @@
         <div class="case-row">
           <div class="case-row-label">기획 자문</div>
           <div class="case-row-body">
-            기획 초기 단계에서 <strong>시스템적으로 가능한 범위 · 비용 · 우회 방법</strong>에 대한 자문을 요청받음. 받은 기획을 그대로 구현하기보다, <em>이 방향이 운영에 어떤 부담을 줄지</em>를 함께 검토.
+            기획 초기 단계에서 <strong>시스템적으로 가능한 범위 · 비용 · 우회 방법</strong> 자문을 요청받음. 받은 기획을 그대로 구현하기보다, <em>이 방향이 운영에 어떤 부담을 줄지</em>를 함께 검토.
           </div>
         </div>
         <div class="case-row">
@@ -1222,7 +1217,7 @@
         <div class="case-row">
           <div class="case-row-label">결과</div>
           <div class="case-row-body">
-            "막상 만들고 보니 의도와 다르다"는 재작업 비용을 사전에 줄이고, 기획팀도 시스템의 실제 모습을 더 정확히 알게 됨. <em>기획·사용자·코드 사이를 잇는 역할도 함께 맡았습니다</em>.
+            "막상 만들고 보니 의도와 다르다"는 재작업 비용을 사전에 줄이고 기획팀도 시스템의 실제 모습을 더 정확히 알게 됨. <em>기획·사용자·코드 사이를 잇는 역할도 함께 맡았습니다</em>.
           </div>
         </div>
       </div>
@@ -1233,7 +1228,7 @@
       <div class="case-header">
         <div class="case-num">🔍 CASE #2</div>
         <div class="case-title">반복 CS 문의의 원인 분석 → 팀 논의 → 사전 차단 구현</div>
-        <div class="case-subtitle">문제의 단서를 제공하고, 결정된 방향을 책임지고 완수한 사례</div>
+        <div class="case-subtitle">문제의 단서를 제공하고 결정된 방향을 책임지고 완수한 사례</div>
       </div>
       <div class="case-body">
         <div class="case-row">
@@ -1257,7 +1252,7 @@
         <div class="case-row">
           <div class="case-row-label">구현·결과</div>
           <div class="case-row-body">
-            업로드 단계에서 외부 분석 API에 넘기기 전에 <strong>사전 파싱으로 시그널을 감지</strong>해 "암호화 해제 후 재업로드" 안내 메시지를 노출. 파일 형식별로 도구를 분리해 <strong>MS Office 계열은 Apache POI, HWP는 hwplib</strong>으로 동일 패턴 적용. <em>일반 파싱 오류와 E-DRM 케이스를 명확히 분기</em> → 불명확한 Exception 화면이 명확한 안내로 바뀌고, <strong>동일 원인의 CS 문의 재발 없음</strong>.
+            업로드 단계에서 외부 분석 API에 넘기기 전에 <strong>사전 파싱으로 시그널을 감지</strong>해 "암호화 해제 후 재업로드" 안내 메시지를 노출. 파일 형식별로 도구를 분리해 <strong>MS Office 계열은 Apache POI, HWP는 hwplib</strong>으로 동일 패턴 적용. <em>일반 파싱 오류와 E-DRM 케이스를 명확히 분기</em> → 불명확한 Exception 화면이 명확한 안내로 바뀌고 <strong>동일 원인의 CS 문의 재발 없음</strong>.
           </div>
         </div>
       </div>
@@ -1368,7 +1363,7 @@
         <div class="contrib-impact">시행착오로 해결한 작업을 이후 학습으로 원리 레벨에서 설명할 수 있게 된 사례</div>
       </div>
       <div class="contrib-body">
-        <p><strong>P</strong> · 팀 차원에서 PG → MSSQL(구버전, 2016) 전체 이관을 진행. 마이그레이션 후 <strong>특정 쿼리가 눈에 띄게 느려진 케이스</strong>를 담당해 개선. <em>특히 주된 원인은, 중복 제거 문자열 집계에서 PG의 <code style="background:var(--code-bg);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11.5px;">string_agg(DISTINCT)</code>가 MSSQL 2016에는 없어 <strong>STUFF + FOR XML PATH + DISTINCT 서브쿼리</strong>로 우회해야 했고, 이 우회 자체가 큰 성능 저하를 유발</em>.</p>
+        <p><strong>P</strong> · 팀 차원에서 PG → MSSQL(구버전, 2016) 전체 이관을 진행. 마이그레이션 후 <strong>특정 쿼리가 눈에 띄게 느려진 케이스</strong>를 담당해 개선. <em>특히 주된 원인은, 중복 제거 문자열 집계에서 PG의 <code style="background:var(--code-bg);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11.5px;">string_agg(DISTINCT)</code>가 MSSQL 2016에는 없어 <strong>STUFF + FOR XML PATH + DISTINCT 서브쿼리</strong>로 우회해야 했고 이 우회 자체가 큰 성능 저하를 유발</em>.</p>
 
         <p><strong>A</strong> · 같은 결과를 내는 여러 SQL 형태를 시도하며 단계적으로 접근:</p>
 
@@ -1419,7 +1414,7 @@
     <div class="connection">
       <div class="connection-tag">→ 학습 연결 고리</div>
       <div class="connection-body">
-        이 경험에서 <strong>SQL 의존성·벤더 종속성의 한계</strong>를 체감 <span class="arrow">→</span> <strong>ORM(JPA) 학습</strong>으로 직결<span class="arrow">→</span> 영속성 컨텍스트·벤더 독립 데이터 접근 계층 설계를 학습 <span class="arrow">→</span> 부트캠프 프로젝트의 <strong>JPA + QueryDSL 설계</strong>에 적용.
+        이 경험에서 <strong>SQL 의존성·벤더 종속성의 한계</strong>를 체감해 <strong>ORM(JPA)</strong>을 학습. 영속성 컨텍스트·벤더 독립 데이터 접근 계층 설계를 익혀 부트캠프 프로젝트의 <strong>JPA + QueryDSL 설계</strong>에 적용.
       </div>
     </div>
   </section>
@@ -1431,7 +1426,7 @@
       <div class="contrib-headline">
         <div class="contrib-num">⚡ DEEP DIVE — CONCURRENCY</div>
         <div class="contrib-title">임계구역을 긴 로직 뒤에서 맨 앞으로 옮긴 비동기 동시성 설계</div>
-        <div class="contrib-impact">1만 건 분할 비동기 처리에서 다중 창 동시 요청을 통한 한도 우회 원천 차단 + 비동기 모니터링 누락 제거</div>
+        <div class="contrib-impact">1만 건 분할 비동기 처리에서 다중 창 동시 요청으로 한도 우회를 막음 + 비동기 모니터링 누락 제거</div>
       </div>
       <div class="contrib-body">
         <p><strong>P</strong> · 1만 건 규모 다운로드를 100건씩 분할 비동기 처리하는 회원제 기능에서, 이용량을 <strong>모든 처리 완료 후</strong> 집계하는 구조 → 사용자가 여러 창에서 동시에 다운로드하면 <strong>검사 시점에 한도가 비어있어 제한 우회</strong>(race condition). 비동기 특성상 실패 다운로드의 모니터링 알림도 누락.</p>
@@ -1535,7 +1530,7 @@
 
     <div class="contrib-card">
       <div class="contrib-body" style="padding-top:18px;">
-        <p><strong>R</strong> · 동시 다발 요청을 통한 이용량 제한 우회를 <strong>구조적으로 차단</strong>, 비동기 환경 모니터링 누락 제거.</p>
+        <p><strong>R</strong> · 동시 다발 요청으로 이용량 제한 우회를 <strong>구조적으로 차단</strong>, 비동기 환경 모니터링 누락 제거.</p>
 
         <div class="honest-aside" style="background:var(--accent-faded); border-left-color:var(--accent);">
           <span class="aside-tag" style="color:var(--accent);">📚 당시 한계와 이후 학습</span>
@@ -1549,7 +1544,7 @@
     <div class="connection">
       <div class="connection-tag">→ 학습 연결 고리</div>
       <div class="connection-body">
-        "긴 로직 <strong>이전에</strong> 임계구역을 둔다"는 동시성 설계 원칙을 체득 <span class="arrow">→</span> 부트캠프에서 <strong>분산 락·동시성 제어를 자청 발표</strong>(낙관·비관·분산 락 트레이드오프) <span class="arrow">→</span> 다2조부 프로젝트의 <strong>seq 채번 race condition</strong>에서 의식적으로 <strong>비관적 락(PESSIMISTIC_WRITE)</strong> 선택. 3단계 학습 곡선의 시작점.
+        "긴 로직 <strong>이전에</strong> 임계구역을 둔다"는 동시성 설계 원칙을 체득해 부트캠프에서 <strong>분산 락·동시성 제어를 자청 발표</strong>(낙관·비관·분산 락 트레이드오프)하고 다2조부 프로젝트의 <strong>seq 채번 race condition</strong>에서 의식적으로 <strong>비관적 락(PESSIMISTIC_WRITE)</strong> 선택.
       </div>
     </div>
   </section>
@@ -1564,7 +1559,7 @@
         <div class="contrib-impact">두 방식의 비용·체감 응답성 트레이드오프를 정리해 의사결정. 인프라 부하 증가를 감수하고 UX를 택한 근거가 분명한 사례</div>
       </div>
       <div class="contrib-body">
-        <p><strong>P</strong> · 특허 검색 결과 한 화면에 최대 <strong>200건</strong>의 항목이 노출되며, 각 항목의 제목·요약을 사용자의 언어로 번역해 함께 표시해야 함. 번역 API는 건당 수백 ms 단위라 누적 시간이 큼. 팀 내에서 <em>"번역 도입 후 로딩 속도 저하"</em>에 대한 우려가 있었음.</p>
+        <p><strong>P</strong> · 특허 검색 결과 한 화면에 최대 <strong>200건</strong>의 항목이 노출되며, 각 항목의 제목·요약을 사용자의 언어로 번역해 함께 표시해야 함. 번역 API는 건당 수백 ms 단위라 누적 시간이 큼. 팀 내에서 <em>"번역 도입 후 로딩 속도 저하"</em> 우려가 있었음.</p>
 
         <p><strong>A</strong> · 두 가지 방식의 트레이드오프를 비교 후, 인프라 수용량과 UX 중요도를 근거로 방식 B 선택. 프론트와 협업해 응답 처리 흐름 설계.</p>
 
@@ -1573,20 +1568,20 @@
             <div class="action-title">① 방식 A vs B 트레이드오프 정리</div>
             <div class="action-body">
               <strong>A</strong>: 서버가 200건 번역 후 한 번에 응답 — 통신은 1회로 효율적이나 사용자는 전부 번역될 때까지 빈 화면 대기.
-              <strong>B</strong>: 원문 즉시 응답 + 클라이언트가 항목별로 번역 fan-out — 서버 통신 1회 → 최대 200회로 증가(<strong>인프라 부하↑</strong>), 대신 첫 화면 대기 시간(TTFB) 극적 단축.
-              <em><strong>판단 기준:</strong> 어느 쪽이 빠른가보다, 어느 쪽 비용을 감당할 수 있고 어느 쪽 가치가 더 중요한가를 두 축으로 결정.</em>
+              <strong>B</strong>: 원문 즉시 응답 + 클라이언트가 항목별로 번역 fan-out — 서버 통신 1회 → 최대 200회로 증가(<strong>인프라 부하↑</strong>), 대신 첫 화면 대기 시간(TTFB) 크게 줄임.
+              <em><strong>판단 기준:</strong> 어느 쪽이 빠른가보다, 어느 쪽 비용을 감당할 수 있는지, 가치는 어느 쪽이 더 중요한지를 두 축으로 결정.</em>
             </div>
           </li>
           <li class="action-item">
             <div class="action-title">② B 선택 근거 — 인프라 수용량 + UX 중요도</div>
             <div class="action-body">
-              우리 인프라가 200회 동시 요청 수준을 감당 가능하다는 정보가 있었고, 해당 페이지는 사용자 경험이 중요한 페이지로 분류되어 있었음 → <strong>비용은 감당 가능, 가치는 우위</strong>라는 결론으로 B 채택.
+              우리 인프라가 200회 동시 요청 수준을 감당 가능하다는 정보가 있었고 해당 페이지는 사용자 경험이 중요한 페이지로 분류되어 있었음 → <strong>비용은 감당 가능, 가치는 우위</strong>라는 결론으로 B 채택.
             </div>
           </li>
           <li class="action-item">
             <div class="action-title">③ 구현 — 원문 즉시 렌더 + 비동기 도착 순 교체</div>
             <div class="action-body">
-              서버는 번역되지 않은 원본을 먼저 빠르게 응답해 화면을 즉시 그림. 이후 클라이언트가 각 항목별로 번역 API를 비동기 호출하고, 응답이 도착하는 순서대로 해당 영역만 원본→번역문으로 교체.
+              서버는 번역되지 않은 원본을 먼저 빠르게 응답해 화면을 즉시 그림. 이후 클라이언트가 각 항목별로 번역 API를 비동기 호출하고 응답이 도착하는 순서대로 해당 영역만 원본→번역문으로 교체.
               <em><strong>사용자 경험:</strong> 빈 화면 0초 → 원본 즉시 노출 → 번역 도착 항목부터 자연스럽게 갱신.</em>
             </div>
           </li>
@@ -1614,7 +1609,7 @@
         <div class="contrib-impact">메인 담당 기능의 핵심 사용성 작업. 단계별로 문제 원인을 짚어 개선한 결과, 그 해 전체 개선 기능 중 사용자 만족도 2위로 선정</div>
       </div>
       <div class="contrib-body">
-        <p><strong>P</strong> · 메인 창에는 다수의 특허 문헌을 빠르게 탐색할 수 있는 <strong>"이지뷰어"</strong>가 있고, <strong>"도면 보기"</strong>를 클릭하면 별도 컨트롤러 URL을 호출해 전체 HTML을 받아오는 <strong>팝업 창</strong>이 열리는 구조. <em>A문헌 도면을 본 상태에서 이지뷰어로 다른 문헌을 탐색해도 팝업은 A문헌 도면 상태로 고정</em>되어, 사용자가 매번 "도면 보기"를 다시 클릭해야 하는 불편이 있었음.</p>
+        <p><strong>P</strong> · 메인 창에는 다수의 특허 문헌을 빠르게 탐색할 수 있는 <strong>"이지뷰어"</strong>가 있고 <strong>"도면 보기"</strong>를 클릭하면 별도 컨트롤러 URL을 호출해 전체 HTML을 받아오는 <strong>팝업 창</strong>이 열리는 구조. <em>A문헌 도면을 본 상태에서 이지뷰어로 다른 문헌을 탐색해도 팝업은 A문헌 도면 상태로 고정</em>되어, 사용자가 매번 "도면 보기"를 다시 클릭해야 하는 불편이 있었음.</p>
 
         <p><strong>A</strong> · 이지뷰어 문헌 이동 시 팝업 도면이 자동 동기화되도록 개선. <strong>각 단계에서 드러난 문제 원인을 정확히 짚어 다음 단계로 이어감</strong>.</p>
 
@@ -1629,14 +1624,14 @@
           <li class="action-item">
             <div class="action-title">2차 — 부분 렌더링 (동기 AJAX)</div>
             <div class="action-body">
-              깜빡임·포커스 강탈의 근본 원인이 <strong>"팝업 URL을 바꿔 페이지 전체를 재로딩"하는 데 있다고 판단</strong>. 팝업 HTML을 <strong>고정 영역(헤더·툴바) + 가변 영역(도면)</strong>으로 분할하고, 팝업 URL은 그대로 둔 채 <strong>가변 영역의 HTML 조각만 동기 AJAX로 받아 innerHTML로 교체</strong>.
+              깜빡임·포커스 강탈의 근본 원인이 <strong>"팝업 URL을 바꿔 페이지 전체를 재로딩"하는 데 있다고 판단</strong>. 팝업 HTML을 <strong>고정 영역(헤더·툴바) + 가변 영역(도면)</strong>으로 분할하고 팝업 URL은 그대로 둔 채 <strong>가변 영역의 HTML 조각만 동기 AJAX로 받아 innerHTML로 교체</strong>.
               <em><strong>해결:</strong> 깜빡임·포커스 강탈 사라지고 전송량 감소로 속도 개선. <strong>남은 문제:</strong> 동기 AJAX 특성상 응답 도착 전까지 메인 스레드가 멈춰 "순간 멈춤"이 인지됨.</em>
             </div>
           </li>
           <li class="action-item">
             <div class="action-title">3차 — 비동기 호출 + 콜백 기반 실행 순서 재구성</div>
             <div class="action-body">
-              AJAX를 비동기로 변경. 단순히 동기→비동기 전환만으로는 부족하고, <strong>응답 시점에 의존하는 후속 로직(도면 초기화 JS 등)이 응답 완료 후 실행되도록 콜백 기반으로 코드 구조를 재정비</strong>.
+              AJAX를 비동기로 변경. 단순히 동기→비동기 전환만으로는 부족하고 <strong>응답 시점에 의존하는 후속 로직(도면 초기화 JS 등)이 응답 완료 후 실행되도록 콜백 기반으로 코드 구조를 재정비</strong>.
               <em><strong>해결:</strong> 응답 대기 중에도 사용자 입력에 반응 가능해져 멈춤 현상까지 해소. 1·2차에서 드러난 모든 문제(깜빡임·포커스 강탈·속도·멈춤)가 최종적으로 모두 개선됨.</em>
             </div>
           </li>
@@ -1657,7 +1652,7 @@
       <div class="connection-body">
         <strong>브라우저가 강제하는 동작 단위를 좁혀 사용자 흐름을 보존하는</strong> 설계. 사용자 경험을 코드 구조 레벨에서 직접 풀어낸 작업.
         <br><br>
-        <strong>점진적 응답성 개선(전체 재로딩 → 부분 렌더링 → 비동기 갱신)</strong>의 사고 패턴은 이후 <strong>대규모 특허 번역</strong>(서버 일괄 응답 → 클라이언트 fan-out + 점진 교체)으로 이어지고, 부트캠프 프로젝트의 <em>ants-camp 클라이언트 fan-out 구조</em>까지 일관되게 적용됨.
+        <strong>점진적 응답성 개선(전체 재로딩 → 부분 렌더링 → 비동기 갱신)</strong>의 사고 패턴을 이후 <strong>대규모 특허 번역</strong>(서버 일괄 응답 → 클라이언트 fan-out + 점진 교체)과 부트캠프 프로젝트의 <em>ants-camp 클라이언트 fan-out 구조</em>에 일관되게 적용했음.
       </div>
     </div>
   </section>
@@ -1691,8 +1686,8 @@
     <h2>실무 한계 → 학습 동기 → 부트캠프 적용</h2>
     <div class="section-rule"></div>
     <p class="lede">
-      실무에서 시행착오로 풀어낸 문제들이 그대로 <strong>"왜 그게 효과 있었는지 알고 싶다"</strong>는 공부로 이어졌습니다.
-      이론으로 채운 뒤 다시 프로젝트에서 검증하는 사이클이 두 번 완결.
+      실무에서 시행착오로 풀어낸 문제들을 그대로 <strong>"왜 그게 효과 있었는지 알고 싶다"</strong>는 공부로 이어갔습니다.
+      이론으로 채운 뒤 다시 프로젝트에서 검증하는 사이클을 두 번 거쳤습니다.
     </p>
 
     <div class="cycle-card">

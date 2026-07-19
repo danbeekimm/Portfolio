@@ -1400,24 +1400,44 @@
     </details>
 
     <details class="fold"><summary>구현 코드 — Outbox 원자 저장 (Java)<span class="fold-hint">클릭해 펼치기</span></summary>
-    <pre><span class="com">// 업체 삭제 트랜잭션 내 Outbox 원자 저장</span>
+    <pre><span class="com">// CompanyService — 삭제 트랜잭션 안에서 이벤트 발행을 위임 (원자성)</span>
 <span class="ann">@Transactional</span>
-<span class="kw">public void</span> deleteCompany(UUID companyId) {
-    companyRepository.delete(companyId);
-    outboxRepository.save(<span class="kw">new</span> OutboxEvent(
-        <span class="str">"company.deleted"</span>, companyId, payload, <span class="str">"PENDING"</span>
-    ));  <span class="com">// 같은 트랜잭션 — 원자 보장</span>
+<span class="ann">@CacheEvict</span>(value = <span class="str">"company"</span>, key = <span class="str">"#companyId"</span>)
+<span class="kw">public void</span> deleteCompany(UUID companyId, String userRole, UUID userId) {
+    Company company = findCompanyOrThrow(companyId);
+    <span class="com">// ... 권한 검증 · 진행 중 주문 확인 ...</span>
+    company.softDelete(userId.toString());
+    companyEventPublisher.publishCompanyDeleted(
+        companyId, userId.toString(), company.getDeletedAt());
 }
 
-<span class="com">// 10초마다 PENDING → Kafka</span>
+<span class="com">// CompanyEventPublisherImpl — 도메인 변경과 같은 트랜잭션에서 Outbox 저장</span>
+<span class="ann">@Override</span>
+<span class="kw">public void</span> publishCompanyDeleted(UUID companyId, String deletedBy, LocalDateTime deletedAt) {
+    String payload = objectMapper.writeValueAsString(Map.of(
+        <span class="str">"companyId"</span>, companyId.toString(),
+        <span class="str">"deletedBy"</span>, deletedBy,
+        <span class="str">"deletedAt"</span>, deletedAt.toString()));
+    OutboxEvent outboxEvent = OutboxEvent.create(
+        <span class="str">"Company"</span>, companyId, <span class="str">"CompanyDeleted"</span>, COMPANY_DELETED_TOPIC, payload);
+    outboxEventRepository.save(outboxEvent);  <span class="com">// 같은 트랜잭션 — 원자 보장</span>
+}
+
+<span class="com">// OutboxEventScheduler — 10초마다 PENDING을 Kafka로 발행</span>
 <span class="ann">@Scheduled</span>(fixedDelay = <span class="str">10000</span>)
-<span class="kw">public void</span> publish() {
-    outboxRepository.findByStatus(<span class="str">"PENDING"</span>).forEach(event -> {
-        kafkaTemplate.send(event).addCallback(
-            ok -> outboxRepository.markPublished(event.getId()),
-            fail -> log.warn(<span class="str">"retry next tick"</span>)
-        );
-    });
+<span class="kw">public void</span> publishPendingEvents() {
+    List&lt;OutboxEvent&gt; pendingEvents =
+        outboxEventRepository.findByStatusOrderByCreatedAtAsc(OutboxStatus.PENDING);
+    <span class="kw">for</span> (OutboxEvent event : pendingEvents) {
+        <span class="kw">try</span> {
+            kafkaTemplate.send(event.getTopic(),
+                event.getAggregateId().toString(), event.getPayload()).get();
+            event.markPublished();
+            outboxEventRepository.save(event);
+        } <span class="kw">catch</span> (Exception e) {  <span class="com">// 단일 실패가 나머지 발행을 막지 않음 → 다음 주기 재시도</span>
+            log.warn(<span class="str">"발행 실패, 다음 주기 재시도: id={}"</span>, event.getEventId());
+        }
+    }
 }</pre>
     </details>
   </section>
@@ -1456,15 +1476,23 @@
     </div>
 
     <details class="fold"><summary>구현 코드 — Circuit Breaker / Retry (Java)<span class="fold-hint">클릭해 펼치기</span></summary>
-    <pre><span class="ann">@Retry</span>(name = <span class="str">"hubService"</span>)
+    <pre><span class="ann">@Override</span>
+<span class="ann">@Retry</span>(name = <span class="str">"hubService"</span>)
 <span class="ann">@CircuitBreaker</span>(name = <span class="str">"hubService"</span>, fallbackMethod = <span class="str">"hubServiceFallback"</span>)
 <span class="kw">public boolean</span> validateHubExists(UUID hubId) {
-    <span class="kw">return</span> hubClient.exists(hubId);  <span class="com">// 동기 검증</span>
+    <span class="kw">try</span> {
+        hubFeignClient.getHubs(hubId, <span class="str">10</span>, <span class="str">0</span>);
+        <span class="kw">return true</span>;
+    } <span class="kw">catch</span> (FeignException.NotFound e) {
+        <span class="kw">return false</span>;  <span class="com">// 없는 허브 — 정상 응답으로 처리</span>
+    }
+    <span class="com">// 그 외 FeignException은 @Retry가 재시도, 소진 시 CB fallback</span>
 }
 
-<span class="kw">private boolean</span> hubServiceFallback(UUID hubId, Throwable t) {
-    log.warn(<span class="str">"Hub validation fallback — CB OPEN. hubId={}"</span>, hubId);
-    <span class="kw">return false</span>;  <span class="com">// 즉시 반환 → 스레드 점유 X</span>
+<span class="kw">private void</span> hubServiceFallback(UUID hubId, Throwable t) {
+    <span class="com">// CB OPEN / 재시도 소진 시 즉시 예외 반환 → 대기 스레드 점유 없이 fail-fast</span>
+    log.error(<span class="str">"CircuitBreaker 허브 서비스 호출 불가: hubId={}, cause={}"</span>, hubId, t.getMessage());
+    <span class="kw">throw new</span> CustomException(ErrorCode.HUB_SERVICE_ERROR);
 }</pre>
     </details>
 
@@ -1558,30 +1586,43 @@
     </details>
 
     <details class="fold"><summary>구현 코드 — VRPTW 핵심 구성 (Java)<span class="fold-hint">클릭해 펼치기</span></summary>
-    <pre><span class="com">// VRPTW 핵심 구성</span>
-<span class="com">// nodes: 방문 지점 수(허브+업체) / vehicles: 담당자 수 / depot: 출발·복귀 지점(허브) 인덱스</span>
-RoutingIndexManager manager = <span class="kw">new</span> RoutingIndexManager(
-    nodes, vehicles, depot
-);
+    <pre><span class="com">// nodeCount = 업체 수 + 1(depot=허브), vehicleCount = 담당자 수, depot = 0</span>
+RoutingIndexManager manager =
+    <span class="kw">new</span> RoutingIndexManager(nodeCount, vehicleCount, depot);
+RoutingModel routing = <span class="kw">new</span> RoutingModel(manager);
 
-<span class="com">// AddDimension: 시간/거리/용량처럼 라우트 따라 누적되는 값에 제약 부여</span>
-routing.AddDimension(
+<span class="com">// 시간 차원 — 라우트 따라 누적되는 시간에 제약 부여</span>
+<span class="kw">int</span> timeCallback = routing.registerTransitCallback((from, to) -&gt;
+    timeMatrix[manager.indexToNode(from)][manager.indexToNode(to)]);
+routing.addDimension(
     timeCallback,
-    <span class="str">30</span>,        <span class="com">// 노드별 대기 가능 여유(slack) — 시간창 도착에 30분 버퍼</span>
-    <span class="str">480</span>,       <span class="com">// 한 담당자 라우트 총 시간 상한(분) = 8시간</span>
-    <span class="kw">false</span>, <span class="str">"Time"</span>  <span class="com">// depot 시작 시점에 누적값 리셋 안 함</span>
-);
+    <span class="str">30</span>,                            <span class="com">// 노드별 대기 여유(slack) 30분</span>
+    input.maxRouteTimeMinutes(),   <span class="com">// 라우트 총 시간 상한(480분=8시간)</span>
+    <span class="kw">false</span>, <span class="str">"Time"</span>);
 
-<span class="com">// 차량당 상한 — 부하 균등</span>
-<span class="kw">int</span> maxPerVehicle = (<span class="kw">int</span>) Math.ceil((<span class="kw">double</span>) total / vehicles);
+<span class="com">// 배송 건수 균등 분배 — ceil(건수/담당자수)를 1인 상한으로</span>
+<span class="kw">int</span> maxPerVehicle = (<span class="kw">int</span>) Math.ceil((<span class="kw">double</span>) points.size() / vehicleCount);
+<span class="kw">int</span> countCallback = routing.registerUnaryTransitCallback(
+    fromIndex -&gt; manager.indexToNode(fromIndex) == depot ? <span class="str">0</span> : <span class="str">1</span>);
+routing.addDimension(countCallback, <span class="str">0</span>, maxPerVehicle, <span class="kw">true</span>, <span class="str">"Count"</span>);
 
-<span class="com">// 솔버 구성 = "초기해를 빠르게 + 그 해를 개선" 2단</span>
+<span class="com">// 업체별 시간창(영업시간) 제약 — 도착 가능 구간 설정</span>
+RoutingDimension timeDimension = routing.getMutableDimension(<span class="str">"Time"</span>);
+<span class="kw">for</span> (<span class="kw">int</span> i = <span class="str">0</span>; i &lt; points.size(); i++) {
+    <span class="kw">long</span> index = manager.nodeToIndex(i + <span class="str">1</span>);
+    <span class="kw">long</span>[] window = toTimeWindow(
+        points.get(i).requestedDeliveryTime(), input.batchStartTime());
+    timeDimension.cumulVar(index).setRange(window[<span class="str">0</span>], window[<span class="str">1</span>]);
+}
+
+<span class="com">// 솔버 = 초기해 생성(그리디) + 지역탐색 개선, 5초 제한</span>
 RoutingSearchParameters params = main.defaultRoutingSearchParameters()
     .toBuilder()
-    .setFirstSolutionStrategy(FirstSolutionStrategy.PATH_CHEAPEST_ARC)         <span class="com">// 가까운 노드부터 그리디로 초기해 생성</span>
-    .setLocalSearchMetaheuristic(LocalSearchMetaheuristic.GUIDED_LOCAL_SEARCH) <span class="com">// 초기해를 개선하며 국소최적 탈출</span>
-    .setTimeLimit(Duration.ofSeconds(<span class="str">5</span>))
-    .build();</pre>
+    .setFirstSolutionStrategy(FirstSolutionStrategy.Value.PATH_CHEAPEST_ARC)
+    .setLocalSearchMetaheuristic(LocalSearchMetaheuristic.Value.GUIDED_LOCAL_SEARCH)
+    .setTimeLimit(Duration.newBuilder().setSeconds(<span class="str">5</span>).build())
+    .build();
+Assignment solution = routing.solveWithParameters(params);</pre>
     </details>
 
     <p style="font-size:13px; color:var(--ink-soft); margin-top:14px;">
@@ -1660,11 +1701,11 @@ RoutingSearchParameters params = main.defaultRoutingSearchParameters()
     </details>
 
     <details class="fold"><summary>구현 코드 — 비관적 락 seq 채번 (Java)<span class="fold-hint">클릭해 펼치기</span></summary>
-    <pre><span class="ann">@Lock</span>(LockModeType.PESSIMISTIC_WRITE)
+    <pre><span class="com">// 업체 배송담당자 최고 순번(seq) 조회 — 파생 쿼리 메서드에 비관적 락 부여</span>
+<span class="ann">@Lock</span>(LockModeType.PESSIMISTIC_WRITE)
 <span class="ann">@QueryHints</span>({<span class="ann">@QueryHint</span>(name = <span class="str">"jakarta.persistence.lock.timeout"</span>, value = <span class="str">"3000"</span>)})
-<span class="ann">@Query</span>(<span class="str">"select dm from DeliveryManager dm "</span>
-     + <span class="str">"where dm.hubId = :hubId order by dm.seq desc"</span>)
-Optional&lt;DeliveryManager&gt; findTopByHubIdOrderBySeqDesc(UUID hubId);
+Optional&lt;DeliveryManager&gt; findTopByTypeAndHubId_HubIdAndDeletedAtIsNullOrderBySeqDesc(
+    DeliveryManagerType type, UUID hubId);
 <span class="com">// → SELECT ... FOR UPDATE — 동시 요청은 대기 후 순차 처리, 3초 초과 시 LockTimeoutException</span></pre>
     </details>
 

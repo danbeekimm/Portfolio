@@ -1589,9 +1589,9 @@
             </div>
 
             <details class="fold"><summary>핵심 코드 — Self-preference 차단 (Java)<span class="fold-hint">클릭해 펼치기</span></summary>
-            <pre><span class="com">// EvalProcessor.judgeAndSave()</span>
+            <pre><span class="com">// EvalProcessor.judgeAndSave() — 응답 생성 모델과 Judge 모델이 동일하면 self-preference bias 발생 → skip</span>
 <span class="kw">if</span> (judgeModel.equalsIgnoreCase(ragQuery.getLlmModel())) {
-    log.warn(<span class="str">"Self-preference bias 방지: skip. model={}"</span>, judgeModel);
+    log.warn(<span class="str">"Self-preference bias 방지: RAG 생성 모델과 Judge 모델이 동일하여 skip. model={}"</span>, judgeModel);
     <span class="kw">return</span>;
 }</pre>
             </details>
@@ -1858,12 +1858,26 @@
                 </ul>
                 <p><strong>R</strong> · 알림 수신 후 수 초 내 "근거 메트릭/로그 + 권장 조치" 자동 게시. <strong>AI를 운영 모니터링 시스템의 일부로 통합.</strong></p>
                 <details class="fold"><summary>핵심 코드 — @Async 비동기 ACK (Java)<span class="fold-hint">클릭해 펼치기</span></summary>
-                <pre style="margin-top:14px;"><span class="com">// Slack 3초 응답 제약 → @Async ACK 후 메시지 갱신</span>
+                <pre style="margin-top:14px;"><span class="com">// Slack 3초 응답 제약 → @Async로 먼저 ACK 후 메시지 갱신</span>
 <span class="kw">@Async</span>(<span class="str">"slackActionExecutor"</span>)
 <span class="kw">public void</span> executeAndNotifyAsync(SlackActionCommand command) {
-    trySlack(<span class="str">"처리 중"</span>, () -> alertPort.markAsProcessing(...));
-    ActionResult result = executeAction(...);
-    trySlack(<span class="str">"완료/실패 갱신"</span>, () -> alertPort.markAsHandled(...));
+    Notification notification = notificationRepository.findById(command.notificationId())
+            .orElseThrow(NotificationException::notFound);
+
+    trySlack(<span class="str">"처리 중 메시지 갱신"</span>, () ->
+            alertPort.markAsProcessing(notification, command.slackUserId(), command.action()));
+
+    ActionResult result = executeAction(command.action(), notification.getJob());
+    <span class="kw">if</span> (result <span class="kw">instanceof</span> ActionResult.Failure) {
+        notificationCommandHandler.markActionFailed(command.notificationId());
+    }
+    <span class="kw">boolean</span> succeeded = result <span class="kw">instanceof</span> ActionResult.Success;
+
+    trySlack(<span class="str">"Slack 메시지 업데이트"</span>, () ->
+            alertPort.markAsHandled(notification, command.slackUserId(), command.action(), succeeded));
+    trySlack(<span class="str">"스레드 답글 전송"</span>, () ->
+            alertPort.notifyActionResult(notification.getChannelId(),
+                    notification.getSlackMessageTs(), command.action(), command.slackUserId(), result));
 }</pre>
                 </details>
                 <div class="code-links">

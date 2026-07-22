@@ -241,41 +241,6 @@
                 <div class="ai-stage-body">코드 작업 후 <strong>자동 검토(A) · 빌드/테스트/API(B) · Slack 보고(C)</strong> 워크플로우의 트리거와 흐름을 정의. "언제 무엇을 자동으로 할지"를 명문화.</div>
             </div>
         </div>
-
-        <h3 class="spaced">심각도 체계 — 리뷰가 무엇을 막고 무엇을 권하는가</h3>
-        <div class="two-col">
-            <div class="box warn">
-                <div class="box-title"><span class="sev red">🔴 Request Changes</span> &nbsp;반드시 수정</div>
-                <ul>
-                    <li><strong>아키텍처 경계 위반</strong> — DDD/레이어/트랜잭션/이벤트 경계</li>
-                    <li><code>@Transactional</code> 안에서 외부 API 호출(커넥션 점유)</li>
-                    <li>JPA 엔티티 <code>@Setter</code>/<code>@Data</code> — 상태 변경은 의미 있는 메서드로</li>
-                    <li>1 트랜잭션 1 Aggregate · 분산 트랜잭션(2PC) 금지 → Kafka 최종 일관성</li>
-                    <li>동시성 제어 누락 · 민감정보 평문 로그</li>
-                </ul>
-            </div>
-            <div class="box muted">
-                <div class="box-title"><span class="sev yellow">🟡 Comment</span> &nbsp;개선 권장</div>
-                <ul>
-                    <li>성능 · 코드 품질 · 리팩토링</li>
-                    <li>VO/DTO/Event는 <code>record</code> · Strong Type VO(primitive obsession 회피)</li>
-                    <li>N+1 회피 — 연관관계 <code>LAZY</code> 기본, 필요 시 fetch join</li>
-                </ul>
-            </div>
-        </div>
-
-        <h3 class="spaced">코드베이스 특수 예외는 규칙으로 흡수한다</h3>
-        <p class="body-p">
-            일반론이 이 코드베이스엔 안 맞는 경우, <strong>왜 예외인지를 규칙 문서에 직접 박아</strong> AI 리뷰가 같은 지적을 반복하지 않게 합니다.
-            예: "모든 <code>record</code>의 compact constructor에 검증을 넣으라"는 일반 규칙에 대해 —
-        </p>
-        <div class="box">
-            <div class="box-title">conventions §4 — 명문화된 예외</div>
-            <ul>
-                <li>서비스 간 <strong>내부 이벤트 메시지 <code>record</code>는 발행 측에서 검증되었다고 가정</strong>하므로 compact constructor 검증의 예외로 둔다.</li>
-                <li>→ AI/리뷰 봇이 "검증 누락"으로 잘못 지적하지 않고, <strong>의도한 설계</strong>임을 그대로 확인할 수 있다.</li>
-            </ul>
-        </div>
     </section>
 
     <!-- 04 — WORKFLOWS -->
@@ -298,7 +263,6 @@
 
         <h3 class="spaced">A. <span class="accent">/revref</span> — 컨벤션 준수 자동 검토</h3>
         <p class="body-p"><code>git diff</code> 변경분(<code>--context</code>)이나 지정 파일을 대상으로, <strong>차원별 리뷰 에이전트를 병렬 실행</strong>해 위반을 심각도와 근거(<code>conventions §N</code>)와 함께 보고합니다. 같은 일반론 지적이 반복되면 규칙 문서로 흡수합니다.</p>
-        <p class="body-p"><strong>병렬 검토 차원</strong> — ① 아키텍처/레이어/DDD(§2,5,7) ② Spring/JPA 내부(§1) ③ 동시성(§6) ④ 타입 안정성·공통 모듈(§4,9). <code>--context</code> 모드에서는 정확성(<code>/code-review</code>)·보안(<code>/security-review</code>) 검토까지 통합해 <strong>🔴/🟡 + 파일:라인 + 근거 → 제안</strong> 형식으로 종합합니다.</p>
 
         <div class="shot">
             <div class="shot-head">

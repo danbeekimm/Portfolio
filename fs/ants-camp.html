@@ -1230,12 +1230,6 @@
                     <li><strong>bias 방어</strong> — Judge==생성모델이면 채점 skip · Judge temperature 0 · Judge 2종(claude-sonnet-4-6 + gpt-4o) 교차 검증</li>
                 </ul>
                 <p><strong>R</strong> · 점수·승률 기반으로 <strong>gpt-4o-mini → claude-haiku 교체</strong>. <strong>OpenAI 자사 gpt-4o조차 gpt-4o-mini를 낮게 평가</strong> → 계열 편향 데이터로 반박.</p>
-                <div class="code-links">
-                    <span class="code-links-label">CODE</span>
-                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/assistant-service/src/main/java/io/antcamp/assistantservice/application/service/EvalProcessor.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>EvalProcessor.java<span class="hint">· Judge 채점·bias skip</span></a>
-                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/assistant-service/src/main/java/io/antcamp/assistantservice/application/service/PairwiseProcessor.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>PairwiseProcessor.java<span class="hint">· A/B 위치 교차</span></a>
-                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/assistant-service/src/main/java/io/antcamp/assistantservice/application/service/RetrievalReranker.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>RetrievalReranker.java<span class="hint">· 검색 컷오프</span></a>
-                </div>
             </div>
         </div>
 
@@ -1315,18 +1309,24 @@
                     <li><strong>수집</strong> — Prometheus(15s scrape · 10 job) + Promtail(<code>docker_sd_configs</code> 컨테이너 자동 발견)</li>
                     <li><strong>저장</strong> — Loki(로그) · Prometheus TSDB(메트릭)</li>
                     <li><strong>시각화</strong> — Grafana provisioning IaC(대시보드 코드 관리)</li>
-                    <li><strong>알림</strong> — Alertmanager + 룰 7종 차등 설계</li>
+                    <li><strong>알림</strong> — Alertmanager + 룰 7종 차등 설계(아래 표)</li>
                 </ul>
                 <p><strong>R</strong> · MTTD &lt; 1분, 반복 알림 LLM 비용 0(dedup). SPOF 해소 fallback까지 완비.</p>
-                <div class="code-links">
-                    <span class="code-links-label">CODE</span>
-                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/monitoring/prometheus/alert-rules.yaml" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>alert-rules.yaml<span class="hint">· 룰 7종 for: 차등</span></a>
-                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/monitoring/alertmanager/alertmanager.yaml" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>alertmanager.yaml<span class="hint">· match_re fallback</span></a>
-                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/monitoring/promtail/promtail.yaml" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>promtail.yaml<span class="hint">· docker_sd</span></a>
-                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/tree/dev/monitoring" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>monitoring/<span class="hint">· 스택 전체</span></a>
-                </div>
             </div>
         </div>
+
+        <table>
+            <thead>
+            <tr><th>룰</th><th>임계 / for</th><th>심각도</th><th>근거</th></tr>
+            </thead>
+            <tbody>
+            <tr><td>ServiceDown</td><td class="num">up == 0 / 1m</td><td><span class="pill warn">critical</span></td><td>scrape 15s × 4회 연속 실패라야 발동 → 순간 끊김과 구분</td></tr>
+            <tr><td>ConnPoolPending</td><td class="num">&gt; 3 / 1m</td><td><span class="pill warn">critical</span></td><td>대기 자체가 고갈 신호 → 가장 짧게</td></tr>
+            <tr><td>HighCPU</td><td class="num">0.8 / 2m</td><td><span class="pill warn">critical</span></td><td>throttling 시작 구간, 100% 직전 여유</td></tr>
+            <tr><td>HighMemory · ConnPoolNear · HttpError</td><td class="num">/ 2m</td><td><span class="pill">warning</span></td><td>스파이크와 추세 구분 가능한 지점</td></tr>
+            <tr><td>HighGcOverhead</td><td class="num">0.1 / 5m</td><td><span class="pill">warning</span></td><td>단기 변동 잦아 가장 길게</td></tr>
+            </tbody>
+        </table>
         <p style="font-size:13px;color:var(--accent);margin-top:14px;">
             <strong>★ SPOF 해소</strong> — notification-service 자기 장애 시 Alertmanager <code style="background:var(--code-bg);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11.5px;">match_re</code>(라벨 정규식 매칭으로 알림 라우트 분기) fallback으로 Slack 직통(LLM 분석 없는 단순 텍스트로 알림 보존).
         </p>
@@ -1367,13 +1367,6 @@
                     <li><strong>HITL 액션</strong> — Slack Block Kit으로 분석 + <strong>복구 버튼 4종</strong>(restart / rollback / cache-clear / false-alarm) 동시 노출</li>
                 </ul>
                 <p><strong>R</strong> · 알림 수신 후 수 초 내 "근거 메트릭/로그 + 권장 조치" 자동 게시. <strong>AI를 운영 모니터링 시스템의 일부로 통합.</strong></p>
-                <div class="code-links">
-                    <span class="code-links-label">CODE</span>
-                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/notification-service/src/main/java/io/antcamp/notificationservice/application/service/NotificationApplicationService.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>NotificationApplicationService.java<span class="hint">· dedup→RCA→HITL</span></a>
-                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/notification-service/src/main/java/io/antcamp/notificationservice/infrastructure/client/slack/SlackBlockBuilder.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>SlackBlockBuilder.java<span class="hint">· 복구 버튼 4종</span></a>
-                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/notification-service/src/main/java/io/antcamp/notificationservice/infrastructure/client/llm/ClaudeApiClient.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>ClaudeApiClient.java<span class="hint">· LLM RCA</span></a>
-                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/notification-service/src/main/java/io/antcamp/notificationservice/infrastructure/client/redis/RedisDeduplicationAdapter.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>RedisDeduplicationAdapter.java<span class="hint">· SET NX dedup</span></a>
-                </div>
             </div>
         </div>
 
@@ -1406,12 +1399,6 @@
                 <p><strong>P</strong> · LLM 제안 시스템은 ① 인프라 서비스 오작동(LLM이 gateway/kafka에 destructive action 권유), ② 외부 위변조 요청(공개 endpoint 노출), ③ LLM 입력으로의 PII/시크릿 유출 등 다층 위험을 동시에 가짐.</p>
                 <p><strong>A</strong> · 세 위험에 각각 독립적 방어선을 둠 (아래 3겹).</p>
                 <p><strong>R</strong> · 세 시나리오 모두 fallback 동작 검증 완료 — ① notification-service 자기 장애 시 Alertmanager <code>match_re</code> fallback으로 Slack 직통, ② LLM API 장애 시 단순 텍스트 fallback, ③ 비동기 ingest 실패 시 Reconciler 자가복구.</p>
-                <div class="code-links">
-                    <span class="code-links-label">CODE</span>
-                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/notification-service/src/main/java/io/antcamp/notificationservice/infrastructure/security/filter/SlackSignatureVerificationFilter.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>SlackSignatureVerificationFilter.java<span class="hint">· HMAC·replay·timing</span></a>
-                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/notification-service/src/main/java/io/antcamp/notificationservice/infrastructure/client/llm/PromptUtil.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>PromptUtil.java<span class="hint">· PII 마스킹</span></a>
-                    <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/notification-service/src/main/java/io/antcamp/notificationservice/infrastructure/config/NotificationProperties.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>NotificationProperties.java<span class="hint">· 인프라 화이트리스트</span></a>
-                </div>
             </div>
         </div>
 
@@ -1497,33 +1484,6 @@
                 </div>
             </div>
         </div>
-
-        <div class="fe-highlight">
-            <div class="fe-h-title">RAG 운영 콘솔 — 백엔드와 프론트엔드를 잇는 한 가지</div>
-            <p>
-                LLM-as-a-Judge 평가 파이프라인(백엔드)부터 그 결과로 모델 교체를 결정하는 콘솔(프론트)까지 직접 구현했습니다.
-                덕분에 <strong>화면이 필요로 하는 형태로 API를 설계</strong>할 수 있었고, 평가 → 비교 → 적용으로 이어지는 운영 흐름이 화면 안에서 끊기지 않습니다.
-            </p>
-        </div>
-
-        <p class="fe-decision">
-            <strong>상태 관리 — Redux vs Zustand.</strong> Redux의 강점(예측 가능한 단방향 흐름, 미들웨어·DevTools 생태계, 대규모 팀 협업 규약)과
-            비용(보일러플레이트, 러닝커브)을 이 프로젝트 조건에 비춰봤습니다. 전역 상태가 <strong>인증·시세·테마</strong>로 한정적이고 5인 단기 프로젝트라,
-            Redux의 구조적 이점을 살릴 규모가 아니라고 판단해 <strong>가벼운 Zustand</strong>를 택했습니다. "왜 이 기술인가"를 설명할 수 있을 때 고른 선택입니다.
-        </p>
-
-        <p class="fe-decision">
-            <strong>스토어 설계.</strong> 전역 상태를 <strong>도메인별 4개 스토어로 분리</strong>(<code>authStore</code> · <code>stockStore</code> · <code>tickerStore</code> · <code>themeStore</code>)했습니다.
-            인증·테마는 <strong>localStorage와 동기화</strong>해 새로고침에도 유지되고, 시세는 종목을 <strong>Record 맵(<code>stocks[종목코드]</code>)</strong>으로 들고 있어 실시간 갱신이 O(1)로 떨어집니다.
-            체결가 히스토리는 <strong>최근 60개 슬라이딩 윈도우</strong>로 잘라 차트 데이터가 무한히 자라지 않게 했습니다 — 별도 서버 상태 라이브러리 없이
-            <strong>실시간 스트림의 캐싱을 Zustand 스토어가 직접 담당</strong>하는 구조입니다.
-        </p>
-
-        <div class="code-links" style="margin-top:24px;">
-            <span class="code-links-label">CODE</span>
-            <a class="code-link" href="https://github.com/danbeekimm/ants-camp-frontend" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>ants-camp-frontend<span class="hint">· React · TS · Tailwind · Zustand</span></a>
-            <a class="code-link" href="https://app.antscamp.site/guest/login" target="_blank" rel="noopener">▶ 라이브 데모<span class="hint">· 게스트 로그인</span></a>
-        </div>
     </section>
 
     <!-- SECTION 08 — REALTIME · WEBSOCKET -->
@@ -1537,7 +1497,7 @@
         </p>
 
         <ul class="approach-points">
-            <li><strong>선언적 구독 동기화</strong> — 스토어의 구독 종목 변경을 감지해 추가된 종목만 subscribe · 빠진 종목만 unsubscribe</li>
+            <li><strong>선언적 구독 동기화</strong> — 스토어의 구독 종목 변경을 감지해 추가된 종목만 구독 · 빠진 종목만 구독 해제</li>
             <li><strong>재연결 3초 + 자동 재구독</strong> — 재연결 시 스토어에 남은 종목 전체를 복구. KIS/STOMP 이중 연결 상태는 배지로 시각화</li>
             <li><strong>REST 폴백</strong> — 장 마감 등 실시간 데이터가 없으면 현재가 REST 조회로 대체해 빈 화면 방지</li>
         </ul>

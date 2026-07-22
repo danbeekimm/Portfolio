@@ -1259,7 +1259,7 @@
       <div class="contrib-headline">
         <div class="contrib-num">🗄️ DEEP DIVE — DB MIGRATION</div>
         <div class="contrib-title">PostgreSQL → MSSQL 마이그레이션 후 슬로우 쿼리 개선</div>
-        <div class="contrib-impact">시행착오로 해결한 작업을 이후 학습으로 원리 레벨에서 설명할 수 있게 된 사례</div>
+        <div class="contrib-impact">거대 단일 쿼리를 임시 테이블 분할로 개선 — 옵티마이저 추정 원리로 설명 가능한 해결</div>
       </div>
       <div class="contrib-body">
         <p><strong>P</strong> · 팀 차원에서 PG → MSSQL(구버전, 2016) 전체 이관을 진행. 마이그레이션 후 <strong>특정 쿼리가 눈에 띄게 느려진 케이스</strong>를 담당해 개선. <em>특히 주된 원인은, 중복 제거 문자열 집계에서 PG의 <code style="background:var(--code-bg);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11.5px;">string_agg(DISTINCT)</code>가 MSSQL 2016에는 없어 <strong>STUFF + FOR XML PATH + DISTINCT 서브쿼리</strong>로 우회해야 했고 이 우회 자체가 큰 성능 저하를 유발</em>.</p>
@@ -1302,10 +1302,13 @@
         <p><strong>R</strong> · 벤더가 바뀌어도 <strong>기존 환경 대비 동일 수준의 응답 성능 유지</strong>하며 슬로우 쿼리 개선 완료.</p>
 
         <div class="honest-aside">
-          <span class="aside-tag">📚 당시 한계와 이후 학습</span>
-          당시엔 옵티마이저 개념을 깊이 알지 못한 채 시행착오로 해결.
-          <strong>이후 학습 결과로 이해한 메커니즘</strong>: MSSQL 옵티마이저는 참여 테이블 수와 데이터 분포가 복잡해질수록 통계 추정이 빗나가 <em>잘못된 조인 순서나 비효율적 조인 방식(예: 해시 조인이 적절한데 중첩 루프를 택함)</em>을 선택하는 경향이 있음. 거대한 단일 쿼리를 통째로 던지면 옵티마이저가 길을 잃는 상황이었던 것. 임시 테이블 분할은 각 단계마다 데이터 크기·통계가 명확한 상태에서 옵티마이저가 판단하도록 강제하는 효과.
-          <strong>다음 작업 시 접근법</strong>: 실행 계획을 먼저 확인하고 옵티마이저의 추정·실제 차이를 진단한 뒤 접근.
+          <span class="aside-tag">⚙️ 처리 원리 — 왜 임시 테이블 분할이 통했나</span>
+          MSSQL 옵티마이저는 테이블 <strong>통계(히스토그램)로 각 단계의 행 수를 추정</strong>해 조인 순서·방식을 고른다. 참여 테이블과 중간 결과가 많아질수록 추정 오차가 단계마다 <em>곱으로 누적</em>돼, 잘못된 조인 순서나 비효율적 조인 방식(예: 해시 조인이 적절한데 중첩 루프를 택함)을 고르기 쉽다. 임시 테이블 분할은 <strong>중간 결과를 실제 데이터로 물질화(materialize)</strong>해 다음 단계 옵티마이저가 정확한 크기·통계 위에서 다시 판단하게 만드는 효과 — 거대한 한 방 쿼리에서 누적되던 추정 오차를 단계 경계마다 끊어낸다.
+          <br><br>
+          <strong>옵티마이저 확인 방법</strong>:
+          ① SSMS <strong>실제 실행 계획</strong>(Ctrl+M)으로 연산자별 <em>추정 행 수 vs 실제 행 수</em>의 괴리와 선택된 조인 방식을 확인
+          ② <code style="background:var(--code-bg);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:12px;">SET STATISTICS IO ON</code> · <code style="background:var(--code-bg);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:12px;">SET STATISTICS TIME ON</code>으로 쿼리 형태별 <em>논리적 읽기 수·CPU/경과 시간</em>을 수치로 비교
+          ③ 추정이 크게 빗나가면 <code style="background:var(--code-bg);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:12px;">UPDATE STATISTICS</code>로 통계 최신화 여부부터 점검.
         </div>
       </div>
     </div>

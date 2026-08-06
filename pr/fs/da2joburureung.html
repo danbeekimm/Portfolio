@@ -1058,65 +1058,11 @@
         <div class="feature-body">상품 등록 시 LLM 기반 설명 자동 생성. AI 응답 로그는 별도 트랜잭션(REQUIRES_NEW)으로 분리해 본 로직 무영향.</div>
       </div>
     </div>
-
-    <h3 style="margin-top:32px; margin-bottom:14px;">2-Track 배송 구조 — 발제문 기반</h3>
-    <table>
-      <thead>
-      <tr><th>트랙</th><th>역할</th><th>인원</th><th>배정 방식</th></tr>
-      </thead>
-      <tbody>
-      <tr>
-        <td><strong>허브 배송 담당자</strong></td>
-        <td>허브 간 화물 이동 (경기도 허브 → 부산 허브)</td>
-        <td class="num">전체 10명</td>
-        <td>대기시간·순번 기반 <strong>라운드로빈</strong></td>
-      </tr>
-      <tr>
-        <td><strong>업체 배송 담당자</strong></td>
-        <td>최종 허브 → 수령 업체 배송</td>
-        <td class="num">허브당 10명</td>
-        <td><strong>OR-Tools VRPTW</strong> (시간창·차량 부하 균등)</td>
-      </tr>
-      </tbody>
-    </table>
-    <p style="font-size:13px; color:var(--ink-soft); margin-top:14px;">
-      두 트랙의 <strong>업무는 명확히 분리</strong> — 허브 배송 담당자는 허브 → 업체 배송 불가, 업체 배송 담당자는 허브 간 배송 불가.
-      이 도메인 특성을 코드로 강제하기 위해 <strong>배정 알고리즘 자체를 트랙별로 분리</strong>(라운드로빈 / VRPTW)했습니다.
-    </p>
-  </section>
-
-  <!-- 03 — DESIGN GOALS (이전 02 — 핵심 도전 + 핵심 기여) -->
-  <section class="section">
-    <div class="section-tag">03 · DESIGN GOALS</div>
-    <h2>설계 도전 과제와 핵심 기여</h2>
-    <div class="section-rule"></div>
-
-    <div class="two-col">
-      <div class="box">
-        <div class="box-title">핵심 도전 과제</div>
-        <ul>
-          <li>분산 트랜잭션 없이 <strong>이벤트 유실 · 유령 이벤트</strong> 차단 — DB 커밋과 Kafka 발행의 원자성 불가</li>
-          <li>외부 서비스 장애 시 <strong>연쇄 전파(cascading failure)</strong> 차단 — 대기 스레드 누적 문제</li>
-          <li>B2B의 <strong>시간창 SLA</strong> 준수 — 후처리 정렬 아닌 제약 조건으로 모델링 필요</li>
-          <li>seq 채번의 <strong>Read-Modify-Write race</strong> — 동시 등록 시 중복 발급 위험</li>
-        </ul>
-      </div>
-      <div class="box muted">
-        <div class="box-title">핵심 기여 (개인)</div>
-        <ul>
-          <li>company-service 전담 + DeliveryManager 도메인 <strong>DDD 4계층 헥사고날</strong> 설계</li>
-          <li>업체 삭제 이벤트의 <strong>Kafka + Outbox 패턴</strong> 구현 (Saga 대안 검토 후 채택)</li>
-          <li>user/hub/order 호출의 <strong>OpenFeign + Resilience4j CB</strong> 적용</li>
-          <li>매일 06:00 cron의 <strong>OR-Tools VRPTW</strong> 일괄 배송 최적화</li>
-          <li>seq 채번 <strong>비관적 락(PESSIMISTIC_WRITE)</strong> — 스터디에서 학습한 트레이드오프 적용</li>
-        </ul>
-      </div>
-    </div>
   </section>
 
   <!-- 04 — ARCHITECTURE -->
   <section class="section">
-    <div class="section-tag">04 · ARCHITECTURE</div>
+    <div class="section-tag">03 · ARCHITECTURE</div>
     <h2>시스템 아키텍처</h2>
     <div class="section-rule"></div>
     <p class="lede">
@@ -1314,45 +1260,11 @@
       배송 컨텍스트는 처음엔 <code style="background:var(--code-bg);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11.5px;">delivery / delivery_manager / delivery_route</code> 3개 서비스로 분할 시도했으나
       <strong>강한 응집성·동일 트랜잭션 경계 요구</strong> 때문에 <code style="background:var(--code-bg);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11.5px;">delivery-service</code> 한 컨텍스트로 통합하고 내부 도메인으로 분리.
     </p>
-
-    <h3 style="margin-top:32px; margin-bottom:14px;">설계 의사결정과 근거</h3>
-    <table>
-      <thead>
-      <tr><th>결정</th><th>대안</th><th>선택 이유 — 트레이드오프 명시</th></tr>
-      </thead>
-      <tbody>
-      <tr>
-        <td>MSA + DDD 헥사고날</td>
-        <td>모놀리식 (omin)</td>
-        <td>직전 omin에서 한 도메인에 결함이 나면 전체가 멈추고 도메인 전용 기술(PostGIS)을 전 팀원이 설치해야 했던 비효율 직접 경험 → <strong>도메인별 독립 배포·기술 선택</strong>이 가능한 MSA로.</td>
-      </tr>
-      <tr>
-        <td>database-per-service</td>
-        <td>공유 DB · schema 분리</td>
-        <td>바운디드 컨텍스트별 PostgreSQL 분리 → 서비스 독립성·장애 격리. <strong>데이터 정합성은 Outbox 이벤트로 별도 보장.</strong></td>
-      </tr>
-      <tr>
-        <td>"검증=동기, 통지=비동기" 통신 분리</td>
-        <td>전부 동기 / 전부 비동기</td>
-        <td>정합성 검증("이 hub가 있나?")은 응답을 받아야 진행 가능 → 동기(Feign). 삭제 통지는 응답 불필요 → 비동기(Kafka). <strong>의도적 분리.</strong></td>
-      </tr>
-      <tr>
-        <td>Outbox 패턴</td>
-        <td>Saga · 2PC · 직접 Kafka 발행</td>
-        <td>단방향 통지·응답 불필요라 full Saga는 과함. 2PC는 분산 트랜잭션 회피. 직접 발행은 유실/유령 이벤트 위험 → <strong>at-least-once + 결과적 일관성</strong>의 Outbox가 적정.</td>
-      </tr>
-      <tr>
-        <td>단일 인스턴스 → 분산 락 생략</td>
-        <td>ShedLock · 리더 선출</td>
-        <td>각 서비스 단일 인스턴스 배포 토폴로지 → Outbox 스케줄러 중복 실행 자체가 발생 X. <strong>수평 확장 시</strong> ShedLock + 컨슈머 멱등 처리 추가 예정.</td>
-      </tr>
-      </tbody>
-    </table>
   </section>
 
   <!-- 04 — CONTRIBUTION ① — Kafka + Outbox -->
   <section class="section">
-    <div class="section-tag">05 · KEY CONTRIBUTION ①</div>
+    <div class="section-tag">04 · KEY CONTRIBUTION ①</div>
     <div class="contrib-card">
       <div class="contrib-headline">
         <div class="contrib-num">📨 CONTRIBUTION #1</div>
@@ -1363,13 +1275,6 @@
         <p><strong>P</strong> · 업체 삭제 시 주문·상품 등 타 서비스 통지가 필요한데, "DB 커밋 → Kafka 발행" 사이 발행 실패 시 <strong>이벤트 영구 유실</strong>(DB는 지워졌는데 남들은 모름), 발행 후 DB 롤백 시 <strong>유령 이벤트</strong>(다른 서비스는 삭제됐다고 알고 처리). 분산 트랜잭션(2PC)은 가용성을 해치고 MSA와 부적합.</p>
         <p><strong>A</strong> · 삭제 트랜잭션 내 <code>OutboxEvent</code>(PENDING) <strong>원자 저장</strong> → DB 커밋과 함께 커밋(또는 함께 롤백). <code>OutboxEventScheduler</code>가 <code>@Scheduled(fixedDelay=10000)</code>로 10초마다 PENDING을 Kafka로 발행→<code>PUBLISHED</code>. 실패 시 PENDING 유지 → 다음 주기 자동 재발행.</p>
         <p><strong>R</strong> · 분산 트랜잭션 없이 <strong>at-least-once 발행 + 결과적 일관성</strong> 보장. 단위 테스트로 단일 이벤트 실패가 나머지 발행을 막지 않음 검증.</p>
-        <div class="code-links">
-          <span class="code-links-label">CODE</span>
-          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/company-service/src/main/java/com/da2jobu/application/service/CompanyService.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>CompanyService.java<span class="hint">· deleteCompany 원자 저장</span></a>
-          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/company-service/src/main/java/com/da2jobu/infrastructure/messaging/outbox/OutboxEventScheduler.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>OutboxEventScheduler.java<span class="hint">· 10s 폴링 발행</span></a>
-          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/company-service/src/main/java/com/da2jobu/infrastructure/messaging/outbox/OutboxEvent.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>OutboxEvent.java<span class="hint">· 상태 모델</span></a>
-          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/company-service/src/test/java/com/da2jobu/infrastructure/messaging/outbox/OutboxEventSchedulerTest.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>OutboxEventSchedulerTest.java<span class="hint">· 단위 테스트</span></a>
-        </div>
       </div>
     </div>
 
@@ -1398,53 +1303,11 @@
       </div>
     </div>
     </details>
-
-    <details class="fold"><summary>구현 코드 — Outbox 원자 저장 (Java)<span class="fold-hint">클릭해 펼치기</span></summary>
-    <pre><span class="com">// CompanyService — 삭제 트랜잭션 안에서 이벤트 발행을 위임 (원자성)</span>
-<span class="ann">@Transactional</span>
-<span class="ann">@CacheEvict</span>(value = <span class="str">"company"</span>, key = <span class="str">"#companyId"</span>)
-<span class="kw">public void</span> deleteCompany(UUID companyId, String userRole, UUID userId) {
-    Company company = findCompanyOrThrow(companyId);
-    <span class="com">// ... 권한 검증 · 진행 중 주문 확인 ...</span>
-    company.softDelete(userId.toString());
-    companyEventPublisher.publishCompanyDeleted(
-        companyId, userId.toString(), company.getDeletedAt());
-}
-
-<span class="com">// CompanyEventPublisherImpl — 도메인 변경과 같은 트랜잭션에서 Outbox 저장</span>
-<span class="ann">@Override</span>
-<span class="kw">public void</span> publishCompanyDeleted(UUID companyId, String deletedBy, LocalDateTime deletedAt) {
-    String payload = objectMapper.writeValueAsString(Map.of(
-        <span class="str">"companyId"</span>, companyId.toString(),
-        <span class="str">"deletedBy"</span>, deletedBy,
-        <span class="str">"deletedAt"</span>, deletedAt.toString()));
-    OutboxEvent outboxEvent = OutboxEvent.create(
-        <span class="str">"Company"</span>, companyId, <span class="str">"CompanyDeleted"</span>, COMPANY_DELETED_TOPIC, payload);
-    outboxEventRepository.save(outboxEvent);  <span class="com">// 같은 트랜잭션 — 원자 보장</span>
-}
-
-<span class="com">// OutboxEventScheduler — 10초마다 PENDING을 Kafka로 발행</span>
-<span class="ann">@Scheduled</span>(fixedDelay = <span class="str">10000</span>)
-<span class="kw">public void</span> publishPendingEvents() {
-    List&lt;OutboxEvent&gt; pendingEvents =
-        outboxEventRepository.findByStatusOrderByCreatedAtAsc(OutboxStatus.PENDING);
-    <span class="kw">for</span> (OutboxEvent event : pendingEvents) {
-        <span class="kw">try</span> {
-            kafkaTemplate.send(event.getTopic(),
-                event.getAggregateId().toString(), event.getPayload()).get();
-            event.markPublished();
-            outboxEventRepository.save(event);
-        } <span class="kw">catch</span> (Exception e) {  <span class="com">// 단일 실패가 나머지 발행을 막지 않음 → 다음 주기 재시도</span>
-            log.warn(<span class="str">"발행 실패, 다음 주기 재시도: id={}"</span>, event.getEventId());
-        }
-    }
-}</pre>
-    </details>
   </section>
 
   <!-- 05 — CONTRIBUTION ② — Circuit Breaker -->
   <section class="section">
-    <div class="section-tag">06 · KEY CONTRIBUTION ②</div>
+    <div class="section-tag">05 · KEY CONTRIBUTION ②</div>
     <div class="contrib-card">
       <div class="contrib-headline">
         <div class="contrib-num">🛡 CONTRIBUTION #2</div>
@@ -1455,68 +1318,13 @@
         <p><strong>P</strong> · 외부 서비스 호출이 타임아웃까지 블로킹되면 <strong>대기 스레드 누적 → 내 서비스까지 연쇄로 죽음</strong>(cascading failure). 단순 동기 호출은 한 서비스 장애가 전체로 번지는 구조.</p>
         <p><strong>A</strong> · 통신을 의도적으로 분리: <strong>정합성 검증은 동기(Feign)로, 삭제 통지는 비동기(Kafka)로</strong>. user/hub/order 호출은 <code>@CircuitBreaker</code> + <code>@Retry</code>로 감쌈. CB(window 10·실패율 50%·OPEN 10s·slow-call 3s·retry 3회/500ms)로 fallback 즉시 반환.</p>
         <p><strong>R</strong> · CB OPEN 시 즉시 fallback 반환 → 대기 스레드 누적·연쇄 장애 차단. CB 상태전이(OPEN/CLOSED/HALF_OPEN)·호출차단·slow-call 전체 로깅.</p>
-        <div class="code-links">
-          <span class="code-links-label">CODE</span>
-          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/company-service/src/main/java/com/da2jobu/infrastructure/client/HubClientImpl.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>HubClientImpl.java<span class="hint">· CB+fallback</span></a>
-          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/company-service/src/main/java/com/da2jobu/infrastructure/config/ResilienceConfig.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>ResilienceConfig.java<span class="hint">· 상태전이 로깅</span></a>
-          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/company-service/src/main/resources/application-docker.yml" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>application-docker.yml<span class="hint">· CB 설정값</span></a>
-        </div>
       </div>
     </div>
-
-    <h3 style="margin-top:28px; margin-bottom:14px;">연쇄 전파가 어떻게 번지나 (Why → Why)</h3>
-    <div class="box muted">
-      <div class="box-title">실제 장애 시나리오 — hub-service 일시 장애</div>
-      <ul>
-        <li>외부 호출이 <strong>타임아웃까지 스레드를 점유</strong></li>
-        <li>풀에서 스레드가 빠르게 소진 → 새 요청이 대기 큐에 적체</li>
-        <li>대기 요청도 결국 타임아웃 → company-service 자체 응답 지연</li>
-        <li>fail-fast가 없으면 장애가 <strong>양방향으로 전파</strong> → CB OPEN 시 즉시 fallback해 점유 시간을 타임아웃에서 수 ms로 끊어냄</li>
-      </ul>
-    </div>
-
-    <details class="fold"><summary>구현 코드 — Circuit Breaker / Retry (Java)<span class="fold-hint">클릭해 펼치기</span></summary>
-    <pre><span class="ann">@Override</span>
-<span class="ann">@Retry</span>(name = <span class="str">"hubService"</span>)
-<span class="ann">@CircuitBreaker</span>(name = <span class="str">"hubService"</span>, fallbackMethod = <span class="str">"hubServiceFallback"</span>)
-<span class="kw">public boolean</span> validateHubExists(UUID hubId) {
-    <span class="kw">try</span> {
-        hubFeignClient.getHubs(hubId, <span class="str">10</span>, <span class="str">0</span>);
-        <span class="kw">return true</span>;
-    } <span class="kw">catch</span> (FeignException.NotFound e) {
-        <span class="kw">return false</span>;  <span class="com">// 없는 허브 — 정상 응답으로 처리</span>
-    }
-    <span class="com">// 그 외 FeignException은 @Retry가 재시도, 소진 시 CB fallback</span>
-}
-
-<span class="kw">private void</span> hubServiceFallback(UUID hubId, Throwable t) {
-    <span class="com">// CB OPEN / 재시도 소진 시 즉시 예외 반환 → 대기 스레드 점유 없이 fail-fast</span>
-    log.error(<span class="str">"CircuitBreaker 허브 서비스 호출 불가: hubId={}, cause={}"</span>, hubId, t.getMessage());
-    <span class="kw">throw new</span> CustomException(ErrorCode.HUB_SERVICE_ERROR);
-}</pre>
-    </details>
-
-    <table>
-      <thead>
-      <tr><th>설정 항목</th><th class="num">값</th><th>이 값으로 정한 이유</th></tr>
-      </thead>
-      <tbody>
-      <tr><td>sliding window</td><td class="num">10 calls</td><td>실패율 산출 표본 크기. 너무 작으면 1~2건 실패에 과민 반응, 너무 크면 장애 감지가 늦음 → 둘의 절충점</td></tr>
-      <tr><td>failure rate threshold</td><td class="num">50%</td><td>retry 3회를 통과하고도 절반이 깨지면 일시적 결함이 아니라 명백한 장애로 판단. 그 이하(예: 30%)면 단발성 오류에도 차단돼 과민</td></tr>
-      <tr><td>wait in OPEN</td><td class="num">10s</td><td>외부 서비스 재기동·순간 부하 해소에 통상 수~십수 초. 더 짧으면 복구 전 재요청이 몰려 재차 OPEN, 더 길면 정상화 후에도 차단 지속</td></tr>
-      <tr><td>half-open calls</td><td class="num">3</td><td>1건 성공은 우연일 수 있어 성급한 CLOSE를 방지. 3건 시험 호출로 실제 복구 여부를 확인 후 닫음</td></tr>
-      <tr><td>slow call threshold</td><td class="num">3s</td><td>등록 플로우가 허용할 수 있는 지연 상한. Feign read timeout보다 짧게 둬 '느린 성공'도 장애로 간주해 미리 차단</td></tr>
-      <tr><td>retry</td><td class="num">3회 / 500ms</td><td>패킷 손실·순간 GC 같은 일시 결함은 보통 1~2회 재시도로 흡수. 500ms 간격으로 순간 부하 분산, 3회 초과 시 일시 결함이 아니라 보고 CB에 위임</td></tr>
-      </tbody>
-    </table>
-    <p style="font-size:12.5px; color:var(--ink-soft); margin-top:12px;">
-      <strong>값 선정 전제</strong> — 데모 트래픽 기준의 보수적 baseline. Resilience4j 기본값을 출발점으로 위 근거에 따라 조정했고 <strong>운영 전환 시 실제 호출량·지연 분포로 부하 테스트 후 재튜닝</strong>하는 것을 전제로 한 초기값.
-    </p>
   </section>
 
   <!-- 06 — CONTRIBUTION ③ — OR-Tools VRPTW -->
   <section class="section">
-    <div class="section-tag">07 · KEY CONTRIBUTION ③</div>
+    <div class="section-tag">06 · KEY CONTRIBUTION ③</div>
     <div class="contrib-card">
       <div class="contrib-headline">
         <div class="contrib-num">🚛 CONTRIBUTION #3</div>
@@ -1533,13 +1341,6 @@
           <li><strong>가용성</strong> — 해가 없을 때(infeasible) 시간창 단계적 완화 + 스케줄러 레벨 3회 재시도(10초 간격)</li>
         </ul>
         <p><strong>R</strong> · 시간창을 솔버의 직접 제약으로 모델링해 <strong>SLA 보장 가능한 자동 배정 체계</strong> 확보. 해가 없을 때도 시간창 완화로 가용성 확보.</p>
-        <div class="code-links">
-          <span class="code-links-label">CODE</span>
-          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/delivery-service/src/main/java/com/da2jobu/deliveryservice/infrastructure/routing/OrToolsRouteOptimizationService.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>OrToolsRouteOptimizationService.java<span class="hint">· 솔버 구성</span></a>
-          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/delivery-service/src/main/java/com/da2jobu/deliveryservice/application/deliveryManager/service/CompanyDeliveryAssignmentService.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>CompanyDeliveryAssignmentService.java<span class="hint">· 시간창 완화</span></a>
-          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/delivery-service/src/main/java/com/da2jobu/deliveryservice/application/deliveryManager/scheduler/CompanyDeliveryAssignmentScheduler.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>CompanyDeliveryAssignmentScheduler.java<span class="hint">· 06:00 cron+재시도</span></a>
-          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/delivery-service/src/main/java/com/da2jobu/deliveryservice/application/deliveryManager/service/HubDeliveryAssignmentService.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>HubDeliveryAssignmentService.java<span class="hint">· 라운드로빈</span></a>
-        </div>
       </div>
     </div>
 
@@ -1569,72 +1370,12 @@
     </div>
     </details>
 
-    <details class="fold"><summary>OR-Tools VRPTW 구성요소 상세 (Depot · Dimension · Time Window · 솔버 파라미터)<span class="fold-hint">클릭해 펼치기</span></summary>
-    <table>
-      <thead>
-        <tr><th>개념</th><th>코드 표현</th><th>의미</th></tr>
-      </thead>
-      <tbody>
-        <tr><td>Depot</td><td><code>depot</code> 인덱스</td><td>모든 라우트의 출발·복귀 지점(허브)</td></tr>
-        <tr><td>Dimension</td><td><code>AddDimension(...)</code></td><td>라우트 따라 누적되는 값(시간·거리·용량)에 제약 부여</td></tr>
-        <tr><td>Time Window</td><td>Dimension slack + 노드별 setRange</td><td>업체별 영업시간 — 도착 가능 구간</td></tr>
-        <tr><td>1st Solution Strategy</td><td><code>PATH_CHEAPEST_ARC</code></td><td>초기해를 빠르게 만드는 휴리스틱 (가까운 노드 우선)</td></tr>
-        <tr><td>Local Search Metaheuristic</td><td><code>GUIDED_LOCAL_SEARCH</code></td><td>초기해를 점진적으로 개선 — 국소최적 탈출 메커니즘</td></tr>
-        <tr><td>Time Limit</td><td><code>setTimeLimit</code></td><td>솔버 탐색 시간 상한 — 충분히 좋은 해에서 stop</td></tr>
-      </tbody>
-    </table>
-    </details>
-
-    <details class="fold"><summary>구현 코드 — VRPTW 핵심 구성 (Java)<span class="fold-hint">클릭해 펼치기</span></summary>
-    <pre><span class="com">// nodeCount = 업체 수 + 1(depot=허브), vehicleCount = 담당자 수, depot = 0</span>
-RoutingIndexManager manager =
-    <span class="kw">new</span> RoutingIndexManager(nodeCount, vehicleCount, depot);
-RoutingModel routing = <span class="kw">new</span> RoutingModel(manager);
-
-<span class="com">// 시간 차원 — 라우트 따라 누적되는 시간에 제약 부여</span>
-<span class="kw">int</span> timeCallback = routing.registerTransitCallback((from, to) -&gt;
-    timeMatrix[manager.indexToNode(from)][manager.indexToNode(to)]);
-routing.addDimension(
-    timeCallback,
-    <span class="str">30</span>,                            <span class="com">// 노드별 대기 여유(slack) 30분</span>
-    input.maxRouteTimeMinutes(),   <span class="com">// 라우트 총 시간 상한(480분=8시간)</span>
-    <span class="kw">false</span>, <span class="str">"Time"</span>);
-
-<span class="com">// 배송 건수 균등 분배 — ceil(건수/담당자수)를 1인 상한으로</span>
-<span class="kw">int</span> maxPerVehicle = (<span class="kw">int</span>) Math.ceil((<span class="kw">double</span>) points.size() / vehicleCount);
-<span class="kw">int</span> countCallback = routing.registerUnaryTransitCallback(
-    fromIndex -&gt; manager.indexToNode(fromIndex) == depot ? <span class="str">0</span> : <span class="str">1</span>);
-routing.addDimension(countCallback, <span class="str">0</span>, maxPerVehicle, <span class="kw">true</span>, <span class="str">"Count"</span>);
-
-<span class="com">// 업체별 시간창(영업시간) 제약 — 도착 가능 구간 설정</span>
-RoutingDimension timeDimension = routing.getMutableDimension(<span class="str">"Time"</span>);
-<span class="kw">for</span> (<span class="kw">int</span> i = <span class="str">0</span>; i &lt; points.size(); i++) {
-    <span class="kw">long</span> index = manager.nodeToIndex(i + <span class="str">1</span>);
-    <span class="kw">long</span>[] window = toTimeWindow(
-        points.get(i).requestedDeliveryTime(), input.batchStartTime());
-    timeDimension.cumulVar(index).setRange(window[<span class="str">0</span>], window[<span class="str">1</span>]);
-}
-
-<span class="com">// 솔버 = 초기해 생성(그리디) + 지역탐색 개선, 5초 제한</span>
-RoutingSearchParameters params = main.defaultRoutingSearchParameters()
-    .toBuilder()
-    .setFirstSolutionStrategy(FirstSolutionStrategy.Value.PATH_CHEAPEST_ARC)
-    .setLocalSearchMetaheuristic(LocalSearchMetaheuristic.Value.GUIDED_LOCAL_SEARCH)
-    .setTimeLimit(Duration.newBuilder().setSeconds(<span class="str">5</span>).build())
-    .build();
-Assignment solution = routing.solveWithParameters(params);</pre>
-    </details>
-
     <p style="font-size:13px; color:var(--ink-soft); margin-top:14px;">
       <strong>왜 일괄(batch)인가</strong> — 실시간 배정 = 들어오는 순서대로 그리디 → <strong>국소 최적</strong>(지금 가까운 사람에게 줬더니 나중 배송이 꼬임). VRPTW는 <strong>당일 전체를 한 번에 모아야 전역 최적</strong>. B2B는 "즉시"보다 "당일 정시 배송"이 중요 → 일괄이 비즈니스에 더 맞음.
     </p>
 
-    <p style="font-size:13px; color:var(--ink-soft); margin-top:14px;">
-      <strong>해가 없을 때(infeasible) — 시간창만 단계적 완화</strong> · 특정 일자에 시간창이 좁고 물량이 몰리면 솔버가 <strong>infeasible</strong>을 반환한다. 단순 예외 throw는 가용성을 해치므로 다른 제약은 두고 <strong>시간창만 ±30 → ±60 → ±90분</strong>으로 단계적으로 풀어 재시도한다. <em>차량 추가 투입은 인력 자원 문제라 시스템 제어 밖, 모든 제약 무시 후 재계산은 SLA 약속 자체가 깨지므로 배제</em> — SLA 영향이 가장 작은 시간창부터 양보했다. 모두 실패하면 <code>ROUTE_OPTIMIZATION_FAILED</code>로 운영자에게 알리고 스케줄러 레벨에서 10초 간격 3회 재시도한다.
-    </p>
-
     <!-- 실제 OR-Tools 경로 시각화 -->
-    <div class="screenshot-card">
+    <div class="screenshot-card" data-spot>
       <div class="screenshot-header">
         <div class="screenshot-title">📸 실제 OR-Tools VRPTW 솔버 출력 — 담당자별 경로 시각화</div>
         <div class="screenshot-tag">VRPTW · 실측</div>
@@ -1656,7 +1397,7 @@ Assignment solution = routing.solveWithParameters(params);</pre>
 
   <!-- 07 — CONTRIBUTION ④ — Pessimistic Lock -->
   <section class="section">
-    <div class="section-tag">08 · KEY CONTRIBUTION ④</div>
+    <div class="section-tag">07 · KEY CONTRIBUTION ④</div>
     <div class="contrib-card">
       <div class="contrib-headline">
         <div class="contrib-num">🔒 CONTRIBUTION #4</div>
@@ -1667,10 +1408,6 @@ Assignment solution = routing.solveWithParameters(params);</pre>
         <p><strong>P</strong> · 배송담당자 등록 시 "최대 seq 조회 → +1 저장" 사이 동시 요청이 끼면 <strong>Read-Modify-Write race</strong> → 같은 seq가 두 번 발급.</p>
         <p><strong>A</strong> · <code>@Lock(LockModeType.PESSIMISTIC_WRITE)</code>로 최대 seq row를 select for update. <em>대안 검토: 낙관적 락은 어차피 매번 충돌하는 채번엔 재시도 비용만 누적, 분산 락은 단일 인스턴스 토폴로지엔 과함 →</em> <strong>"충돌 잦고 짧은 임계구역"엔 비관적 락이 최적</strong>이라 판단.</p>
         <p><strong>R</strong> · 동시 등록 요청에서도 seq 유일성 보장. 재시도 로직 없이 <strong>DB 레벨에서 차단</strong>. 추가로 <strong>락 타임아웃 3초</strong>를 명시해 장기 트랜잭션·데드락 시 <code>LockTimeoutException</code>으로 빠른 실패 처리 — 무한 대기로 인한 스레드 점유 차단. <strong>동시 등록 시나리오 단위 테스트</strong>로 seq 유일성을 검증했다.</p>
-        <div class="code-links">
-          <span class="code-links-label">CODE</span>
-          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/delivery-service/src/main/java/com/da2jobu/deliveryservice/infrastructure/persistence/JpaDeliveryManagerRepository.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>JpaDeliveryManagerRepository.java<span class="hint">· @Lock+timeout 3000</span></a>
-        </div>
       </div>
     </div>
 
@@ -1699,24 +1436,11 @@ Assignment solution = routing.solveWithParameters(params);</pre>
       </div>
     </div>
     </details>
-
-    <details class="fold"><summary>구현 코드 — 비관적 락 seq 채번 (Java)<span class="fold-hint">클릭해 펼치기</span></summary>
-    <pre><span class="com">// 업체 배송담당자 최고 순번(seq) 조회 — 파생 쿼리 메서드에 비관적 락 부여</span>
-<span class="ann">@Lock</span>(LockModeType.PESSIMISTIC_WRITE)
-<span class="ann">@QueryHints</span>({<span class="ann">@QueryHint</span>(name = <span class="str">"jakarta.persistence.lock.timeout"</span>, value = <span class="str">"3000"</span>)})
-Optional&lt;DeliveryManager&gt; findTopByTypeAndHubId_HubIdAndDeletedAtIsNullOrderBySeqDesc(
-    DeliveryManagerType type, UUID hubId);
-<span class="com">// → SELECT ... FOR UPDATE — 동시 요청은 대기 후 순차 처리, 3초 초과 시 LockTimeoutException</span></pre>
-    </details>
-
-    <p style="font-size:13px; color:var(--ink-soft); margin-top:14px;">
-      <strong>3단계 학습 곡선 연결</strong> — 전 회사의 <strong>비동기 다운로드 race condition</strong>을 해결하면서 "정확히 어떤 락이 어느 상황에 맞는지" 몰랐던 게 학습 동기. 부트캠프 스터디에서 <strong>낙관적/비관적/분산 락 트레이드오프</strong>를 자청 발표. 본 프로젝트에서 <strong>"충돌 잦고 짧은 임계구역엔 비관적 락"</strong>을 실제로 적용 — 한 사이클 완결.
-    </p>
   </section>
 
   <!-- 10 — DEPLOYMENT / INFRA -->
   <section class="section">
-    <div class="section-tag">09 · DEPLOYMENT · INFRA</div>
+    <div class="section-tag">08 · DEPLOYMENT · INFRA</div>
     <h2>배포 인프라 — IaC 한 번으로 AWS + Cloudflare 전 구간 프로비저닝</h2>
     <div class="section-rule"></div>
     <p class="lede">
@@ -1751,119 +1475,8 @@ Optional&lt;DeliveryManager&gt; findTopByTypeAndHubId_HubIdAndDeletedAtIsNullOrd
         <p><strong>IaC · Terraform</strong> — VPC(NAT 없는 퍼블릭 서브넷)·EC2·RDS(프리티어)·ECR·IAM(OIDC role)·EventBridge Scheduler·Lambda를 하나의 코드로 선언. <strong>Cloudflare(Tunnel·DNS·SSL)까지 같은 <code>apply</code></strong>로 생성하고 터널 토큰을 EC2 user_data에 자동 주입.</p>
         <p><strong>네트워킹 · Cloudflare</strong> — ALB/EIP 없이 <strong>Tunnel로 오리진을 노출</strong>해 인바운드 포트를 전부 닫고(공격면↓), 무료 Universal SSL로 HTTPS 종단. 운영시간 외/주말엔 <strong>Worker가 점검 페이지로 폴백</strong>.</p>
         <p><strong>비용 운영 · EventBridge + Lambda</strong> — 평일 <strong>08:40 start / 21:00 stop</strong>으로 EC2·RDS를 자동 전원 제어, 전시 시간대만 가동해 비용을 절반 이하로 절감.</p>
-        <div class="code-links">
-          <span class="code-links-label">CODE</span>
-          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/.github/workflows/build-push-ecr.yml" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>build-push-ecr.yml<span class="hint">· OIDC matrix×9</span></a>
-          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/terraform/iam.tf" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>iam.tf<span class="hint">· OIDC role 신뢰정책</span></a>
-          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/terraform/user_data.sh.tftpl" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>user_data.sh.tftpl<span class="hint">· EC2 부트스트랩</span></a>
-          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/terraform/cloudflare.tf" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>cloudflare.tf<span class="hint">· Tunnel·DNS·SSL</span></a>
-          <a class="code-link" href="https://github.com/danbeekimm/da2joburureung/blob/develop/terraform/scheduler.tf" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>scheduler.tf<span class="hint">· 평일 자동 전원</span></a>
-        </div>
       </div>
     </div>
-
-    <details class="fold"><summary>비용·보안 의사결정 — 대안별 트레이드오프 · EC2 + CF Tunnel 채택<span class="fold-hint">클릭해 펼치기</span></summary>
-    <div class="decision-comp">
-      <div class="dec-card rejected">
-        <div class="dec-status">REJECTED · ECS / EKS</div>
-        <div class="dec-name">매니지드 오케스트레이션</div>
-        <div class="dec-reason">전시 규모엔 <strong>과투자</strong>. 기존 <code>docker-compose</code>를 그대로 재사용하는 편이 훨씬 저렴하고 단순.</div>
-      </div>
-      <div class="dec-card rejected">
-        <div class="dec-status">REJECTED · ALB + EIP</div>
-        <div class="dec-name">표준 인바운드 노출</div>
-        <div class="dec-reason">ALB 월 ~$22 + EIP 미사용 요금. 인바운드 포트를 열어야 해 <strong>공격면 증가</strong>.</div>
-      </div>
-      <div class="dec-card chosen">
-        <div class="dec-status">CHOSEN · EC2 + CF Tunnel</div>
-        <div class="dec-name">단일 박스 + 터널</div>
-        <div class="dec-reason">인바운드 포트 <strong>0개</strong>로 보안↑, ALB/EIP 비용 0, 무료 SSL. 전시 목적의 비용·보안 균형에 최적.</div>
-      </div>
-    </div>
-    </details>
-
-    <details class="fold"><summary>배포 파이프라인 · 런타임 토폴로지 (다이어그램)<span class="fold-hint">클릭해 펼치기</span></summary>
-    <pre><span class="com"># 배포 파이프라인 & 런타임 토폴로지</span>
-push(develop) ─▶ GitHub Actions <span class="com">(OIDC · matrix ×9)</span> ─▶ Amazon ECR
-                                                              │ pull
-사용자 ─https─▶ Cloudflare <span class="com">(Universal SSL + Worker 폴백)</span>      ▼
-        └─Tunnel(무포트)─▶ EC2 t3.medium <span class="com">(앱9 + kafka/redis + cloudflared)</span> ─▶ RDS <span class="com">(DB 8개)</span>
-                          <span class="com">▲ EventBridge + Lambda — 평일 08:40 start / 21:00 stop</span></pre>
-    </details>
-  </section>
-
-  <!-- 11 — STACK -->
-  <section class="section">
-    <div class="section-tag">10 · STACK</div>
-    <h2>기술 스택</h2>
-    <div class="section-rule"></div>
-    <table>
-      <thead>
-      <tr><th>영역</th><th>스택</th></tr>
-      </thead>
-      <tbody>
-      <tr><td>Backend</td><td>Java 17 · Spring Boot 3.5.12 · <strong>Spring Cloud 2025.0.1</strong> (Eureka · Gateway · OpenFeign)</td></tr>
-      <tr><td>Messaging</td><td>Spring Kafka · <strong>Outbox 패턴</strong></td></tr>
-      <tr><td>Resilience</td><td>Resilience4j · <strong>Circuit Breaker · Retry</strong></td></tr>
-      <tr><td>Data</td><td>PostgreSQL (database-per-service) · Redis · JPA · QueryDSL</td></tr>
-      <tr><td>Optimization</td><td><strong>Google OR-Tools 9.12.4544 (VRPTW)</strong></td></tr>
-      <tr><td>Infra (IaC)</td><td><strong>Terraform</strong> · AWS (EC2 · RDS · ECR · IAM/OIDC · EventBridge · Lambda) · Docker Compose</td></tr>
-      <tr><td>CI/CD</td><td><strong>GitHub Actions</strong> (OIDC · matrix build) → Amazon ECR</td></tr>
-      <tr><td>Edge / Network</td><td><strong>Cloudflare</strong> Tunnel · Workers · Universal SSL</td></tr>
-      </tbody>
-    </table>
-  </section>
-
-  <!-- 12 — RETRO -->
-  <section class="section">
-    <div class="section-tag">11 · RETROSPECTIVE</div>
-    <h2>회고 — 잘한 것과 의도적 선택의 트레이드오프</h2>
-    <div class="section-rule"></div>
-    <p class="lede">
-      프로젝트를 마치며 두 갈래로 정리. <strong>무엇을 잘했고</strong> <strong>어떤 부분이 트레이드오프를 따진 의도적 선택이었는지</strong>. 각 선택의 한계와 다음 단계는 항목별 <strong>→ 라인</strong>에 함께 적음.
-    </p>
-
-    <div class="retro-block">
-      <div class="retro-header">
-        <div class="retro-icon">✅</div>
-        <div class="retro-title">잘한 것</div>
-      </div>
-      <div class="retro-good">
-        단순 CRUD에 그치지 않고 <strong>이벤트 유실(Outbox) · 최적화(VRPTW) · 동시성(비관적 락)</strong> 등 운영 수준 문제를 <strong>비즈니스 근거에서 출발해</strong> 직접 설계. 스터디에서 학습한 락 트레이드오프를 실제 적용. "검증=동기, 통지=비동기"의 통신 의도 분리가 일관되게 관철됨.
-      </div>
-    </div>
-
-    <div class="retro-block">
-      <div class="retro-header">
-        <div class="retro-icon">🎯</div>
-        <div class="retro-title">의도적 선택</div>
-        <div class="retro-meta">트레이드오프를 따져보고 현 규모에 적절하다 판단한 부분</div>
-      </div>
-      <div class="retro-intent">
-        <div class="item">
-          <div class="item-title">배송 컨텍스트를 한 서비스로 통합 (delivery + manager + route)</div>
-          <div class="item-body">
-            초기 설계엔 <code>delivery / delivery_manager / delivery_route</code> 3개 서비스로 분할했으나 실제 도메인 분석 결과 <strong>3개 도메인이 동일 트랜잭션 경계에서 함께 변경</strong>되는 강한 응집성을 보임 → 별도 서비스로 분리하면 분산 트랜잭션 비용만 증가한다고 판단해 <strong>delivery-service 한 컨텍스트로 통합 + 내부 도메인으로 분리</strong>.
-          </div>
-          <div class="item-future">"같은 트랜잭션에서 변하는 것은 같은 서비스로" — DDD의 애그리거트 경계 원칙을 실제 적용한 사례</div>
-        </div>
-        <div class="item">
-          <div class="item-title">Outbox 스케줄러가 단일 인스턴스 전제</div>
-          <div class="item-body">
-            분산 스케줄러·ShedLock·리더 선출 등 옵션을 검토했으나 <strong>각 마이크로서비스가 단일 인스턴스로 배포되는 현 토폴로지</strong>에선 스케줄러 중복 실행이 발생 X → 분산 락 도입은 오버엔지니어링.
-          </div>
-          <div class="item-future">수평 확장 시점엔 ShedLock(DB 락) 또는 컨슈머 측 멱등 처리(이벤트 ID dedup) 추가 예정</div>
-        </div>
-        <div class="item">
-          <div class="item-title">full Saga 대신 Outbox 채택</div>
-          <div class="item-body">
-            다중 서비스 트랜잭션엔 Saga(보상 트랜잭션)도 후보였으나 우리 케이스는 <strong>단방향 통지·응답 불필요</strong>라 full Saga의 복잡도가 과함.
-          </div>
-          <div class="item-future">다중 단계 트랜잭션이 필요한 도메인에선 Saga가 정답 — 알고 있음</div>
-        </div>
-      </div>
-    </div>
-
   </section>
 
   <footer>
@@ -1958,5 +1571,6 @@ push(develop) ─▶ GitHub Actions <span class="com">(OIDC · matrix ×9)</span
     });
   })();
 </script>
+<script src="../spot-nav.js"></script>
 </body>
 </html>

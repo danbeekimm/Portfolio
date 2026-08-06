@@ -214,35 +214,9 @@
         </div>
     </section>
 
-    <!-- 02 — DEV CYCLE -->
-    <section class="section">
-        <div class="section-tag">02 · DEV CYCLE</div>
-        <h2>개발 사이클 단계별로 도구를 나눠 쓴다</h2>
-        <div class="section-rule"></div>
-        <p class="lede">분석·구현·리뷰는 요구하는 판단이 다릅니다. 단계마다 도구를 분리하되, <strong>설계·결정과 핵심 분기는 사람이 직접 운전</strong>하고 AI의 출력은 그 자리에서 검증합니다.</p>
-
-        <div class="ai-flow">
-            <div class="ai-stage">
-                <div class="ai-stage-phase">분석 · 설계</div>
-                <div class="ai-stage-tool">Claude Code</div>
-                <div class="ai-stage-body">루트 <code>CLAUDE.md</code>의 헥사고날 4레이어·네이밍 규약을 기준으로 호출 경로와 설계 대안을 교차 검증. 포트를 안쪽(application/domain)에 먼저 두고 어댑터를 <code>infrastructure</code>에 두는 흐름을 그대로 따름.</div>
-            </div>
-            <div class="ai-stage">
-                <div class="ai-stage-phase">구현 · 테스트</div>
-                <div class="ai-stage-tool">Claude Code · 서브에이전트</div>
-                <div class="ai-stage-body">보일러플레이트·반복 작성에만 서브에이전트를 쓰고, <strong>도메인 로직과 메인 흐름은 직접 작성·통제</strong>. AI가 낸 초안은 경계 조건·검증 기준을 다시 설계해 <strong>그대로 받지 않고 반드시 손본다</strong>.</div>
-            </div>
-            <div class="ai-stage">
-                <div class="ai-stage-phase">리뷰</div>
-                <div class="ai-stage-tool">/revref · CodeRabbit</div>
-                <div class="ai-stage-body">커밋 전 직접 만든 <code>/revref</code> 스킬이 컨벤션 위반을 점검(신규 파일·50줄+ 수정 시 자동), PR 단계는 <strong>CodeRabbit</strong>이 동일 원칙으로 한 번 더. <strong>반복 지적은 규칙 문서로 흡수</strong>.</div>
-            </div>
-        </div>
-    </section>
-
     <!-- 03 — RULES (SSOT) -->
     <section class="section">
-        <div class="section-tag">03 · RULES · SSOT</div>
+        <div class="section-tag">02 · RULES · SSOT</div>
         <h2>규칙을 단일 출처(SSOT) 문서로 주입한다</h2>
         <div class="section-rule"></div>
         <p class="lede">
@@ -267,46 +241,11 @@
                 <div class="ai-stage-body">코드 작업 후 <strong>자동 검토(A) · 빌드/테스트/API(B) · Slack 보고(C)</strong> 워크플로우의 트리거와 흐름을 정의. "언제 무엇을 자동으로 할지"를 명문화.</div>
             </div>
         </div>
-
-        <h3 class="spaced">심각도 체계 — 리뷰가 무엇을 막고 무엇을 권하는가</h3>
-        <div class="two-col">
-            <div class="box warn">
-                <div class="box-title"><span class="sev red">🔴 Request Changes</span> &nbsp;반드시 수정</div>
-                <ul>
-                    <li><strong>아키텍처 경계 위반</strong> — DDD/레이어/트랜잭션/이벤트 경계</li>
-                    <li><code>@Transactional</code> 안에서 외부 API 호출(커넥션 점유)</li>
-                    <li>JPA 엔티티 <code>@Setter</code>/<code>@Data</code> — 상태 변경은 의미 있는 메서드로</li>
-                    <li>1 트랜잭션 1 Aggregate · 분산 트랜잭션(2PC) 금지 → Kafka 최종 일관성</li>
-                    <li>동시성 제어 누락 · 민감정보 평문 로그</li>
-                </ul>
-            </div>
-            <div class="box muted">
-                <div class="box-title"><span class="sev yellow">🟡 Comment</span> &nbsp;개선 권장</div>
-                <ul>
-                    <li>성능 · 코드 품질 · 리팩토링</li>
-                    <li>VO/DTO/Event는 <code>record</code> · Strong Type VO(primitive obsession 회피)</li>
-                    <li>N+1 회피 — 연관관계 <code>LAZY</code> 기본, 필요 시 fetch join</li>
-                </ul>
-            </div>
-        </div>
-
-        <h3 class="spaced">코드베이스 특수 예외는 규칙으로 흡수한다</h3>
-        <p class="body-p">
-            일반론이 이 코드베이스엔 안 맞는 경우, <strong>왜 예외인지를 규칙 문서에 직접 박아</strong> AI 리뷰가 같은 지적을 반복하지 않게 합니다.
-            예: "모든 <code>record</code>의 compact constructor에 검증을 넣으라"는 일반 규칙에 대해 —
-        </p>
-        <div class="box">
-            <div class="box-title">conventions §4 — 명문화된 예외</div>
-            <ul>
-                <li>서비스 간 <strong>내부 이벤트 메시지 <code>record</code>는 발행 측에서 검증되었다고 가정</strong>하므로 compact constructor 검증의 예외로 둔다.</li>
-                <li>→ AI/리뷰 봇이 "검증 누락"으로 잘못 지적하지 않고, <strong>의도한 설계</strong>임을 그대로 확인할 수 있다.</li>
-            </ul>
-        </div>
     </section>
 
     <!-- 04 — WORKFLOWS -->
     <section class="section">
-        <div class="section-tag">04 · WORKFLOWS</div>
+        <div class="section-tag">03 · WORKFLOWS</div>
         <h2>작업 단계에 맞춰 자동으로 도는 워크플로우 A · B · C</h2>
         <div class="section-rule"></div>
         <p class="lede">규칙은 "지켜야 한다"로 끝나지 않게, <strong>작업이 끝나면 자동으로 검토·검증·보고</strong>가 돌도록 슬래시 스킬과 스크립트로 묶었습니다.</p>
@@ -324,7 +263,6 @@
 
         <h3 class="spaced">A. <span class="accent">/revref</span> — 컨벤션 준수 자동 검토</h3>
         <p class="body-p"><code>git diff</code> 변경분(<code>--context</code>)이나 지정 파일을 대상으로, <strong>차원별 리뷰 에이전트를 병렬 실행</strong>해 위반을 심각도와 근거(<code>conventions §N</code>)와 함께 보고합니다. 같은 일반론 지적이 반복되면 규칙 문서로 흡수합니다.</p>
-        <p class="body-p"><strong>병렬 검토 차원</strong> — ① 아키텍처/레이어/DDD(§2,5,7) ② Spring/JPA 내부(§1) ③ 동시성(§6) ④ 타입 안정성·공통 모듈(§4,9). <code>--context</code> 모드에서는 정확성(<code>/code-review</code>)·보안(<code>/security-review</code>) 검토까지 통합해 <strong>🔴/🟡 + 파일:라인 + 근거 → 제안</strong> 형식으로 종합합니다.</p>
 
         <div class="shot">
             <div class="shot-head">
@@ -335,7 +273,7 @@
             <div class="shot-cap">변경분을 차원별 에이전트가 병렬 검토해 <strong>🔴/🟡 심각도 · 파일:라인 · 근거(conventions §N)</strong>와 함께 보고한다.</div>
         </div>
 
-        <h3 class="spaced">B. <span class="accent">/apitest</span> — 빌드부터 게이트웨이 시나리오까지</h3>
+        <h3 class="spaced" data-spot>B. <span class="accent">/apitest</span> — 빌드부터 게이트웨이 시나리오까지</h3>
         <div class="ai-flow">
             <div class="ai-stage">
                 <div class="ai-stage-phase">1–2 · 빌드 · 단위</div>
@@ -363,7 +301,7 @@
             <div class="shot-cap">빌드·단위 테스트 후 게이트웨이 헬스 폴링 → 시나리오(.http)를 단계별 상태코드·본문으로 <strong>통과/실패 판정</strong>한다.</div>
         </div>
 
-        <h3 class="spaced">C. <span class="accent">notify-slack.sh</span> — 작업을 깨지 않는 보고</h3>
+        <h3 class="spaced" data-spot>C. <span class="accent">notify-slack.sh</span> — 작업을 깨지 않는 보고</h3>
         <div class="pre-label">scripts/notify-slack.sh</div>
         <pre><span class="com"># 성공/실패 + 제목 + 본문(또는 summary 파일)으로 Incoming Webhook 보고</span>
 scripts/notify-slack.sh --status success \
@@ -385,7 +323,7 @@ scripts/notify-slack.sh --status success \
 
     <!-- 05 — GUARDRAILS & CONTEXT -->
     <section class="section">
-        <div class="section-tag">05 · GUARDRAILS · CONTEXT</div>
+        <div class="section-tag">04 · GUARDRAILS · CONTEXT</div>
         <h2>가드레일과 컨텍스트를 설계한다</h2>
         <div class="section-rule"></div>
         <p class="lede">생성을 빠르게 하되, <strong>위험한 자동화는 막고(가드레일)</strong> AI가 <strong>틀린 맥락으로 추측하지 않게(컨텍스트)</strong> 합니다.</p>
@@ -415,7 +353,7 @@ scripts/notify-slack.sh --status success \
 
     <!-- 06 — PRINCIPLE -->
     <section class="section">
-        <div class="section-tag">06 · PRINCIPLE</div>
+        <div class="section-tag">05 · PRINCIPLE</div>
         <h2>왜 이렇게까지 하는가</h2>
         <div class="section-rule"></div>
         <p class="lede">
@@ -516,5 +454,6 @@ scripts/notify-slack.sh --status success \
     });
   })();
 </script>
+<script src="../spot-nav.js"></script>
 </body>
 </html>

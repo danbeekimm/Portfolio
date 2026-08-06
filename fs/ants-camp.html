@@ -2068,9 +2068,40 @@
         </div>
     </section>
 
-    <!-- SECTION 10 — TROUBLESHOOTING -->
+    <!-- SECTION 10 — REALTIME · WEBSOCKET -->
     <section class="section">
-        <div class="section-tag">10 · TROUBLESHOOTING</div>
+        <div class="section-tag">10 · REALTIME · WEBSOCKET</div>
+        <h2>실시간 시세 — WebSocket(STOMP) 구독 설계</h2>
+        <div class="section-rule"></div>
+        <p class="lede">
+            체결가·호가를 <strong>@stomp/stompjs</strong>로 실시간 수신합니다. SockJS 폴백 없이 <strong>네이티브 WebSocket</strong>으로 연결하고,
+            종목코드별 <strong>실시간 체결가 수신</strong> · <strong>실시간 호가 수신</strong> 두 채널을 구독합니다.
+        </p>
+
+        <ul class="approach-points">
+            <li><strong>선언적 구독 동기화</strong> — 스토어의 구독 종목 변경을 감지해 추가된 종목만 구독 · 빠진 종목만 구독 해제</li>
+            <li><strong>재연결 3초 + 자동 재구독</strong> — 재연결 시 스토어에 남은 종목 전체를 복구. KIS/STOMP 이중 연결 상태는 배지로 시각화</li>
+            <li><strong>REST 폴백</strong> — 장 마감 등 실시간 데이터가 없으면 현재가 REST 조회로 대체해 빈 화면 방지</li>
+        </ul>
+
+        <div class="screenshot-card">
+            <div class="screenshot-header">
+                <div class="screenshot-title">📸 실시간 종목 상세 — STOMP 구독이 갱신하는 화면</div>
+                <div class="screenshot-tag">WebSocket · 실측</div>
+            </div>
+            <div class="screenshot-img-wrap">
+                <img src="../images/stomp-trading-ui.png" alt="종목 상세 화면 — 캔들 차트, 호가, 주문 패널과 STOMP 연결 배지" data-zoomable>
+                <span class="screenshot-zoom-hint">CLICK TO ZOOM</span>
+            </div>
+            <div class="screenshot-caption">
+                캔들 차트 · 호가 · 주문 패널이 한 화면에서 STOMP 구독으로 갱신됩니다. 좌측 상단 <strong>STOMP 연결 배지</strong>가 위에서 설명한 연결 상태 추적의 실제 표시.
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 11 — TROUBLESHOOTING -->
+    <section class="section">
+        <div class="section-tag">11 · TROUBLESHOOTING</div>
         <h2>트러블슈팅 — 원인을 윗단까지 파고든 사례</h2>
         <div class="section-rule"></div>
         <p class="lede">
@@ -2212,9 +2243,9 @@
         </div>
     </section>
 
-    <!-- SECTION 11 — STACK -->
+    <!-- SECTION 12 — STACK -->
     <section class="section">
-        <div class="section-tag">11 · STACK</div>
+        <div class="section-tag">12 · STACK</div>
         <h2>기술 스택</h2>
         <div class="section-rule"></div>
         <table>
@@ -2232,9 +2263,9 @@
         </table>
     </section>
 
-    <!-- SECTION 12 — RETRO — 3분할 구조 -->
+    <!-- SECTION 13 — RETRO — 3분할 구조 -->
     <section class="section">
-        <div class="section-tag">12 · RETROSPECTIVE</div>
+        <div class="section-tag">13 · RETROSPECTIVE</div>
         <h2>회고 — 의도적 선택과 진짜 아쉬운 점을 구분하다</h2>
         <div class="section-rule"></div>
         <p class="lede">

@@ -1,4 +1,11 @@
 {
+  "scripts": {
+    "build:pdf": "node build-pdf.js",
+    "optimize:pdf": "node optimize-pdfs.js",
+    "build:pdf:optimized": "node build-optimized.js",
+    "build:pdf:fs:optimized": "node build-optimized.js --only fs",
+    "build:pdf:backend:optimized": "node build-optimized.js --only backend"
+  },
   "dependencies": {
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^3.11.174",

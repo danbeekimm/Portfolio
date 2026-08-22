@@ -415,7 +415,7 @@
     </h1>
     <p class="main-sub">
       회원제 SaaS 운영팀에서 <strong>RDBMS 마이그레이션·동시성 제어·다국가 확장</strong>을 직접 풀어내고,<br>
-      그 한계에서 공부할 이유를 찾아 <strong>모놀리식 → MSA → LLMOps</strong>까지 설계 경험을 단계적으로 확장했습니다.<br>
+      운영 경험을 바탕으로 <strong>모놀리식 → MSA → LLMOps</strong>까지 설계 범위를 단계적으로 확장했습니다.<br>
       "왜 이 기술을 쓰는가"를 끝까지 묻고, 운영 환경의 정합성·신뢰성 문제를 설계 단계에서 해결합니다.
     </p>
     <div class="contact-strip">
@@ -432,7 +432,7 @@
     <h2>프로젝트 · 경력</h2>
     <div class="section-rule"></div>
     <p class="lede">
-      세 작업을 시간순으로. <strong>실무에서 출발해 모놀리식·MSA를 거쳐 LLMOps에 닿은 궤적</strong> — 현장에서 마주친 한계를 학습 동기로 삼아, 다음 프로젝트의 설계 결정까지 이어 간 흐름.
+      세 작업을 시간순으로 정리했습니다. <strong>실무 운영, MSA 설계, LLMOps 구축</strong>에서 정합성·동시성·관측 가능성 문제를 해결한 흐름입니다.
     </p>
 
     <!-- 경력 -->
@@ -445,8 +445,7 @@
       <div class="project-subtitle">풀스택 개발자 — 회원제 특허 SaaS의 고도화·운영</div>
       <div class="project-tagline">
         100% MyBatis 환경의 <strong>PostgreSQL → MSSQL 전면 마이그레이션</strong>을 옵티마이저·라운드트립 단위로 재설계하고,<br>
-        1만 건 분할 비동기 다운로드의 <strong>이용량 우회 race condition</strong>을 "임계구역 위치 재배치"로 풀었습니다.<br>
-        여기서 체감한 한계가 그대로 부트캠프 학습으로 이어졌습니다.
+        1만 건 분할 비동기 다운로드의 <strong>이용량 우회 race condition</strong>을 "임계구역 위치 재배치"로 풀었습니다.
       </div>
 
       <div class="project-highlights">
@@ -459,8 +458,8 @@
           <div class="highlight-label">다중 창 동시 요청 한도 우회</div>
         </div>
         <div class="highlight">
-          <div class="highlight-num">3 → 1</div>
-          <div class="highlight-label">실무 한계 · 스터디 · 부트캠프 연결</div>
+          <div class="highlight-num">Execution Plan</div>
+          <div class="highlight-label">추정·실제 행 수와 조인 방식 분석</div>
         </div>
       </div>
 
@@ -491,7 +490,7 @@
       <div class="project-tagline">
         직전 모놀리식의 한계(한 도메인 결함이 전체 멈춤)를 계기로 <strong>MSA + DDD</strong>로 확장.<br> 분산 트랜잭션 없이
         <strong>Outbox 패턴</strong>으로 이벤트 정합성을 보장하고, <strong>OR-Tools VRPTW</strong>로 B2B 시간창 SLA를
-        제약 조건으로 모델링했습니다.<br> 비관적 락은 스터디에서 학습한 트레이드오프를 실제 적용한 사례.
+        제약 조건으로 모델링했습니다.<br> seq 채번 race는 짧고 충돌이 잦은 임계구역에 맞춰 비관적 락으로 차단했습니다.
       </div>
 
       <div class="project-highlights">

@@ -447,8 +447,7 @@
       <div class="project-tagline">
         대량 문서 뷰어의 <strong>도면-텍스트 실시간 동기화</strong>를 부분 렌더링 → 비동기 갱신으로 재설계해 깜빡임·포커스 강탈을 제거하고,<br>
         서버에서는 분할 비동기 다운로드의 <strong>이용량 우회 race condition</strong>을 "임계구역 위치 재배치"로,
-        <strong>PostgreSQL → MSSQL 전면 마이그레이션</strong>의 슬로우 쿼리를 옵티마이저 단위로 풀었습니다.<br>
-        화면에서 느낀 한계가 서버 설계로, 다시 부트캠프 학습으로 이어졌습니다.
+        <strong>PostgreSQL → MSSQL 전면 마이그레이션</strong>의 슬로우 쿼리를 옵티마이저 단위로 풀었습니다.
       </div>
 
       <div class="project-highlights">
@@ -493,7 +492,7 @@
       <div class="project-tagline">
         직전 모놀리식의 한계(한 도메인 결함이 전체 멈춤)를 계기로 <strong>MSA + DDD</strong>로 확장.<br> 분산 트랜잭션 없이
         <strong>Outbox 패턴</strong>으로 이벤트 정합성을 보장하고, <strong>OR-Tools VRPTW</strong>로 B2B 시간창 SLA를
-        제약 조건으로 모델링했습니다.<br> 비관적 락은 스터디에서 학습한 트레이드오프를 실제 적용한 사례.
+        제약 조건으로 모델링했습니다.<br> seq 채번 race는 짧고 충돌이 잦은 임계구역에 맞춰 비관적 락으로 차단했습니다.
       </div>
 
       <div class="project-highlights">

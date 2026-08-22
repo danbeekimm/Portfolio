@@ -1402,7 +1402,7 @@
       <div class="contrib-headline">
         <div class="contrib-num">🔒 CONTRIBUTION #4</div>
         <div class="contrib-title">짧고 잦은 임계구역엔 비관적 락 — seq 채번 race condition 해결</div>
-        <div class="contrib-impact">경력의 동시성 학습 → 스터디 발표 → 본 프로젝트 적용. 3단계 학습 곡선의 매듭</div>
+        <div class="contrib-impact">동시 요청의 중복 seq 채번을 SELECT FOR UPDATE와 3초 락 타임아웃으로 차단</div>
       </div>
       <div class="contrib-body">
         <p><strong>P</strong> · 배송담당자 등록 시 "최대 seq 조회 → +1 저장" 사이 동시 요청이 끼면 <strong>Read-Modify-Write race</strong> → 같은 seq가 두 번 발급.</p>

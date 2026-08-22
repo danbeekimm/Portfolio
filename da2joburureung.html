@@ -1108,7 +1108,7 @@
           <li>업체 삭제 이벤트의 <strong>Kafka + Outbox 패턴</strong> 구현 (Saga 대안 검토 후 채택)</li>
           <li>user/hub/order 호출의 <strong>OpenFeign + Resilience4j CB</strong> 적용</li>
           <li>매일 06:00 cron의 <strong>OR-Tools VRPTW</strong> 일괄 배송 최적화</li>
-          <li>seq 채번 <strong>비관적 락(PESSIMISTIC_WRITE)</strong> — 스터디에서 학습한 트레이드오프 적용</li>
+          <li>seq 채번 <strong>비관적 락(PESSIMISTIC_WRITE)</strong> — 짧고 충돌이 잦은 임계구역의 동시성 차단</li>
         </ul>
       </div>
     </div>
@@ -1344,7 +1344,7 @@
       <tr>
         <td>단일 인스턴스 → 분산 락 생략</td>
         <td>ShedLock · 리더 선출</td>
-        <td>각 서비스 단일 인스턴스 배포 토폴로지 → Outbox 스케줄러 중복 실행 자체가 발생 X. <strong>수평 확장 시</strong> ShedLock + 컨슈머 멱등 처리 추가 예정.</td>
+        <td>각 서비스가 단일 인스턴스로 배포되는 현재 토폴로지에서는 Outbox 스케줄러 중복 실행이 발생하지 않아 분산 락을 생략.</td>
       </tr>
       </tbody>
     </table>
@@ -1399,47 +1399,6 @@
     </div>
     </details>
 
-    <details class="fold"><summary>구현 코드 — Outbox 원자 저장 (Java)<span class="fold-hint">클릭해 펼치기</span></summary>
-    <pre><span class="com">// CompanyService — 삭제 트랜잭션 안에서 이벤트 발행을 위임 (원자성)</span>
-<span class="ann">@Transactional</span>
-<span class="ann">@CacheEvict</span>(value = <span class="str">"company"</span>, key = <span class="str">"#companyId"</span>)
-<span class="kw">public void</span> deleteCompany(UUID companyId, String userRole, UUID userId) {
-    Company company = findCompanyOrThrow(companyId);
-    <span class="com">// ... 권한 검증 · 진행 중 주문 확인 ...</span>
-    company.softDelete(userId.toString());
-    companyEventPublisher.publishCompanyDeleted(
-        companyId, userId.toString(), company.getDeletedAt());
-}
-
-<span class="com">// CompanyEventPublisherImpl — 도메인 변경과 같은 트랜잭션에서 Outbox 저장</span>
-<span class="ann">@Override</span>
-<span class="kw">public void</span> publishCompanyDeleted(UUID companyId, String deletedBy, LocalDateTime deletedAt) {
-    String payload = objectMapper.writeValueAsString(Map.of(
-        <span class="str">"companyId"</span>, companyId.toString(),
-        <span class="str">"deletedBy"</span>, deletedBy,
-        <span class="str">"deletedAt"</span>, deletedAt.toString()));
-    OutboxEvent outboxEvent = OutboxEvent.create(
-        <span class="str">"Company"</span>, companyId, <span class="str">"CompanyDeleted"</span>, COMPANY_DELETED_TOPIC, payload);
-    outboxEventRepository.save(outboxEvent);  <span class="com">// 같은 트랜잭션 — 원자 보장</span>
-}
-
-<span class="com">// OutboxEventScheduler — 10초마다 PENDING을 Kafka로 발행</span>
-<span class="ann">@Scheduled</span>(fixedDelay = <span class="str">10000</span>)
-<span class="kw">public void</span> publishPendingEvents() {
-    List&lt;OutboxEvent&gt; pendingEvents =
-        outboxEventRepository.findByStatusOrderByCreatedAtAsc(OutboxStatus.PENDING);
-    <span class="kw">for</span> (OutboxEvent event : pendingEvents) {
-        <span class="kw">try</span> {
-            kafkaTemplate.send(event.getTopic(),
-                event.getAggregateId().toString(), event.getPayload()).get();
-            event.markPublished();
-            outboxEventRepository.save(event);
-        } <span class="kw">catch</span> (Exception e) {  <span class="com">// 단일 실패가 나머지 발행을 막지 않음 → 다음 주기 재시도</span>
-            log.warn(<span class="str">"발행 실패, 다음 주기 재시도: id={}"</span>, event.getEventId());
-        }
-    }
-}</pre>
-    </details>
   </section>
 
   <!-- 05 — CONTRIBUTION ② — Circuit Breaker -->
@@ -1475,27 +1434,6 @@
       </ul>
     </div>
 
-    <details class="fold"><summary>구현 코드 — Circuit Breaker / Retry (Java)<span class="fold-hint">클릭해 펼치기</span></summary>
-    <pre><span class="ann">@Override</span>
-<span class="ann">@Retry</span>(name = <span class="str">"hubService"</span>)
-<span class="ann">@CircuitBreaker</span>(name = <span class="str">"hubService"</span>, fallbackMethod = <span class="str">"hubServiceFallback"</span>)
-<span class="kw">public boolean</span> validateHubExists(UUID hubId) {
-    <span class="kw">try</span> {
-        hubFeignClient.getHubs(hubId, <span class="str">10</span>, <span class="str">0</span>);
-        <span class="kw">return true</span>;
-    } <span class="kw">catch</span> (FeignException.NotFound e) {
-        <span class="kw">return false</span>;  <span class="com">// 없는 허브 — 정상 응답으로 처리</span>
-    }
-    <span class="com">// 그 외 FeignException은 @Retry가 재시도, 소진 시 CB fallback</span>
-}
-
-<span class="kw">private void</span> hubServiceFallback(UUID hubId, Throwable t) {
-    <span class="com">// CB OPEN / 재시도 소진 시 즉시 예외 반환 → 대기 스레드 점유 없이 fail-fast</span>
-    log.error(<span class="str">"CircuitBreaker 허브 서비스 호출 불가: hubId={}, cause={}"</span>, hubId, t.getMessage());
-    <span class="kw">throw new</span> CustomException(ErrorCode.HUB_SERVICE_ERROR);
-}</pre>
-    </details>
-
     <table>
       <thead>
       <tr><th>설정 항목</th><th class="num">값</th><th>이 값으로 정한 이유</th></tr>
@@ -1510,7 +1448,7 @@
       </tbody>
     </table>
     <p style="font-size:12.5px; color:var(--ink-soft); margin-top:12px;">
-      <strong>값 선정 전제</strong> — 데모 트래픽 기준의 보수적 baseline. Resilience4j 기본값을 출발점으로 위 근거에 따라 조정했고 <strong>운영 전환 시 실제 호출량·지연 분포로 부하 테스트 후 재튜닝</strong>하는 것을 전제로 한 초기값.
+      <strong>값 선정 전제</strong> — 데모 트래픽 기준의 보수적 baseline. Resilience4j 기본값을 출발점으로 호출 실패율·복구 대기 시간·허용 지연을 기준 삼아 조정한 값.
     </p>
   </section>
 
@@ -1585,46 +1523,6 @@
     </table>
     </details>
 
-    <details class="fold"><summary>구현 코드 — VRPTW 핵심 구성 (Java)<span class="fold-hint">클릭해 펼치기</span></summary>
-    <pre><span class="com">// nodeCount = 업체 수 + 1(depot=허브), vehicleCount = 담당자 수, depot = 0</span>
-RoutingIndexManager manager =
-    <span class="kw">new</span> RoutingIndexManager(nodeCount, vehicleCount, depot);
-RoutingModel routing = <span class="kw">new</span> RoutingModel(manager);
-
-<span class="com">// 시간 차원 — 라우트 따라 누적되는 시간에 제약 부여</span>
-<span class="kw">int</span> timeCallback = routing.registerTransitCallback((from, to) -&gt;
-    timeMatrix[manager.indexToNode(from)][manager.indexToNode(to)]);
-routing.addDimension(
-    timeCallback,
-    <span class="str">30</span>,                            <span class="com">// 노드별 대기 여유(slack) 30분</span>
-    input.maxRouteTimeMinutes(),   <span class="com">// 라우트 총 시간 상한(480분=8시간)</span>
-    <span class="kw">false</span>, <span class="str">"Time"</span>);
-
-<span class="com">// 배송 건수 균등 분배 — ceil(건수/담당자수)를 1인 상한으로</span>
-<span class="kw">int</span> maxPerVehicle = (<span class="kw">int</span>) Math.ceil((<span class="kw">double</span>) points.size() / vehicleCount);
-<span class="kw">int</span> countCallback = routing.registerUnaryTransitCallback(
-    fromIndex -&gt; manager.indexToNode(fromIndex) == depot ? <span class="str">0</span> : <span class="str">1</span>);
-routing.addDimension(countCallback, <span class="str">0</span>, maxPerVehicle, <span class="kw">true</span>, <span class="str">"Count"</span>);
-
-<span class="com">// 업체별 시간창(영업시간) 제약 — 도착 가능 구간 설정</span>
-RoutingDimension timeDimension = routing.getMutableDimension(<span class="str">"Time"</span>);
-<span class="kw">for</span> (<span class="kw">int</span> i = <span class="str">0</span>; i &lt; points.size(); i++) {
-    <span class="kw">long</span> index = manager.nodeToIndex(i + <span class="str">1</span>);
-    <span class="kw">long</span>[] window = toTimeWindow(
-        points.get(i).requestedDeliveryTime(), input.batchStartTime());
-    timeDimension.cumulVar(index).setRange(window[<span class="str">0</span>], window[<span class="str">1</span>]);
-}
-
-<span class="com">// 솔버 = 초기해 생성(그리디) + 지역탐색 개선, 5초 제한</span>
-RoutingSearchParameters params = main.defaultRoutingSearchParameters()
-    .toBuilder()
-    .setFirstSolutionStrategy(FirstSolutionStrategy.Value.PATH_CHEAPEST_ARC)
-    .setLocalSearchMetaheuristic(LocalSearchMetaheuristic.Value.GUIDED_LOCAL_SEARCH)
-    .setTimeLimit(Duration.newBuilder().setSeconds(<span class="str">5</span>).build())
-    .build();
-Assignment solution = routing.solveWithParameters(params);</pre>
-    </details>
-
     <p style="font-size:13px; color:var(--ink-soft); margin-top:14px;">
       <strong>왜 일괄(batch)인가</strong> — 실시간 배정 = 들어오는 순서대로 그리디 → <strong>국소 최적</strong>(지금 가까운 사람에게 줬더니 나중 배송이 꼬임). VRPTW는 <strong>당일 전체를 한 번에 모아야 전역 최적</strong>. B2B는 "즉시"보다 "당일 정시 배송"이 중요 → 일괄이 비즈니스에 더 맞음.
     </p>
@@ -1661,7 +1559,7 @@ Assignment solution = routing.solveWithParameters(params);</pre>
       <div class="contrib-headline">
         <div class="contrib-num">🔒 CONTRIBUTION #4</div>
         <div class="contrib-title">짧고 잦은 임계구역엔 비관적 락 — seq 채번 race condition 해결</div>
-        <div class="contrib-impact">경력의 동시성 학습 → 스터디 발표 → 본 프로젝트 적용. 3단계 학습 곡선의 매듭</div>
+        <div class="contrib-impact">동시 요청의 중복 seq 채번을 SELECT FOR UPDATE와 3초 락 타임아웃으로 차단</div>
       </div>
       <div class="contrib-body">
         <p><strong>P</strong> · 배송담당자 등록 시 "최대 seq 조회 → +1 저장" 사이 동시 요청이 끼면 <strong>Read-Modify-Write race</strong> → 같은 seq가 두 번 발급.</p>
@@ -1700,18 +1598,6 @@ Assignment solution = routing.solveWithParameters(params);</pre>
     </div>
     </details>
 
-    <details class="fold"><summary>구현 코드 — 비관적 락 seq 채번 (Java)<span class="fold-hint">클릭해 펼치기</span></summary>
-    <pre><span class="com">// 업체 배송담당자 최고 순번(seq) 조회 — 파생 쿼리 메서드에 비관적 락 부여</span>
-<span class="ann">@Lock</span>(LockModeType.PESSIMISTIC_WRITE)
-<span class="ann">@QueryHints</span>({<span class="ann">@QueryHint</span>(name = <span class="str">"jakarta.persistence.lock.timeout"</span>, value = <span class="str">"3000"</span>)})
-Optional&lt;DeliveryManager&gt; findTopByTypeAndHubId_HubIdAndDeletedAtIsNullOrderBySeqDesc(
-    DeliveryManagerType type, UUID hubId);
-<span class="com">// → SELECT ... FOR UPDATE — 동시 요청은 대기 후 순차 처리, 3초 초과 시 LockTimeoutException</span></pre>
-    </details>
-
-    <p style="font-size:13px; color:var(--ink-soft); margin-top:14px;">
-      <strong>3단계 학습 곡선 연결</strong> — 전 회사의 <strong>비동기 다운로드 race condition</strong>을 해결하면서 "정확히 어떤 락이 어느 상황에 맞는지" 몰랐던 게 학습 동기. 부트캠프 스터디에서 <strong>낙관적/비관적/분산 락 트레이드오프</strong>를 자청 발표. 본 프로젝트에서 <strong>"충돌 잦고 짧은 임계구역엔 비관적 락"</strong>을 실제로 적용 — 한 사이클 완결.
-    </p>
   </section>
 
   <!-- 10 — DEPLOYMENT / INFRA -->
@@ -1820,7 +1706,7 @@ push(develop) ─▶ GitHub Actions <span class="com">(OIDC · matrix ×9)</span
     <h2>회고 — 잘한 것과 의도적 선택의 트레이드오프</h2>
     <div class="section-rule"></div>
     <p class="lede">
-      프로젝트를 마치며 두 갈래로 정리. <strong>무엇을 잘했고</strong> <strong>어떤 부분이 트레이드오프를 따진 의도적 선택이었는지</strong>. 각 선택의 한계와 다음 단계는 항목별 <strong>→ 라인</strong>에 함께 적음.
+      프로젝트를 마치며 <strong>무엇을 잘했고</strong> <strong>어떤 부분이 트레이드오프를 따진 의도적 선택이었는지</strong> 두 갈래로 정리했습니다.
     </p>
 
     <div class="retro-block">
@@ -1829,7 +1715,7 @@ push(develop) ─▶ GitHub Actions <span class="com">(OIDC · matrix ×9)</span
         <div class="retro-title">잘한 것</div>
       </div>
       <div class="retro-good">
-        단순 CRUD에 그치지 않고 <strong>이벤트 유실(Outbox) · 최적화(VRPTW) · 동시성(비관적 락)</strong> 등 운영 수준 문제를 <strong>비즈니스 근거에서 출발해</strong> 직접 설계. 스터디에서 학습한 락 트레이드오프를 실제 적용. "검증=동기, 통지=비동기"의 통신 의도 분리가 일관되게 관철됨.
+        단순 CRUD에 그치지 않고 <strong>이벤트 유실(Outbox) · 최적화(VRPTW) · 동시성(비관적 락)</strong> 등 운영 수준 문제를 <strong>비즈니스 근거에서 출발해</strong> 직접 설계. "검증=동기, 통지=비동기"의 통신 의도 분리를 시스템 전반에 일관되게 적용했습니다.
       </div>
     </div>
 
@@ -1845,21 +1731,18 @@ push(develop) ─▶ GitHub Actions <span class="com">(OIDC · matrix ×9)</span
           <div class="item-body">
             초기 설계엔 <code>delivery / delivery_manager / delivery_route</code> 3개 서비스로 분할했으나 실제 도메인 분석 결과 <strong>3개 도메인이 동일 트랜잭션 경계에서 함께 변경</strong>되는 강한 응집성을 보임 → 별도 서비스로 분리하면 분산 트랜잭션 비용만 증가한다고 판단해 <strong>delivery-service 한 컨텍스트로 통합 + 내부 도메인으로 분리</strong>.
           </div>
-          <div class="item-future">"같은 트랜잭션에서 변하는 것은 같은 서비스로" — DDD의 애그리거트 경계 원칙을 실제 적용한 사례</div>
         </div>
         <div class="item">
           <div class="item-title">Outbox 스케줄러가 단일 인스턴스 전제</div>
           <div class="item-body">
             분산 스케줄러·ShedLock·리더 선출 등 옵션을 검토했으나 <strong>각 마이크로서비스가 단일 인스턴스로 배포되는 현 토폴로지</strong>에선 스케줄러 중복 실행이 발생 X → 분산 락 도입은 오버엔지니어링.
           </div>
-          <div class="item-future">수평 확장 시점엔 ShedLock(DB 락) 또는 컨슈머 측 멱등 처리(이벤트 ID dedup) 추가 예정</div>
         </div>
         <div class="item">
           <div class="item-title">full Saga 대신 Outbox 채택</div>
           <div class="item-body">
             다중 서비스 트랜잭션엔 Saga(보상 트랜잭션)도 후보였으나 우리 케이스는 <strong>단방향 통지·응답 불필요</strong>라 full Saga의 복잡도가 과함.
           </div>
-          <div class="item-future">다중 단계 트랜잭션이 필요한 도메인에선 Saga가 정답 — 알고 있음</div>
         </div>
       </div>
     </div>

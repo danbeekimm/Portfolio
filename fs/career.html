@@ -526,7 +526,7 @@
       font-weight: 500;
     }
 
-    /* Connection — 학습 연결 고리 */
+    /* Connection */
     .connection {
       background: linear-gradient(135deg, var(--accent-faded) 0%, #fff 100%);
       border-left: 4px solid var(--accent);
@@ -1341,7 +1341,7 @@
       <div class="etc-card">
         <div class="etc-title">형광펜 대규모 고도화 <span class="tag">UX 데이터 모델</span></div>
         <div class="etc-body">
-          드래깅·리사이징 레이어 도입, 색상 16 → 40+개 확장, 저장 포맷 <strong>XML → JSON</strong> 전환. 데이터 모델 자체를 재설계해 향후 기능 확장을 쉽게 만든 작업.
+          드래깅·리사이징 레이어 도입, 색상 16 → 40+개 확장, 저장 포맷 <strong>XML → JSON</strong> 전환. 데이터 모델 자체를 재설계해 추가 기능을 쉽게 확장할 수 있도록 만든 작업.
         </div>
       </div>
 
@@ -1473,12 +1473,6 @@
       </div>
     </div>
 
-    <div class="connection">
-      <div class="connection-tag">→ 학습 연결 고리</div>
-      <div class="connection-body">
-        이 경험에서 <strong>SQL 의존성·벤더 종속성의 한계</strong>를 체감해 <strong>ORM(JPA)</strong>을 학습. 영속성 컨텍스트·벤더 독립 데이터 접근 계층 설계를 익혀 부트캠프 프로젝트의 <strong>JPA + QueryDSL 설계</strong>에 적용.
-      </div>
-    </div>
   </section>
 
   <!-- 05 — 비동기 동시성 -->
@@ -1595,18 +1589,9 @@
         <p><strong>R</strong> · 동시 다발 요청으로 이용량 제한 우회를 <strong>구조적으로 차단</strong>, 비동기 환경 모니터링 누락 제거.</p>
 
         <div class="honest-aside" style="background:var(--accent-faded); border-left-color:var(--accent);">
-          <span class="aside-tag" style="color:var(--accent);">📚 당시 한계와 이후 학습</span>
-          당시엔 <strong>"여러 방법 중 사전 차감이 맞다"</strong>는 판단으로 해결했으나, 락 기반 대안을 체계적으로 비교하지 못한 상태였음.
-          <strong>이후 학습 결과로 정리한 대안</strong>: 비관적 락(<code style="background:var(--code-bg);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11.5px;">PESSIMISTIC_WRITE</code>)으로 차감 row를 잠그거나, 낙관적 락(<code style="background:var(--code-bg);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11.5px;">@Version</code>)으로 충돌 시 재시도하는 방식.
-          <strong>해당 환경에서의 판단 근거</strong>: 다운로드 처리 시간이 길어 락 대기 비용이 크므로 사전 차감이 적합. 현재는 환경에 따라 도구를 선택할 수 있는 단계에 도달.
+          <span class="aside-tag" style="color:var(--accent);">⚙️ 선택 근거 — 왜 사전 차감이 맞았나</span>
+          비관적 락(<code style="background:var(--code-bg);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11.5px;">PESSIMISTIC_WRITE</code>)과 낙관적 락(<code style="background:var(--code-bg);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:11.5px;">@Version</code>)도 비교했지만, 다운로드 처리 시간이 길어 락 대기·재시도 비용이 커진다. 이용량을 긴 처리 앞에서 원자적으로 차감하고 실패 시 보상하는 구조가 해당 환경의 처리량과 정합성을 함께 지키는 선택이었다.
         </div>
-      </div>
-    </div>
-
-    <div class="connection">
-      <div class="connection-tag">→ 학습 연결 고리</div>
-      <div class="connection-body">
-        "긴 로직 <strong>이전에</strong> 임계구역을 둔다"는 동시성 설계 원칙을 체득해 부트캠프에서 <strong>분산 락·동시성 제어를 자청 발표</strong>(낙관·비관·분산 락 트레이드오프)하고 다2조부 프로젝트의 <strong>seq 채번 race condition</strong>에서 의식적으로 <strong>비관적 락(PESSIMISTIC_WRITE)</strong> 선택.
       </div>
     </div>
   </section>
@@ -1652,10 +1637,8 @@
         <p><strong>R</strong> · 팀 내에서 우려가 있던 <strong>"번역 도입 후 로딩 속도 저하"가 눈에 띄는 이슈 없이 출시</strong>. 인프라 부하 증가라는 비용을 사전에 인지·감수한 결정이라 출시 후에도 예상 범위 내에서 동작.</p>
 
         <div class="honest-aside" style="background:var(--accent-faded); border-left-color:var(--accent);">
-          <span class="aside-tag" style="color:var(--accent);">📚 당시 한계와 이후 학습</span>
-          당시엔 트레이드오프를 직접 비교해 적용했으나, 이것이 일반화된 패턴임은 인식하지 못한 상태였음.
-          <strong>이후 학습 결과로 이해한 패턴</strong>: <strong>Client fan-out · Progressive Rendering</strong> — <strong>TTFB(첫 반응 시간) 단축이 체감 응답성을 결정한다</strong>는 원칙이며, <strong>HTTP 스트리밍·SSE·GraphQL @defer</strong> 등 표준이 같은 철학에서 출발.
-          <strong>다음 작업 시 접근법</strong>: <strong>SSE 같은 표준 프로토콜</strong>이나 <strong>viewport 우선순위 큐</strong>를 함께 검토해 인프라 부하도 같이 줄이는 방향 가능.
+          <span class="aside-tag" style="color:var(--accent);">⚙️ 설계 패턴 — Client fan-out · Progressive Rendering</span>
+          서버 일괄 응답을 클라이언트 fan-out과 점진 렌더링으로 바꿔 <strong>TTFB(첫 반응 시간)를 단축</strong>하고 사용자가 먼저 볼 수 있는 결과부터 교체했다. HTTP 스트리밍·SSE·GraphQL <code>@defer</code>도 응답 단위를 나눠 체감 대기 시간을 줄인다는 같은 설계 원리를 사용한다.
         </div>
       </div>
     </div>
@@ -1680,43 +1663,8 @@
       </tbody>
     </table>
     <p class="lede" style="margin-top:20px; font-size:14px; color:var(--muted);">
-      위는 <strong>레거시 코드베이스 운영 환경</strong>의 스택. 부트캠프 프로젝트(Java 17 · Spring Boot 3.5 · React/TS 등)에서 <strong>모던 스택으로 학습·적용 병행</strong> → 다음 섹션(GROWTH MAP) 참조.
+      위는 <strong>레거시 코드베이스 운영 환경</strong>에서 직접 사용한 스택입니다.
     </p>
-  </section>
-
-  <!-- 09 — Growth Cycles -->
-  <section class="section">
-    <div class="section-tag">09 · GROWTH MAP</div>
-    <h2>실무 한계 → 학습 동기 → 부트캠프 적용</h2>
-    <div class="section-rule"></div>
-    <p class="lede">
-      실무에서 시행착오로 풀어낸 문제들을 그대로 <strong>"왜 그게 효과 있었는지 알고 싶다"</strong>는 공부로 이어갔습니다.
-      이론으로 채운 뒤 다시 프로젝트에서 검증하는 사이클을 두 번 거쳤습니다.
-    </p>
-
-    <div class="cycle-card">
-      <div class="cycle-header">
-        <div class="cycle-num">🔄 GROWTH CYCLE #1 — SQL · 벤더 종속성 · DB 깊이</div>
-        <div class="cycle-title">PG → MSSQL 슬로우 쿼리 시행착오 → ORM 학습 + 실행 계획 공부 → 부트캠프 프로젝트 적용</div>
-      </div>
-      <div class="cycle-body">
-        <p><strong>실무</strong> · 100% MyBatis 환경에서 슬로우 쿼리를 <strong>경험적 시행착오로 풀었지만</strong>, "왜 효과 있는지" 설명할 수 없는 부분이 마음에 남음.</p>
-        <p><strong>학습</strong> · 영속성 컨텍스트·JPQL·벤더 독립 데이터 접근 계층 설계를 학습. 옵티마이저·실행 계획·카디널리티 추정 개념도 함께 정리. <strong>"왜 ORM이 필요한지"를 실무 경험으로 설명 가능</strong>.</p>
-        <p><strong>적용</strong> · 부트캠프 프로젝트에서 <strong>JPA + QueryDSL</strong>로 데이터 액세스 계층 직접 설계. PostGIS 같은 벤더 특수 기능은 Native Query로, 일반 도메인은 JPA로 — 이 분기 기준도 실무에서 체감한 한계로부터 나온 판단.</p>
-      </div>
-    </div>
-
-    <div class="cycle-card">
-      <div class="cycle-header">
-        <div class="cycle-num">🔄 GROWTH CYCLE #2 — 동시성 제어</div>
-        <div class="cycle-title">비동기 다운로드 race 직감으로 해결 → 락 트레이드오프 발표 → 다2조부 비관적 락 의식적 선택</div>
-      </div>
-      <div class="cycle-body">
-        <p><strong>실무</strong> · "긴 로직 이전에 임계구역을 둔다"는 방식으로 race를 풀었지만, <strong>어떤 락이 어떤 상황에 맞는지 체계적으로 모름</strong>.</p>
-        <p><strong>학습</strong> · 부트캠프 스터디에서 <strong>낙관적/비관적/분산 락 트레이드오프</strong>를 자청 발표. 각 락의 동작 원리·임계구역 크기·충돌 빈도에 따른 선택 기준을 코드 레벨로 검증.</p>
-        <p><strong>적용</strong> · 다2조부 프로젝트의 <strong>seq 채번 race condition</strong>에 비관적 락(<code style="background:var(--code-bg);padding:1px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:12px;">PESSIMISTIC_WRITE</code>) 적용. 분산 락도 검토 후 "단일 인스턴스 토폴로지엔 오버엔지니어링"이라는 판단으로 배제 — <strong>여러 옵션을 알고 의도적으로 선택</strong>한 사례.</p>
-      </div>
-    </div>
   </section>
 
   <footer>

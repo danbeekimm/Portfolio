@@ -1254,12 +1254,6 @@
             <strong>한국투자증권 API/WebSocket</strong> · <strong>네이버 뉴스</strong> · <strong>Cloud SQL</strong> · <strong>GCP Container Registry</strong>)은
             GCP 경계 바깥에서 통신. AI Assistant(녹색)와 Notification(주황) 두 흐름이 동일 인프라를 공유합니다.
         </p>
-        <p class="lede note-migration">
-            위 구성은 <strong>발표 시점의 아키텍처</strong>입니다. 발표 종료 후 운영 비용을 줄이고자 백엔드·프론트엔드 전체를
-            <strong>OCI 단일 인스턴스</strong>(Docker Compose + Nginx)로 직접 마이그레이션했고,
-            현재 <a href="https://app.antscamp.site/guest/login" target="_blank" rel="noopener">라이브 데모</a>가 그 위에서 동작합니다.
-        </p>
-
         <div class="arch">
             <svg viewBox="0 0 920 700" xmlns="http://www.w3.org/2000/svg">
                 <defs>
@@ -1525,18 +1519,18 @@
         <h3 style="margin-top:32px; margin-bottom:14px;">설계 의사결정과 근거</h3>
         <table>
             <thead>
-            <tr><th>결정</th><th>대안</th><th>선택 이유 — 정량 가정 · 확장 계획 포함</th></tr>
+            <tr><th>결정</th><th>대안</th><th>선택 이유 — 정량 가정 포함</th></tr>
             </thead>
             <tbody>
             <tr>
                 <td>역할별 VM 5개 분리</td>
                 <td>단일 VM 통합 · K8s 클러스터</td>
-                <td>학습/포트폴리오 환경엔 K8s가 과함. 단일 VM은 SPOF·자원 경합 위험. <strong>역할별 분리로 장애 격리와 자원 독립성 확보</strong>. 운영 시 GKE로 단계적 이행 가능.</td>
+                <td>학습/포트폴리오 환경엔 K8s가 과함. 단일 VM은 SPOF·자원 경합 위험. <strong>역할별 분리로 장애 격리와 자원 독립성 확보</strong>.</td>
             </tr>
             <tr>
                 <td>pgvector</td>
                 <td>Pinecone · Milvus</td>
-                <td>문서 수 수천 건 · QPS 한 자릿수 가정엔 cosine + IVFFlat로 p95 충분. <strong>수십만 건 또는 멀티테넌시</strong> 시점에 외부화 검토.</td>
+                <td>문서 수 수천 건 · QPS 한 자릿수인 현재 규모에서는 cosine + IVFFlat로 요구 성능을 충족해 별도 벡터 DB를 도입하지 않음.</td>
             </tr>
             <tr>
                 <td>Spring AI + 모델명 라우팅</td>
@@ -1556,12 +1550,12 @@
             <tr>
                 <td>Reconciler(@Scheduled)</td>
                 <td>메시지 큐 (DLQ)</td>
-                <td>인제스트 동시성 분당 수십 건 가정엔 60초 주기 보정으로 SLA 만족. <strong>분당 수백 건 이상</strong> 시 Kafka DLQ 전환.</td>
+                <td>인제스트 동시성 분당 수십 건인 현재 규모에서는 60초 주기 보정으로 SLA를 충족해 별도 DLQ를 도입하지 않음.</td>
             </tr>
             <tr>
                 <td>단일 인스턴스 → 분산 락 생략</td>
                 <td>ShedLock · 리더 선출</td>
-                <td>각 서비스 단일 인스턴스 배포 토폴로지 → 스케줄러 중복 실행 자체 발생 X. <strong>수평 확장 시</strong> ShedLock + 컨슈머 멱등 처리.</td>
+                <td>각 서비스가 단일 인스턴스로 배포되는 현재 토폴로지에서는 스케줄러 중복 실행이 발생하지 않아 분산 락을 생략.</td>
             </tr>
             </tbody>
         </table>
@@ -1615,14 +1609,6 @@
                 </div>
             </div>
 
-            <details class="fold"><summary>핵심 코드 — Self-preference 차단 (Java)<span class="fold-hint">클릭해 펼치기</span></summary>
-            <pre><span class="com">// EvalProcessor.judgeAndSave() — 응답 생성 모델과 Judge 모델이 동일하면 self-preference bias 발생 → skip</span>
-<span class="kw">if</span> (judgeModel.equalsIgnoreCase(ragQuery.getLlmModel())) {
-    log.warn(<span class="str">"Self-preference bias 방지: RAG 생성 모델과 Judge 모델이 동일하여 skip. model={}"</span>, judgeModel);
-    <span class="kw">return</span>;
-}</pre>
-            </details>
-
             <h3 style="margin-top:24px;">결과 — 데이터 기반 의사결정</h3>
             <table>
                 <thead>
@@ -1641,8 +1627,7 @@
                 </tbody>
             </table>
             <p style="font-size:12.5px;color:var(--muted);margin-top:8px;font-style:italic;">
-                표본 40건은 통계적 검정력 충분치 않으나 ① 두 Judge 동일 방향 ② Pairwise 동일 방향 → 방향성 견고.
-                정밀화 시 골든셋 200건+ 확대 및 사람 평가자 inter-rater agreement 측정으로 Judge 신뢰도 자체 검증 계획.
+                표본 40건은 통계적 검정력이 충분하지 않지만, 두 Judge와 Pairwise가 모두 같은 방향을 보여 결과의 방향성은 일관됐습니다.
             </p>
         </div>
 
@@ -1884,29 +1869,6 @@
                     <li><strong>HITL 액션</strong> — Slack Block Kit으로 분석 + <strong>복구 버튼 4종</strong>(restart / rollback / cache-clear / false-alarm) 동시 노출</li>
                 </ul>
                 <p><strong>R</strong> · 알림 수신 후 수 초 내 "근거 메트릭/로그 + 권장 조치" 자동 게시. <strong>AI를 운영 모니터링 시스템의 일부로 통합.</strong></p>
-                <details class="fold"><summary>핵심 코드 — @Async 비동기 ACK (Java)<span class="fold-hint">클릭해 펼치기</span></summary>
-                <pre style="margin-top:14px;"><span class="com">// Slack 3초 응답 제약 → @Async로 먼저 ACK 후 메시지 갱신</span>
-<span class="kw">@Async</span>(<span class="str">"slackActionExecutor"</span>)
-<span class="kw">public void</span> executeAndNotifyAsync(SlackActionCommand command) {
-    Notification notification = notificationRepository.findById(command.notificationId())
-            .orElseThrow(NotificationException::notFound);
-
-    trySlack(<span class="str">"처리 중 메시지 갱신"</span>, () ->
-            alertPort.markAsProcessing(notification, command.slackUserId(), command.action()));
-
-    ActionResult result = executeAction(command.action(), notification.getJob());
-    <span class="kw">if</span> (result <span class="kw">instanceof</span> ActionResult.Failure) {
-        notificationCommandHandler.markActionFailed(command.notificationId());
-    }
-    <span class="kw">boolean</span> succeeded = result <span class="kw">instanceof</span> ActionResult.Success;
-
-    trySlack(<span class="str">"Slack 메시지 업데이트"</span>, () ->
-            alertPort.markAsHandled(notification, command.slackUserId(), command.action(), succeeded));
-    trySlack(<span class="str">"스레드 답글 전송"</span>, () ->
-            alertPort.notifyActionResult(notification.getChannelId(),
-                    notification.getSlackMessageTs(), command.action(), command.slackUserId(), result));
-}</pre>
-                </details>
                 <div class="code-links">
                     <span class="code-links-label">CODE</span>
                     <a class="code-link" href="https://github.com/danbeekimm/ants-camp/blob/dev/apps/notification-service/src/main/java/io/antcamp/notificationservice/application/service/NotificationApplicationService.java" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>NotificationApplicationService.java<span class="hint">· dedup→RCA→HITL</span></a>
@@ -2136,7 +2098,6 @@
                     <ul>
                         <li><strong>3구간 분리</strong>: 유저메시지 저장(T1) → LLM 호출(<strong>트랜잭션 없음</strong>) → 봇메시지 + COMPLETED(T2)</li>
                         <li>omin 프로젝트 트랜잭션 경계 분리 교훈을 LLM 호출에 그대로 재사용</li>
-                        <li><em>측정 후속 계획: Micrometer <code>hikari_connections_active</code> + <code>llm_call_duration</code> 게이지로 점유 시간 정량화 예정</em></li>
                     </ul>
                 </div>
             </div>
@@ -2266,10 +2227,10 @@
     <!-- SECTION 13 — RETRO — 3분할 구조 -->
     <section class="section">
         <div class="section-tag">13 · RETROSPECTIVE</div>
-        <h2>회고 — 의도적 선택과 진짜 아쉬운 점을 구분하다</h2>
+        <h2>회고 — 잘한 것과 의도적 선택</h2>
         <div class="section-rule"></div>
         <p class="lede">
-            프로젝트를 마치며 세 갈래로 정리. <strong>무엇을 잘했고</strong> <strong>어떤 부분이 의도적 선택이었으며</strong> <strong>어디가 진짜 아쉬웠는지</strong>.
+            프로젝트를 마치며 <strong>무엇을 잘했고</strong> <strong>어떤 부분이 트레이드오프를 따진 의도적 선택이었는지</strong> 두 갈래로 정리했습니다.
         </p>
 
         <!-- ✅ 잘한 것 -->
@@ -2298,49 +2259,28 @@
                     <div class="item-body">
                         SSM · K8s rolling restart로 외부화하는 옵션도 검토했으나, <strong>단일 호스트 데모 환경</strong>에선 직접 호출이 더 단순·명료. 운영 복잡도 증가의 비용이 이득을 넘어선다고 판단.
                     </div>
-                    <div class="item-future">다중 인스턴스 시점엔 SSM/K8s API로 외부화 예정</div>
                 </div>
                 <div class="item">
                     <div class="item-title">Loki <code>replication_factor=1</code> · retention 미설정</div>
                     <div class="item-body">
                         단일 VM 토폴로지에선 HA가 의미 없음 → 단순 구성 선택. 데이터 영속성도 데모 범위 안에서 충분.
                     </div>
-                    <div class="item-future">운영 환경 전제로는 다중 노드 + 보관 정책 도입</div>
                 </div>
                 <div class="item">
                     <div class="item-title">인증을 게이트웨이 헤더에 위임</div>
                     <div class="item-body">
                         모든 서비스에 JWT 검증을 중복 구현 vs 게이트웨이 단일 검증의 단순함을 비교한 결과 <strong>부트캠프 규모엔 후자가 적절</strong>.
                     </div>
-                    <div class="item-future">운영 환경엔 서비스 레벨 JWT 한 겹 추가가 정석 — 알고 있고 다음에는 그렇게 설계</div>
                 </div>
                 <div class="item">
                     <div class="item-title">분산 락 생략</div>
                     <div class="item-body">
                         각 서비스가 단일 인스턴스 배포 토폴로지에선 스케줄러 중복 실행 자체가 발생 X → ShedLock 도입은 오버엔지니어링.
                     </div>
-                    <div class="item-future">수평 확장 시점에 ShedLock + 컨슈머 멱등 처리 추가</div>
                 </div>
             </div>
         </div>
 
-        <!-- 🛠 진짜 아쉬운 것 -->
-        <div class="retro-block">
-            <div class="retro-header">
-                <div class="retro-icon">🛠</div>
-                <div class="retro-title">진짜 아쉬운 것</div>
-                <div class="retro-meta">더 챙겼어야 하는 부분</div>
-            </div>
-            <div class="retro-real">
-                <div class="item">
-                    <div class="item-title">의미 캐시 임계값이 엄격 — 유효 hit율 한계</div>
-                    <div class="item-body">
-                        측정해 보니 코사인 ≈0.95 임계값이 사실상 <strong>동일 문구만 통과</strong>시켜, 같은 의도라도 표현이 다른 질문은 전부 미스(paraphrase hit율 0%). 캐시 히트도 ~0.95s 소요(질문 임베딩 왕복 1회). 측정 자체도 단일 클라이언트·소표본 기준이라 동시성/부하 하 수치는 아님.
-                    </div>
-                    <div class="item-future">임계값 0.90~0.92 완화(미묘하게 다른 질문에 오반환 위험과 트레이드오프) · 정규화 질문 exact-match 단축 경로 · 임베딩 캐싱 검토</div>
-                </div>
-            </div>
-        </div>
     </section>
 
     <footer>

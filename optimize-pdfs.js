@@ -92,8 +92,8 @@ function mib(bytes) {
   return (bytes / 1024 / 1024).toFixed(2);
 }
 
-function optimizeOne(target) {
-  const sourcePath = path.join(ROOT, target.source);
+function optimizeOne(target, sourceDir) {
+  const sourcePath = path.join(sourceDir, target.source);
   const outputPath = path.join(ROOT, target.output);
   const tempPath = path.join(ROOT, `.${target.output}.${process.pid}.tmp.pdf`);
 
@@ -130,9 +130,9 @@ function optimizeOne(target) {
   }
 }
 
-function optimizePdfs({ only = null } = {}) {
+function optimizePdfs({ only = null, sourceDir = ROOT } = {}) {
   const targets = only ? TARGETS.filter(target => target.only === only) : TARGETS;
-  targets.forEach(optimizeOne);
+  targets.forEach(target => optimizeOne(target, sourceDir));
 }
 
 if (require.main === module) {

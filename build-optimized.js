@@ -1,13 +1,16 @@
 const { spawnSync } = require('child_process');
+const fs = require('fs');
+const os = require('os');
 const path = require('path');
 const { optimizePdfs, parseOnly } = require('./optimize-pdfs');
 
 const ROOT = __dirname;
 
-function buildOriginalPdfs(only) {
+function buildOriginalPdfs(only, outputDir) {
   const env = { ...process.env };
-  // 최적화 대상인 long PDF만 생성하고 A4 PDF는 건드리지 않는다.
+  // 최적화에 필요한 long 원본만 임시 폴더에 생성한다.
   env.LONG_ONLY = '1';
+  env.PDF_OUTPUT_DIR = outputDir;
   if (only) env.ONLY = only;
   else delete env.ONLY;
 
@@ -25,8 +28,13 @@ function buildOriginalPdfs(only) {
 
 function main() {
   const only = parseOnly(process.argv.slice(2));
-  buildOriginalPdfs(only);
-  optimizePdfs({ only });
+  const sourceDir = fs.mkdtempSync(path.join(os.tmpdir(), 'portfolio-pdf-'));
+  try {
+    buildOriginalPdfs(only, sourceDir);
+    optimizePdfs({ only, sourceDir });
+  } finally {
+    fs.rmSync(sourceDir, { recursive: true, force: true });
+  }
 }
 
 try {

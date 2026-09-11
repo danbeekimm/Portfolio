@@ -20,6 +20,13 @@ node_modules/
 dist/
 build/
 
+# PDF 중간 산출물 (최적화본만 관리)
+/portfolio-a4.pdf
+/portfolio-long.pdf
+/portfolio-fs-long.pdf
+/_toc*.html
+/.*.tmp.pdf
+
 # Working docs (작업 계획·메모)
 docs/
 

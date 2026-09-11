@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "build:pdf": "node build-pdf.js",
-    "optimize:pdf": "node optimize-pdfs.js",
+    "build:pdf": "node build-optimized.js",
+    "optimize:pdf": "node build-optimized.js",
     "build:pdf:optimized": "node build-optimized.js",
     "build:pdf:fs:optimized": "node build-optimized.js --only fs",
     "build:pdf:backend:optimized": "node build-optimized.js --only backend"

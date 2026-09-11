@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = __dirname;
+const OUTPUT_DIR = process.env.PDF_OUTPUT_DIR || ROOT;
 const PAGES = [
   { file: 'index.html',          title: '커버 — Portfolio 메인',           tag: 'COVER' },
   // career는 본문이 길어 마지막 footer 한 줄이 다음 페이지로 넘쳐 거의 빈 페이지가 생긴다.
@@ -297,6 +298,27 @@ async function mergePdfs(buffers) {
     const src = await PDFDocument.load(buf);
     const copied = await merged.copyPages(src, src.getPageIndices());
     copied.forEach(p => merged.addPage(p));
+    // Chrome의 #섹션 링크는 문서 카탈로그의 이름을 참조한다.
+    // copyPages는 카탈로그를 복사하지 않으므로 병합된 페이지의 실제 목적지로 바꾼다.
+    const namedDests = src.context.lookup(src.catalog.get(PDFName.of('Dests')));
+    if (namedDests) {
+      const pageIndices = new Map(src.getPages().map((p, i) => [String(p.ref), i]));
+      for (const pg of copied) {
+        for (const ref of pg.node.Annots()?.asArray() || []) {
+          const annot = merged.context.lookup(ref);
+          const name = annot.get(PDFName.of('Dest'));
+          if (name instanceof PDFName) {
+            const dest = src.context.lookup(namedDests.get(name));
+            if (!dest) continue;
+            const targetIdx = pageIndices.get(String(dest.get(0)));
+            if (targetIdx == null) continue;
+            const mappedDest = dest.clone(merged.context);
+            mappedDest.set(0, copied[targetIdx].ref);
+            annot.set(PDFName.of('Dest'), mappedDest);
+          }
+        }
+      }
+    }
   }
   return { merged, startIndices };
 }
@@ -334,7 +356,7 @@ function addTocLinks(merged, rowBoxes, startIndices) {
 // 긴 한 페이지(통짜 세로) 버전을 만든다: TOC → 각 페이지를 자기 높이만큼의 단일 페이지로 렌더 → 병합.
 // tocOpts(role/roleKo)로 백엔드/풀스택 등 버전별 TOC 문구를 바꾼다. outName으로 결과 파일명을 지정.
 async function buildLongVersion(browser, pages, tocOpts, outName) {
-  const tocPath = path.join(ROOT, `_toc_${outName.replace(/\.pdf$/, '')}.html`);
+  const tocPath = path.join(OUTPUT_DIR, `_toc_${outName.replace(/\.pdf$/, '')}.html`);
   fs.writeFileSync(tocPath, buildTOCHTML(pages, tocOpts));
   try {
     const longBuffers = [];
@@ -362,7 +384,7 @@ async function buildLongVersion(browser, pages, tocOpts, outName) {
     const long = await mergePdfs(longBuffers);
     addTocLinks(long.merged, tocBoxes, long.startIndices);
     rewriteInternalLinks(long.merged, buildPageIndexByName(pages, long.startIndices));
-    fs.writeFileSync(path.join(ROOT, outName), await long.merged.save());
+    fs.writeFileSync(path.join(OUTPUT_DIR, outName), await long.merged.save());
     console.log(`✓ ${outName}`);
   } finally {
     fs.unlinkSync(tocPath);
@@ -397,13 +419,13 @@ async function buildA4Version(browser, tocPath) {
   const a4 = await mergePdfs(a4Buffers);
   addTocLinks(a4.merged, a4TocBoxes, a4.startIndices);
   rewriteInternalLinks(a4.merged, buildPageIndexByName(PAGES, a4.startIndices));
-  fs.writeFileSync(path.join(ROOT, 'portfolio-a4.pdf'), await a4.merged.save());
+  fs.writeFileSync(path.join(OUTPUT_DIR, 'portfolio-a4.pdf'), await a4.merged.save());
   console.log('✓ portfolio-a4.pdf');
 }
 
 async function main() {
   // Write TOC HTML to temp file so it loads with file:// (so Google Fonts work)
-  const tocPath = path.join(ROOT, '_toc.html');
+  const tocPath = path.join(OUTPUT_DIR, '_toc.html');
   fs.writeFileSync(tocPath, buildTOCHTML(PAGES));
 
   const browser = await puppeteer.launch({

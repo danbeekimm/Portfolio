@@ -1530,7 +1530,7 @@
             <tr>
                 <td>pgvector</td>
                 <td>Pinecone · Milvus</td>
-                <td>문서 수 수천 건 · QPS 한 자릿수인 현재 규모에서는 cosine + IVFFlat로 요구 성능을 충족해 별도 벡터 DB를 도입하지 않음.</td>
+                <td>주 DB로 PostgreSQL을 선택해 pgvector 도입이 쉽고, QPS가 한 자릿수인 현재 규모에서는 cosine 유사도만으로도 목표 성능을 제공하기에 충분하다고 판단.</td>
             </tr>
             <tr>
                 <td>Spring AI + 모델명 라우팅</td>

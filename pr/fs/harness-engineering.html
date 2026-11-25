@@ -131,6 +131,7 @@
 
         .body-p { font-size: 14.5px; color: var(--ink-soft); line-height: 1.75; margin-bottom: 14px; }
         .body-p strong { color: var(--ink); font-weight: 600; }
+        .body-p a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent-soft); }
         .caveat { font-size: 12.5px; color: var(--muted); font-style: italic; margin-top: 10px; }
 
         /* Screenshot */
@@ -287,7 +288,7 @@
             <div class="ai-stage">
                 <div class="ai-stage-phase">5 · 보존</div>
                 <div class="ai-stage-tool">tests/results</div>
-                <div class="ai-stage-body">타임스탬프 폴더에 <code>summary.md</code> 표·요청·응답 저장. <strong>토큰·시크릿은 마스킹</strong>, 결과물은 <code>.gitignore</code>.</div>
+                <div class="ai-stage-body">타임스탬프 폴더에 <code>summary.md</code> 표·요청·응답 저장. <strong>토큰·시크릿은 마스킹</strong>하고, 저장 직후 검사 스크립트가 남은 시크릿 패턴을 찾으면 <strong>그 실행은 실패</strong>. 결과물은 <code>.gitignore</code>.</div>
             </div>
         </div>
 
@@ -301,7 +302,7 @@
         </div>
 
         <h3 class="spaced" data-spot>C. <span class="accent">notify-slack.sh</span> — 작업을 깨지 않는 보고</h3>
-        <p class="caveat">외부 전송이므로 처음에는 보고 대상·내용을 사용자에게 확인받고, 사소한 변경(문서/오타)은 보고하지 않습니다.</p>
+        <p class="caveat">외부 전송이므로 실행할 때마다 사용자 확인을 거치고(권한 설정 <code>ask</code>), 사소한 변경(문서/오타)은 보고하지 않습니다.</p>
 
         <div class="shot">
             <div class="shot-head">
@@ -316,30 +317,79 @@
     <!-- 05 — GUARDRAILS & CONTEXT -->
     <section class="section">
         <div class="section-tag">04 · GUARDRAILS · CONTEXT</div>
-        <h2>가드레일과 컨텍스트를 설계한다</h2>
+        <h2>지키라고 적지 않고, 어길 수 없게 만든다</h2>
         <div class="section-rule"></div>
-        <p class="lede">생성을 빠르게 하되, <strong>위험한 자동화는 막고(가드레일)</strong> AI가 <strong>틀린 맥락으로 추측하지 않게(컨텍스트)</strong> 합니다.</p>
+        <p class="lede">
+            규칙 문서는 AI가 읽고 따르기를 기대하는 <strong>약속</strong>입니다. 약속은 어겨질 수 있으므로, 위험한 동작은
+            <strong>설정 · 훅 · 테스트로 실행 자체를 막았습니다</strong>. 위험이 낮은 일은 묻지 않고 맡기고, 높은 일일수록 기계가 막습니다.
+        </p>
 
-        <div class="two-col">
-            <div class="box warn">
-                <div class="box-title">가드레일 — 무엇을 못 하게 하나</div>
-                <ul>
-                    <li><strong>합격 판정은 사람이</strong> — 검토·테스트는 자동화하되 통과 여부는 직접 결정, 🔴 항목은 반드시 수정 후 <strong>빌드로 재검증</strong></li>
-                    <li><strong>외부 전송은 확인 후</strong> — Slack 보고는 처음에 사용자 승인</li>
-                    <li><strong>시크릿·PII 마스킹</strong> — 테스트 결과·로그에 JWT/<code>KIS_*</code>/<code>*_API_KEY</code>/비밀번호 평문 금지(§8)</li>
-                    <li>테스트 산출물(<code>tests/results/</code>)은 <strong>커밋 대상 아님</strong>(.gitignore)</li>
-                    <li>신뢰 경계 — 도메인 서비스는 JWT를 직접 검증하지 않고 게이트웨이가 주입한 <code>X-User-Id</code>만 신뢰</li>
-                </ul>
-            </div>
-            <div class="box">
-                <div class="box-title">컨텍스트 — 무엇을 언제 보게 하나</div>
-                <ul>
-                    <li><strong>SSOT 상호참조</strong> — 세 문서가 서로를 가리켜 중복·표류 방지</li>
-                    <li><strong>설정 외부화 인지</strong> — "이 레포에서 <code>application.yaml</code> 찾지 말 것", 실제 설정은 Config 레포(<code>dev</code>)</li>
-                    <li><strong>작업 유형별 참고문서 라우팅</strong> — RAG 작업 → <code>rag-architecture.md</code>, 알림 작업 → <code>aiops-architecture.md</code></li>
-                    <li>휘발성 큰 정보(스키마·설정)는 문서에 박제하지 않고 그때그때 실측</li>
-                </ul>
-            </div>
+        <h3 class="spaced">위험도별로 맡기는 범위</h3>
+        <table>
+            <thead>
+                <tr><th>위험도</th><th>예</th><th>처리</th><th>수단</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>낮음</td><td>빌드 · 단위 테스트 · 아키텍처 테스트 · git 조회</td><td>묻지 않고 실행</td><td>권한 허용 (<code>allow</code>)</td></tr>
+                <tr><td>중간</td><td>Slack 전송 · <code>docker compose</code> 기동/중지</td><td>매번 확인</td><td>권한 확인 (<code>ask</code>)</td></tr>
+                <tr><td>높음</td><td><code>.env</code> 읽기·수정 · 배포 스크립트 · main 직접 푸시 · 강제 푸시 · 볼륨 삭제</td><td>차단</td><td>권한 차단 (<code>deny</code>) + 실행 전 훅</td></tr>
+            </tbody>
+        </table>
+
+        <h3 class="spaced">규칙을 누가 검사하는가</h3>
+        <table>
+            <thead>
+                <tr><th>규칙</th><th>검사</th><th>수단</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>레이어 의존 방향 · domain 역참조 · 엔티티 setter · 예외 처리기 위치</td><td>기계</td><td>ArchUnit (<code>./gradlew archTest</code>, PR CI 단계)</td></tr>
+                <tr><td>트랜잭션 안 외부 호출 · Aggregate 경계 · 동시성 · 민감 정보 로그</td><td>AI 리뷰</td><td><code>/revref</code></td></tr>
+                <tr><td>테스트 결과 저장물의 시크릿</td><td>기계</td><td>마스킹 → 검사 스크립트</td></tr>
+                <tr><td>최종 합격 판정</td><td>사람</td><td>-</td></tr>
+            </tbody>
+        </table>
+
+        <div class="box" style="margin-top:22px;">
+            <div class="box-title">직접 돌려 본 결과 — antcamp · 2026-11-24</div>
+            <ul>
+                <li><strong>구조만 보면 판정되는 규칙 4개는 테스트로 옮겼습니다.</strong> AI 리뷰는 매번 결과가 달라질 수 있지만 테스트는 항상 같은 답을 냅니다. 도메인 서비스 7개에 같은 규칙을 두었습니다.</li>
+                <li><strong>도입 시점의 기존 위반 514건은 기록해 두고, 그 뒤로 새 위반만 실패시킵니다.</strong> 참조 한 건씩 센 수이고 모두 레이어 의존 방향 규칙에서 나왔습니다. 나머지 세 규칙은 0건이었습니다.</li>
+                <li><strong>일부러 넣은 위반 2건을 각 규칙이 잡았습니다.</strong> presentation 에서 domain repository 를 직접 주입받는 클래스와, 공개 setter 가 있는 <code>@Entity</code> 를 넣고 돌린 결과가 아래 로그입니다.</li>
+                <li><strong>실행 전 훅은 가짜 입력 23건으로 시험했습니다.</strong> 차단 13건 · 통과 10건이 모두 기대와 같았습니다.</li>
+                <li><strong>테스트 결과 저장물은 저장 직후 스크립트가 시크릿 패턴을 검사합니다.</strong> 남아 있으면 그 실행은 실패로 처리됩니다. 가짜 토큰으로 검사 실패 → 마스킹 → 검사 통과를 확인했습니다.</li>
+            </ul>
+        </div>
+<pre>ArchitectureRulesTest &gt; layers FAILED
+ArchitectureRulesTest &gt; noEntitySetters FAILED
+4 tests completed, 2 failed</pre>
+        <p class="caveat"><strong>한계:</strong> 실행 전 훅은 명령 문자열을 보는 방식이라 실수를 막는 수준입니다. 완전한 차단이 아니며(알려진 우회 경로 2건을 시험표에 적어 두었습니다), 그래서 최종 판정은 여전히 사람이 합니다.</p>
+        <p class="body-p" style="margin-top:14px;">
+            저장소에서 보기 —
+            <a href="https://github.com/danbeekimm/ants-camp/blob/2504b13a87fc5964cc701788280d2f90b03b0b59/.claude/settings.json" target="_blank" rel="noopener"><code>.claude/settings.json</code></a> ·
+            <a href="https://github.com/danbeekimm/ants-camp/blob/2504b13a87fc5964cc701788280d2f90b03b0b59/.claude/hooks/guard-bash.sh" target="_blank" rel="noopener"><code>guard-bash.sh</code></a> ·
+            <a href="https://github.com/danbeekimm/ants-camp/blob/2504b13a87fc5964cc701788280d2f90b03b0b59/.claude/hooks/guard-bash.cases.md" target="_blank" rel="noopener">훅 시험표</a> ·
+            <a href="https://github.com/danbeekimm/ants-camp/blob/2504b13a87fc5964cc701788280d2f90b03b0b59/apps/ranking-service/src/archTest/java/io/antcamp/rankingservice/ArchitectureRulesTest.java" target="_blank" rel="noopener"><code>ArchitectureRulesTest</code></a> ·
+            <a href="https://github.com/danbeekimm/ants-camp/blob/2504b13a87fc5964cc701788280d2f90b03b0b59/docs/guardrails-results.md" target="_blank" rel="noopener">시험 기록</a>
+        </p>
+
+        <h3 class="spaced">다른 프로젝트에도 같은 구성을 옮겼다</h3>
+        <p class="body-p">
+            같은 구성(권한 설정 · 실행 전 훅 · 아키텍처 테스트)을 <strong>다2조부르릉</strong>(B2B 물류 MSA)에도 옮겨 적용했습니다.
+            레이어 구조가 있는 서비스 9개에 구조 규칙 3개를 두고 기존 위반(레이어 의존 방향 557건, 그중 domain 역참조 58건)을 얼렸으며,
+            일부러 넣은 위반은 세 규칙 모두 잡았습니다. 훅은 <code>terraform apply/destroy</code> 차단을 더해 27건으로 시험했습니다.
+            엔티티 setter 규칙은 이 저장소에 근거 조항이 없어 넣지 않았습니다 —
+            <a href="https://github.com/danbeekimm/da2joburureung/blob/a701b5d5892d0335be2eb8a1c7aa774a946c1989/docs/guardrails-results.md" target="_blank" rel="noopener">시험 기록</a>
+        </p>
+
+        <h3 class="spaced">컨텍스트 — 무엇을 언제 보게 하나</h3>
+        <div class="box">
+            <ul>
+                <li><strong>SSOT 상호참조</strong> — 세 문서가 서로를 가리켜 중복·표류 방지</li>
+                <li><strong>설정 외부화 인지</strong> — "이 레포에서 <code>application.yaml</code> 찾지 말 것", 실제 설정은 Config 레포(<code>dev</code>)</li>
+                <li><strong>작업 유형별 참고문서 라우팅</strong> — RAG 작업 → <code>rag-architecture.md</code>, 알림 작업 → <code>aiops-architecture.md</code></li>
+                <li><strong>신뢰 경계</strong> — 도메인 서비스는 JWT를 직접 검증하지 않고 게이트웨이가 주입한 <code>X-User-Id</code>만 신뢰</li>
+                <li>휘발성 큰 정보(스키마·설정)는 문서에 박제하지 않고 그때그때 실측</li>
+            </ul>
         </div>
     </section>
 
@@ -352,6 +402,7 @@
             AI 생성물은 빠르지만 <strong>이 코드베이스의 맥락을 모른 채 그럴듯하지만 틀린 코드</strong>를 자신 있게 내놓습니다.
             그 실수가 코드베이스에 들어오지 못하도록 규칙(SSOT)·자동 검토/검증·가드레일로 <strong>여러 겹의 관문</strong>을 두고,
             사람은 생성이 아니라 <strong>감독과 최종 판단</strong>에 시간을 씁니다. AI는 빨라지되 <strong>사람의 통제 밖에서 코드를 확정하지 못합니다</strong>. 이 관리 체계는 모델·도구가 바뀌어도 남습니다.
+            통제는 전부 막는다는 뜻이 아닙니다. <strong>위험이 낮은 일은 넓게 맡기고, 높은 일은 기계가 막습니다</strong>.
         </p>
         <div class="ai-closing">AI에게 개발을 일임하지 않는다 — 통제하고 감독한다.</div>
     </section>
